@@ -1,0 +1,22 @@
+/* AI section styles (scoped). Only adds markdown tables, which the
+   base theme doesn't style. Uses the theme's CSS variables so it matches a
+   light OR dark theme. Do NOT style pre/code/blockquote/img here — the base
+   theme already does, and overriding caused white-on-white text. */
+.ai-page-title { margin-bottom: 0.25em; }
+.ai-page-subtitle { color: var(--text-muted, #888); margin-top: 0; margin-bottom: 2em; }
+
+.post-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+  font-size: 0.95em;
+}
+.post-content th,
+.post-content td {
+  border: 1px solid var(--border, var(--border-color, #d0d7de));
+  padding: 6px 10px;
+  text-align: left;
+}
+.post-content th {
+  background: var(--bg-secondary, #f6f8fa);
+}

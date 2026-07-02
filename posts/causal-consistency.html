@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>存储一致性之一般一致性(General Consistency)和因果一致性(Causal Consistency) - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>存储一致性之一般一致性(General Consistency)和因果一致性(Causal Consistency)</h1>
+                    <div class="post-date">2011-05-06</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">存储一致性</span>
+                        <span class="tag">共享存储</span>
+                        <span class="tag">一般一致性</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>相比于<a href="/2011/05/6/strict-consistency.html">严格一致性</a>，<a href="/2011/05/6/sequential-consistency.html">顺序一致性</a>虽然放松了限制条件，但是对性能的影响还是很大，因此出现了一般一致性和因果一致性。  一般一致性的定义是：</p>
+<blockquote><p>一个系统支持一般一致性，当每个处理机所执行的所有写已被完成时，如果一个内存位置的所有副本最终地包含同样的数据。</p></blockquote>
+<p>   因果一致模型（Hutto和Ahamad，1990）是顺序一致的淡化，它按有无可能的潜在因果联系来区分各事件。  假设进程P1写变量x，然后P2读出x，写入y。这里读出x和写入y之间可能有潜在的因果联系，因为y的计算很可能决定于P2读到的x值（即P1写入的值）。  另一方面，若两进程自然而同时地写两个变量，就没有因果联系。先有读操作之后执行写操作，两个事件就可能有因果联系。相似的，读和提供所读数据的写有因果关系。没有因果关系的操作称为并发的（concurrent）。  因果一致性定义：</p>
+<blockquote><p>A system provides causal consistency if memory operations that potentially are causally related are seen by every node of the system in the same order. Concurrent writes (i.e. ones that are not causally related) may be seen in different order by different nodes.</p></blockquote>
+<p>中译为：</p>
+<blockquote><p>因果一致的存储器应遵守以下条件：可能因果相关的写操作应对所有进程可见，且顺序一致。并发写操作在不同机器看来顺序可能是不同的。</p></blockquote>
+<p>在下图（a）中，W(x)b可能决定于W(x)a，因为 b可能是R(x)a所读的值计算的结果，两个写操作是因果联系的，所有进程必须视它们为同一顺序。因此（a）不正确。（b）中，读被取掉，W(x)a和W(x)b变为并发事件。因果一致性存储器不要求并发写有全局一致的次序，因此（b）是正确的。  <img style="display: block; float: none; margin-left: auto; margin-right: auto;" src="http://public.blu.livefilestore.com/y1pHJGO4wLvW1wE25AQmzg8TwTQroioCr0FHaek4WeRNlq7RWbhXiV1h6XcRPDFcPARzdoX6n82KFhGdtBa-OYGjQ/causual-consistency.jpg?psid=1" alt="" width="495" height="146" />    实现因果一致性需要由记录来跟踪哪个进程看到哪个写操作。这要建立和维护一个依赖图：即一个操作依赖于其他什么操作。一种实现方法是使用向量时间戳。这样做需要一些额外的开销。</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (4)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-05-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>楼主发癫了，一下发这么多。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-05-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>楼主发癫了，一下发这么多。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-05-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1021001" rel="nofollow">@grapeot</a><br><br />本来写了更多的，停电不能发了，现在继续<br><br />PS：grapeot发癫了，回复两个一样的回复</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-05-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>是你的验证码发癫了。</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,52 @@
+[
+  {
+    "id": "baf5fed6-0bc7-4a31-a6a8-ed508996cf41",
+    "slug": "当-anthropic-把博弈摆上桌面",
+    "dir": "2026-06-15-当-anthropic-把博弈摆上桌面",
+    "title": "当 Anthropic 把博弈摆上桌面",
+    "date": "2026-06-15",
+    "type": "deep_article",
+    "summary": "一纸行政命令,要求 Anthropic 立即停服 Fable 5 与 Mythos 5。理由是\"国家安全\":据 Anthropic 理解,政府认为自己发现了一种绕过或\"越狱\" Fable 5 的方法。",
+    "path": "ai/2026-06-15-当-anthropic-把博弈摆上桌面/"
+  },
+  {
+    "id": "3d6aa39e-7e07-413c-9d8e-80e47e9e19bb",
+    "slug": "wdc在773没有hbm的玩家凭什么比micron还贵",
+    "dir": "2026-06-19-wdc在773没有hbm的玩家凭什么比micron还贵",
+    "title": "WDC在$773：没有HBM的玩家，凭什么比Micron还贵？",
+    "date": "2026-06-19",
+    "type": "deep_article",
+    "summary": "你打开任何一份memory行业估值表，逻辑应该很清楚：谁有HBM，谁就该有溢价。SK Hynix有，Samsung有，Micron有——这三家瓜分了AI训练所需的HBM产能，市场给它们高PE是合理的风险定价。",
+    "path": "ai/2026-06-19-wdc在773没有hbm的玩家凭什么比micron还贵/"
+  },
+  {
+    "id": "d5ab5f68-db70-487f-84fb-f3b7cb6bf2d2",
+    "slug": "一笔交易两个方向",
+    "dir": "2026-07-02-一笔交易两个方向",
+    "title": "一笔交易，两个方向",
+    "date": "2026-07-02",
+    "type": "deep_article",
+    "summary": "7月1日，同一条新闻让两个板块走向截然相反的方向。",
+    "path": "ai/2026-07-02-一笔交易两个方向/"
+  },
+  {
+    "id": "8befe5a8-6d7c-41a1-a3cc-4bf073094944",
+    "slug": "他们给了agent-1m-token的上下文窗口问题却更糟了",
+    "dir": "2026-07-02-他们给了agent-1m-token的上下文窗口问题却更糟了",
+    "title": "他们给了Agent 1M token的上下文窗口，问题却更糟了",
+    "date": "2026-07-02",
+    "type": "deep_article",
+    "summary": "想象这样一个团队：五个历史学家受命合作破译一批十二世纪的商人信件。组织者慷慨地给了每人一台摄像机，可以回放会议室里说过的每一句话——没有遗忘，没有上限。他们开始工作。A提到一个威尼斯商人常用缩写，B记下了，C也记下了；十分钟后所有人都用同一个符号指代“君士坦丁堡”，却没人意识到这个约定从未被写下来。当B四十七分钟后重构…",
+    "path": "ai/2026-07-02-他们给了agent-1m-token的上下文窗口问题却更糟了/"
+  },
+  {
+    "id": "c76c4873-ef74-451d-93df-612ffb66e846",
+    "slug": "samsung-nand新fab的s曲线被系统性误读的四个季度",
+    "dir": "2026-07-02-samsung-nand新fab的s曲线被系统性误读的四个季度",
+    "title": "Samsung NAND新Fab的S曲线：被系统性误读的四个季度",
+    "date": "2026-07-02",
+    "type": "deep_article",
+    "summary": "Samsung NAND新Fab量产时间不早于2027H2，媒体通稿照例发了，券商报告照例写了“关注Samsung 2027量产对MU定价权的潜在冲击”。买方会议纪要里照例出现了“供给侧压力2027年到来”的讨论框架。",
+    "path": "ai/2026-07-02-samsung-nand新fab的s曲线被系统性误读的四个季度/"
+  }
+]

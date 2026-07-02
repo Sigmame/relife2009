@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于Python变量和List的append操作 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>关于Python变量和List的append操作</h1>
+                    <div class="post-date">2012-02-28</div>
+                    <div class="post-meta">
+                        <span class="tag">编程语音</span>
+                        <span class="tag">贝壳</span>
+                        <span class="tag">作用域</span>
+                        <span class="tag">变量</span>
+                        <span class="tag">python</span>
+                    </div>
+                </header>
+                <div class="post-content">
+今天，写Python代码，碰到一个很诡异的问题，花了好长时间才明白（也怪我基础不好，没系统学习python，都是用的时候直接抓脑皮用），通过这个问题，我基本搞清楚了Python中的变量以及List的一些操作。在这里给自己Mark下，也希望对读这篇文章的人有点用。
+首先，看下面这段代码：
+<pre class="brush: python; gutter: true">#!/usr/bin/python
+# -*- coding: utf-8 -*- 
+
+import os,sys
+
+trace_file = open("./all_memtrace_file_test","r")
+
+all_addr=[]
+all_addr2=[]
+addr_info2={}
+addr_info={}
+
+for line in trace_file.readlines():
+    addr_info = {'addr':int(line.split(",")[2].strip(" "),16),'access':line.split(",")[3].strip("n")}
+#    addr_info2={}
+    addr_info2['addr']=int(line.split(",")[2].strip(" "),16)
+    addr_info2['access']=line.split(",")[3].strip("n")
+    if addr_info == addr_info2:
+        print "addr_info == addr_info2"
+    print "addr_info  = ",
+    print addr_info
+    print "addr_info2 = ",
+    print addr_info2
+    all_addr.append(addr_info)
+    all_addr2.append(addr_info2)
+    print "all_addr   = ",
+    print all_addr
+    print "all_addr2  = ",
+    print all_addr2</pre>
+其中./all_memtrace_file_test的内容如下：
+<pre class="brush: actionscript3; gutter: true"> 0,              49, 0x7fdc000,l
+ 0,              52, 0x20049c4,l</pre>
+咋一看，all_addr和all_addr2应该是一样的，结果应该是：
+<pre class="brush: actionscript3; gutter: true">addr_info == addr_info2
+addr_info  =  {'access': 'l', 'addr': 134070272}
+addr_info2 =  {'access': 'l', 'addr': 134070272}
+all_addr   =  [{'access': 'l', 'addr': 134070272}]
+all_addr2  =  [{'access': 'l', 'addr': 134070272}]
+addr_info == addr_info2
+addr_info  =  {'access': 'l', 'addr': 33573316}
+addr_info2 =  {'access': 'l', 'addr': 33573316}
+all_addr   =  [{'access': 'l', 'addr': 134070272}, {'access': 'l', 'addr': 33573316}]
+all_addr2  =  [{'access': 'l', 'addr': 134070272}, {'access': 'l', 'addr': 33573316}]</pre>
+而实际上，结果确实第二次循环时，all_addr和all_addr2不一样，结果是：
+<pre class="brush: actionscript3; gutter: true">addr_info == addr_info2
+addr_info  =  {'access': 'l', 'addr': 134070272}
+addr_info2 =  {'access': 'l', 'addr': 134070272}
+all_addr   =  [{'access': 'l', 'addr': 134070272}]
+all_addr2  =  [{'access': 'l', 'addr': 134070272}]
+addr_info == addr_info2
+addr_info  =  {'access': 'l', 'addr': 33573316}
+addr_info2 =  {'access': 'l', 'addr': 33573316}
+all_addr   =  [{'access': 'l', 'addr': 134070272}, {'access': 'l', 'addr': 33573316}]
+all_addr2  =  [{'access': 'l', 'addr': 33573316}, {'access': 'l', 'addr': 33573316}]</pre>
+我想了好久，才明白这是为什么。要明白具体的原因，需要了解Python变量以及append函数的知识，具体为：
+<ol>
+	<li>python变量其实都是“引用”(reference)，并不会实际给其分配内存空间。</li>
+	<li>python变量作用域遵循LGB原则，即先局部（local scope），后全局（global scope）。</li>
+	<li>python中，只要是对字典全局赋值（<del>右值不为字典变量</del>之前描述有误，在rex提醒下，应为右值不为字典变量的某一项），就是创建了一个字典，会申请一块内存，并且将该字典变量指向该内存。如前述代码14行，就定义了一个新的局部字典变量addr_info。根据LGB原则，此后在该代码区块中使用的addr_info就是这个局部变量。</li>
+	<li>假如只对字典某一项赋值，是更新字典，如代码中16，17行。因此addr_info2还是全局变量，没有定义新的变量。</li>
+	<li>list的append函数，就是把变量（也就是引用，相当于指针）加在列表后面。因此，对于all_addr，由于两次执行14行语句，都创建了变量，申请的新的内存，因此append上的两个变量所指向的内存是不同的。而对all_addr2，由于都是append全局的addr_info2,导致实际上列表上两项指向的是相同的内存区块，其值一样。假如将15行的注释去掉，则创建了两次变量，list里面的两项指向不同内存。</li>
+</ol>
+为了将上面的问题简化，有这样一段代码，可以说明上面的几点：
+<pre class="brush: python; gutter: true">test_item0,test_item1,test_item2 = [1,1],[2,2],[3,3]
+test_list=[]
+test_list.append(test_item0)
+test_list.append(test_item1)
+test_list.append(test_item2)
+print "test_list = ",
+print test_list
+test_item0[0]=4
+test_item0[1]=4
+test_item1=[5,5]
+print "test_list = ",
+print test_list</pre>
+上面代码的输出是：
+<pre class="brush: actionscript3; gutter: true">test_list =  [[1, 1], [2, 2], [3, 3]]
+test_list =  [[4, 4], [2, 2], [3, 3]]</pre>
+可以发现，test_item0没有重新创建，而test_item1被重新创建了，从而导致test_list里面只有test_item0被更新。
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (5)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.rexzhao.com" rel="nofollow">Rex</a></span>
+                        <span class="comment-date">2012-03-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>“python中，只要是对字典全局赋值（右值不为字典变量），就是创建了一个字典” 。<br>这句话我觉得可能有问题：<br>第14行代码，等号右边是创建了一个新字典，然后把该字典的引用给等号左边。这个和直接用字典变量赋值是没有什么区别的。如果右边不是字典变量，那么这个变量就会变成一个非字典变量（Python的变量类型可以动态改变）。<br>例如：<br>d = {} #刚开始d为字典<br>d = {'one':1} #d还是字典。这句话等同于d2 = dict(one=1) d=d2，或者说{'one':1}等同于dict(one=1)，就是生成了一个字典变量并返回引用<br>d = 1 #在这一步后，d就成了整数，可以查看其类型</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.rexzhao.com" rel="nofollow">Rex</a></span>
+                        <span class="comment-date">2012-03-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>除此之外，好像这段代码也不涉及作用域的呀。<br>举例如下：<br>a = 1<br>print a<br>for x in xrange(2):<br>    a = 'hi'  #这里并不会重新生成一个局部变量a，其实还是前面那个，所以到这里以后a的类型就被改了<br>    print a<br>print a  #结果是hi</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.rexzhao.com" rel="nofollow">Rex</a></span>
+                        <span class="comment-date">2012-03-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>除此之外，好像这段代码也不涉及作用域的呀。<br>举例如下：<br>a = 1<br>print a<br>for x in xrange(2):<br>  a = ‘hi’ #这里并不会重新生成一个局部变量a，其实还是前面那个，所以到这里以后a的类型就被改了<br>  print a<br>print a #结果是hi<br><br>对齐没了，我再试试对齐</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2012-03-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>这句话我表述的确有问题，我本来想表达的是，右值不为字典变量的某一项<br><blockquote cite="#commentbody-2730"><br><strong><a href="#comment-2730" rel="nofollow">Rex</a> :</strong><br><p>“python中，只要是对字典全局赋值（右值不为字典变量），就是创建了一个字典” 。<br><br>这句话我觉得可能有问题：<br><br>第14行代码，等号右边是创建了一个新字典，然后把该字典的引用给等号左边。这个和直接用字典变量赋值是没有什么区别的。如果右边不是字典变量，那么这个变量就会变成一个非字典变量（Python的变量类型可以动态改变）。<br><br>例如：<br><br>d = {} #刚开始d为字典<br><br>d = {‘one’:1} #d还是字典。这句话等同于d2 = dict(one=1) d=d2，或者说{‘one’:1}等同于dict(one=1)，就是生成了一个字典变量并返回引用<br><br>d = 1 #在这一步后，d就成了整数，可以查看其类型</p><br></blockquote></p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2012-03-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-2732" rel="nofollow">@Rex </a> <br>这个我理解有误，LGB原则应该是在函数里面，代码块貌似没有这概念</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

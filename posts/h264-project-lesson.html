@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一点教训 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>一点教训</h1>
+                    <div class="post-date">2011-06-05</div>
+                    <div class="post-meta">
+                        <span class="tag">life</span>
+                        <span class="tag">教训</span>
+                        <span class="tag">code</span>
+                        <span class="tag">life</span>
+                        <span class="tag">程序编码</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>这个端午节真郁闷，一直在加班，直到加班到今晚九点多，服务器文件系统挂了，才能无奈的休息回。而这不意味这几天焦头烂额的生活已经结束，也许意味着服务器好了后会过的更焦头烂额！！</p>  <p>不过也只能怪自己，当初任务没做细，有些事一直在拖，搞得到紧要关头手忙脚乱。在这里随便扯扯教训，算是对做H264硬解码一个子模块的教训，也权充这周的日志。</p>  <ol>   <li><strong>万事不能拖</strong>，当解决的时候就必须解决。之前其实曾经有空整这东西，但是由于各种原因（包括自己的，以及各种对外部因素的依赖），一直没彻底搞定，自己也知道自己做的模块肯定会有问题，但却一直不想去改。这又是我执行力不够的体现，还是那就话，加强自己的执行力，任何事，想到了就去做。 </li>    <li><strong>不能报侥幸心理</strong>。之前解码中有个解出来的参数mb_skip_run，我想当然的以为他不应该超过一行的宏块数，虽然当时怀疑过自己的想法，但却报侥幸心理，觉得大部分视频的mb_skip_run都不会超过这个值，应该问题不大，的确，前面跑了很多视频，都没有出问题，可是昨天测了个视频，跑错了，一trace，发现问题就出在mb_skip_run上这点想当然。于是改，谁知，要不改状态机，得用到除法，而在Verilog中，用除法风险太高了，肯定出来的结果时序要求不符合，DC过不了，主频就惨了。最后只好大改，改状态机，还好，毕竟是自己写的，对状态机挺熟，花了一下午终于改好了，并且做了一些回归测试。还有，之前也怀疑过一个Frame会有几个Slice，但是由于没跑到这样的视频，所以也以为这样的视频很少，不做也罢，谁知，到最后还是得加。 </li>    <li><strong>思路得清晰，关键处要有文档</strong>，之前有个8x8块，我为了省面积，愣是想用4x4块的寄存器数（可以省700+寄存器）来完成8x8的残差计算和扫描，当时想通过4x4的想通过掩码把4x4打散成8x8块，当时就意识到逻辑会比较复杂，当时总觉得肯定可以，于是硬着头皮写了个逻辑，但自己都没有把握。由于之前没跑到8x8的视频，也不知道对否，就一直放在那。直到今天，跑了8x8的视频，才知道有问题，于是重新看了下代码，发现由于逻辑太复杂（需要先打散，之后扫描，扫描又分zigzag和field）以及没有文档，自己都看不懂自己当时是怎么写出那逻辑的。后来仔细想了想，想直接通过掩码，不用寄存器暂存8x8的块不现实（因为只打散的话，可以通过掩码做到，但是还要扫描，掩码就没辙了），于是只好加了用来暂存8x8的寄存器，并且残差输出的状态机也要改，又是一下午的时间才改完并且初步做了回归测试。 </li>    <li>… </li> </ol>  <ol>马上就到端午节了，贴张粽子的图吧，望梅止渴下：    <br /></ol>  <p><img style="display: block; float: none; margin-left: auto; margin-right: auto" title="粽子" alt="粽子" src="http://3fnm6q.blu.livefilestore.com/y1pM6d3ohVbKbHFRIESF0SarG1JUVJpG9oDsWgj74rVEPjsrAXqjb1WUdNDsnTAIpcZumNeuOgivc_C1Yrt6O14ISrcO8q5qyGq/%E7%B2%BD%E5%AD%90.jpg?psid=1" /></p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (25)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.codecho.com" rel="nofollow">代码回音</a></span>
+                        <span class="comment-date">2011-06-05</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>我也没买粽子。明天再去看看</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">Yan</a></span>
+                        <span class="comment-date">2011-06-05</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>讲的很有道理。但在实际生活中常用的一个心得是lazy computing。咱都是搞计算机的，知道并不是所有的任务都需要立刻就完成，很多东西并不是很重要，拖拖就过去了。从你的经历来看，对事业还是不要应用这个比较好~</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-06-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1043002" rel="nofollow">@代码回音</a><br><br />呵呵，到今天了，我都没吃，哎，北京的粽子太贵了，吃不起啊</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-06-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1032013" rel="nofollow">@Yan</a><br><br />很多事的确拖拖就过去了，但拖的过程总感觉不踏实，总觉得欠什么</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">Yan</a></span>
+                        <span class="comment-date">2011-06-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>今晚科大人聚会包粽子，哇咔咔~~</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">Yan</a></span>
+                        <span class="comment-date">2011-06-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>CU科大人可团结了~~今年CU晚会你们就可以看见哥哥猥琐的身影啦！！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-06-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1032015" rel="nofollow">@Yan</a><br><br />刚想在chat问你端午吃粽子没，谁知不仅吃了，还炫耀到这里来了。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">Yan</a></span>
+                        <span class="comment-date">2011-06-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>哈哈哈哈还有美女哦~~男女比1:1哟~~今晚记得去fb看照片哟~</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-06-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1044003" rel="nofollow">@Yan</a><br><br />好，到时我去下面把你什么八辈子的丑事都抖一抖</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">PP</span>
+                        <span class="comment-date">2011-06-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>我现在做事就很拖，汗</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">Yan</a></span>
+                        <span class="comment-date">2011-06-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1040007" rel="nofollow">@PP</a><br><br />你也知道啊。。。昨天那么晚还没起。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-06-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1040007" rel="nofollow">@PP</a><br><br />同是天涯沦落人</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-06-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1032016" rel="nofollow">@Yan</a><br><br />神啊，怎么同时回复。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">Yan</a></span>
+                        <span class="comment-date">2011-06-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你那SB服务器是linux的吧。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">Yan</a></span>
+                        <span class="comment-date">2011-06-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1045002" rel="nofollow">@sigma</a><br><br />对哦。。。我也才发现。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-06-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1044004" rel="nofollow">@Yan</a><br><br />linux怎么了，都是硬盘不给力，文件系统挂了</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">Yan</a></span>
+                        <span class="comment-date">2011-06-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>嘿嘿~~叫你不备份~</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-06-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1041004" rel="nofollow">@Yan</a><br><br />服务器硬盘肯定有raid，用得着备份吗，只是文件系统出了点问题<br><br />拿硬盘貌似死贵死贵，几千块钱300G</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">Yan</a></span>
+                        <span class="comment-date">2011-06-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>也就是说不是硬件问题是软件问题啰？叫你用linux~</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-06-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1042005" rel="nofollow">@Yan</a><br><br />是啊，linux怎么了？windows在那么大的负荷下我想也是要挂的<br><br />并且，windows下有好的EDA工具么<br><br /></p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">Yan</a></span>
+                        <span class="comment-date">2011-06-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你在想什么呢。。。Synopsys, Cadence... 最大最好的平台哪个不支持windows啊？<br><br /><br><br />http://www.synopsys.com/Support/LI/Licensing/Pages/SupportedOS.aspx<br><br /><br><br />http://www.cadence.com/support/computing/Documents/Cadence_Platform_Support_Plan.pdf</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-06-08</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1045005" rel="nofollow">@Yan</a><br><br />Cadence:(貌似一直都是在尝试添加支持，并且都是optional)<br><br />page 4:<br><br />Add support for SUSE SLES 11, Windows Server 2003, OS on x86_64 architecture<br><br />Windows*:Optional,A subset of Cadence products is supported on these compute platforms.  Support is driven by customer demand.<br><br />Synopsys:<br><br />Note: 64-bit versions of Windows are supported. However, any FLEXid dongle drivers must be 32-bit only<br><br />并且很多其他的支持软件如verdi之类的都是linux only，windows下的脚本也没那么方便</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.wukenan.com/" rel="nofollow">七七</a></span>
+                        <span class="comment-date">2011-06-09</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>嗯，有教训才会做得更好！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">sdfe</span>
+                        <span class="comment-date">2011-06-15</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>粽子叶太绿了，很可能是硫酸铜泡过的。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-06-15</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1050001" rel="nofollow">@sdfe</a><br><br />各种专业，膜拜下</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIT Angstrom 项目(二)-设计自我感知的多核操作系统 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>MIT Angstrom 项目(二)-设计自我感知的多核操作系统</h1>
+                    <div class="post-date">2011-02-26</div>
+                    <div class="post-meta">
+                        <span class="tag">IT资讯</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">Angstrom</span>
+                        <span class="tag">OS</span>
+                        <span class="tag">多核</span>
+                        <span class="tag">操作系统</span>
+                        <span class="tag">并行计算</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>前面那篇关于<a href="http://www.sigma.me/2011/02/26/mit-angstrom-HardWare.html">MIT Angstrom项目的多核互连</a>的文章讲了从硬件上提高多核芯片的性能和效率。本文将继续介绍MIT的Angstrom项目，主要介绍其软件，及操作系统层面来提高多核计算机的性能。</p>  <p>在MIT新闻介绍中，他们准备利用机器学习（machine learning）等方法实现一个具有性能感知等自适应能力的操作系统，名字貌似叫FOS(factored operating system).为此，他们利用机器学习等方法建立了自我感知的计算模型（<b>SElf-awarE Computational model，简称SEEC</b>）。</p>  <p>在这种操作系统中，应该具有一些以下特征：</p>  <ol>   <li><font style="background-color: #ffffff">第一个特征是具有性能感知能力，并且基于此进行对处理器核进行动态调度，比如对于一些比较占用资源的应用，操作系统可以感知（之前一般都是通过处理器核的温度反馈的？），并且动态的多分配几个内核（感觉这和Intel的睿频技术有点像，只是Intel的是硬件，并且是提高单个处理器核心的主频来提高性能）。</font> </li>    <li>第二个具有算法感知能力，也就是说，程序员可以写几种算法实现同一个功能，由操作系统通过智能（通过机器学习等获得）判断何种算法效率最高，从而执行何种算法来完成任务，更多细节可看<a href="http://web.mit.edu/newsoffice/2009/parallel-course.html">这里</a>。 </li>    <li>第三个特征是具有任务感知并划分的能力，对于一个给定的任务，操作系统可以判断这个任务是否可分解，可以的话，将其分解成更细的任务，分配到不同的处理器核处理，典型的情况就是文件系统的检索。这篇新闻还提到定义一些新的指令集，来更高效的解决Cache一致性的问题：</li> </ol>  <ol>   <blockquote style="margin-right: 0px" dir="ltr">     <p>Kaashoek has demonstrated how the set of primitive operations executed by a computer chip can be expanded to allow cores access to each other’s caches. In order to streamline a program’s execution, an operating system with Kaashoek’s expanded instruction set could, for instance, swap the contents of two caches, so that data moves to the core that needs it without any trips to main memory; or one core could ask another whether it contains the data stored at some specific location in main memory.</p>   </blockquote>    <p>嗯，最后附一张Linux的kernel map:      <br /><img src="http://3fnp6q.blu.livefilestore.com/y1puEu6Aqnu3xjUZ6qnulf6otftNayXPxWFTWLTMT-35GFpvgfRhCIse2ePKNGl8S1dUldBwrtovPhBkYlNa3meEUZeiEebVHRf/Linux_kernel_map.jpg?psid=1" width="597" height="448" />  <br />更多阅读:<a href="http://web.mit.edu/newsoffice/2011/multicore-series-2-0224.html">MIT关于Angstrom操作系统新闻原文</a>。      <br /></p> </ol>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (9)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.v2xy.com/" rel="nofollow">xyu_ovi</a></span>
+                        <span class="comment-date">2011-02-27</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>看！曲高和寡了吧！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-02-27</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-945011" rel="nofollow">@xyu_ovi</a><br><br />呵呵~没吧~</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.v2xy.com/" rel="nofollow">xyu_ovi</a></span>
+                        <span class="comment-date">2011-02-27</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你看那附图纠结的！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-02-27</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-951010" rel="nofollow">@xyu_ovi</a><br><br />。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-02-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>linux是啥，一坨sh1t呗！<br><br /><br><br />sh1t哥重出江湖！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-02-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>machine learning真是啥都能搞。。。去看看吧，应该会很有好处~~</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-02-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>machine learning是啥，一坨sh1t呗！<br><br /><br><br />做个广告：<br><br />http://grapeot.me/?tag=/machine-learning</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-02-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你这SB系统都不会自动加链接的么。。。<br><br /><a href="http://grapeot.me/?tag=/machine-learning" rel="no-follow" rel="nofollow">点我！</a></p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-02-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-948017" rel="nofollow">@grapeot</a><br><br />机器学习的确很强大，到处都能套一套，一不小心套出一篇牛叉的paper<br><br />不过你写的大部分看不懂...<br><br />那个评论不自动加链接可以防止广告，要加的话，还要改代码，算了</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

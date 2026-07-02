@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>推荐几个Linux命令行下性能监控小工具 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>推荐几个Linux命令行下性能监控小工具</h1>
+                    <div class="post-date">2011-11-22</div>
+                    <div class="post-meta">
+                        <span class="tag">贝壳</span>
+                        <span class="tag">dstat</span>
+                        <span class="tag">top</span>
+                        <span class="tag">Linux</span>
+                        <span class="tag">htop</span>
+                        <span class="tag">iftop</span>
+                    </div>
+                </header>
+                <div class="post-content">
+在Linux中，CPU，内存等系统状态可以通过top命令查看，或者用图形界面的工具，如gnome-system-monitor。但是，有时候，想知道更详细的信息，比如说进程树之类的，网络具体使用之类的，这些工具就无能为力了，在本文中，将介绍几种Linux下的性能监控小工具，也许可以满足这些的要求（由于这些工具使用简单，不多介绍，主要上图）：
+<h3>htop</h3>
+这是一个比top更好的top工具，它比原始的top 多了更直觉的互动式设定和操作方式, 以及提供了彩色字体区分结果。 程序本身有用到ncurses 函式库作开发.我最喜欢看得就是它的程序树状图（F5调出），上图：
+<figure><a href="http://www.sigma.me/wp-content/uploads/2011/11/htop.png"><img class="size-full wp-image-1174099 " title="htop" src="images/2011/11/htop.png" alt="htop截图" width="600"/></a></figure>
+<h3>iftop</h3>
+看名字就知道，这是另外一个top工具，所不同的事，这个top加了if，所以是针对网络的，可以用来查看网络实时使用情况，并且列出来的信息非常全面。
+
+<figure><a href="http://www.sigma.me/wp-content/uploads/2011/11/iftop.png"><img class="size-full wp-image-1174100 " title="iftop" src="images/2011/11/iftop.png" alt="iftop" width="600"/></a></figure>
+<h3>dstat</h3>
+这是一个top工具的集大成者，可以直接查看cpu使用情况，硬盘读写情况，网络使用情况，以及分页使用情况等，可查看的信息非常多。上图：
+
+<figure><a href="http://www.sigma.me/wp-content/uploads/2011/11/dstat.png"><img class="size-full wp-image-1174101" title="dstat" src="images/2011/11/dstat.png" alt="dstat" width="591" height="459" /></a></figure>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (10)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-11-23</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>good, 快赶上任务管理器了~</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-11-23</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>贝壳是什么鸟？shell?</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-11-23</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1927" rel="nofollow">@grapeot </a> <br>你这是贬还是褒啊。。。<br>贝壳就是一个分类。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-11-30</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>我用了htop发现有些核的占用率是NaN。。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-12-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>这篇文章比较相关：http://www.cyberciti.biz/tips/top-linux-monitoring-tools.html</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-12-08</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>嗯，那篇文章不错，怎么发现的</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-12-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1991" rel="nofollow">@sigma </a> <br>忘了。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.decocity.cn" rel="nofollow">MiaQ</a></span>
+                        <span class="comment-date">2011-12-21</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>很好 非常实用</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://EverET.org/" rel="nofollow">ET</a></span>
+                        <span class="comment-date">2012-05-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>啊，不错。只是下面的广告有点.......</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2012-05-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-3197" rel="nofollow">@ET </a> <br>好奇地问，你看到的是啥广告？？</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

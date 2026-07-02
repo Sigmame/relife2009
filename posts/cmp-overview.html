@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMP读书笔记二:CMP简要介绍 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>CMP读书笔记二:CMP简要介绍</h1>
+                    <div class="post-date">2011-03-31</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">study</span>
+                        <span class="tag">芯片设计</span>
+                        <span class="tag">CMP</span>
+                        <span class="tag">性能</span>
+                        <span class="tag">吞吐量</span>
+                        <span class="tag">处理器设计</span>
+                        <span class="tag">片上多核处理器</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<span style="color: #4bacc6;">注：上个学期就下过决心要把《<a href="http://www.sigma.me/wp-content/uploads/2011/03/Chip-Multiprocessor-Architecture-Techniques-to-Improve-Throughput-and-Latency.pdf">Chip Multiprocessor Architecture Techniques to Improve Throughput and Latency</a>》看完，并且写了一篇关于CMP的读书笔记，《</span><a href="http://www.sigma.me/2010/10/17/CMP-ch1.html"><span style="color: #4bacc6;">CMP的提出</span></a><span style="color: #4bacc6;">》，之后，虽然看了下，但一直不想写，今天突然感觉应该把看的东西简要写写，算是总结，故有此文。为了使得这几篇文章脉络稍微清晰点，在这里先对片上多核处理器进行简要的介绍。</span>
+
+片上多核处理器（Chip Multicore Processor，CMP）就是将多个处理器核心集成到一个处理器芯片中，从而提高单个处理器的处理能力。
+
+按照集成的处理器核心的数目，片上多核处理器可以分为多核处理器和众核（Manycore）处理器。
+
+按照计算内核对等与否，片上多核处理器处理器又可以分为同构多核处理器和异构多核处理器。同构多核处理器的各个核心的结构相同，地位对等，现在主流的处理器厂商，如Intel，AMD所推出的处理器一般都是属于这类。异构多核处理器的各个核心的结构不同，功能也不同，地位也不同，分为主处理器和协处理器，IBM，索尼，东芝联手推出的Cell处理器就是一个典型的代表，Cell由一个Power主处理器单元（Power Processor Element ，PPE）和8个协同处理单元（Synergistic Processing Elements，SPE）组成，8个SPE结构不同的，不同的SPE可以快速的完成不同的类型的运算。
+
+片上多核处理器的出现使得在一个处理器上并发地执行多个线程成为可能，大大的增加了处理器的吞吐量（throughput），一些吞吐量的应用，如web应用，可以充分的并且很简单地利用片上多核处理器代理的优势，详见关于<a href="http://www.sigma.me/2011/03/31/CMP-improve-throughput.html">提高处理器吞吐量的文章</a>。但是，对于另外一些对延时敏感，需要高性能的应用，就不是那么容易直接利用多核带来的性能提升。
+
+这些程序分为两类，一类是原来单核心处理器上的串行程序，这些程序不可以直接通过多线程手段在多核处理器上获得更高的性能，为了利用多核所能带来的性能提高，有两种方法可以提高这类程序的性能：第一种是通过增加一个辅助线程（helper thread），辅助线程要比主线程跑地快一点，但是可以跳过一些代码，功能主要是为主线程完成一些预取操作，比如将数据从主存搬到cache上；第二种是通过猜测多线程（thread-level speculation,TLS）来提高串行程序的性能，猜测多线程通过在执行过程中将一些原来的串行比较容易并行化的代码（如循环）的动态地分配给几个线程执行，从而提高程序的执行速度，但是猜测多线程会带来额外的消耗，一是线程分配的消耗，另外就是猜测失败重新执行的消耗。这部分内容详见以后会写的关于<a href="http://www.sigma.me/2011/03/31/CMP-improve-latency.html">降低处理器单任务延时</a>的文章。
+
+第二类程序就是一些本来就是针对多核处理器设计的多线程程序，对于这类程序，可以直接将不同的线程映射到不同的处理器核心，但是，该类程序会因为不同的线程间的数据依赖以及共享资源的竞争导致不能取得理想的加速比。
+<img style="display: block; float: none; margin-left: auto; margin-right: auto;" src="http://public.blu.livefilestore.com/y1pOxhdYaw6uWlXKkeBLj81GXGUUAguhz64iDOZLU5xniR7txy1wr2jaawKsGBQ_07oCfWYSXlTl6oJoq46nVUhJQ/power7_ars.jpg?psid=1" alt="" width="594" height="470" />
+
+该书电子pdf版：
+
+<a href="http://www.sigma.me/wp-content/uploads/2011/03/Chip-Multiprocessor-Architecture-Techniques-to-Improve-Throughput-and-Latency.pdf">Chip Multiprocessor Architecture Techniques to Improve Throughput and Latency</a>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (2)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">wupengkid</span>
+                        <span class="comment-date">2012-12-16</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>您好，我对这本书也很有兴趣，不知您如何获得这本书的，可否分享一下？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2012-12-17</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-10282" rel="nofollow">@wupengkid </a> <br>已在博文最后添加下载链接</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

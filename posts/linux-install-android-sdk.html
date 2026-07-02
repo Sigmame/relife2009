@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>墙内的Linux(Ubuntu)环境下安装Eclipse+Android SDK(ADT)教程 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>墙内的Linux(Ubuntu)环境下安装Eclipse+Android SDK(ADT)教程</h1>
+                    <div class="post-date">2011-04-29</div>
+                    <div class="post-meta">
+                        <span class="tag">code</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">eclipse</span>
+                        <span class="tag">教程</span>
+                        <span class="tag">Android SDK</span>
+                        <span class="tag">Android开发</span>
+                        <span class="tag">ADT</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>最近几天想玩玩Android开发，于是试着在Linux下装Adroid SDK,无奈，由于Android SDK（ADT）的网站被墙了，不能直接在Eclipse的Install New software里安装，几经折腾，终于在linux下安装好了Adroid SDK，在这里分享下，希望对有些人有用，能少走些弯路。</p>  <ol>   <li>下载最新的Eclipse 3.6.2（注意，最好是javaEE的），点<a href="http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/helios/SR2/eclipse-jee-helios-SR2-linux-gtk.tar.gz&url=http://mirror.bjtu.edu.cn/eclipse/technology/epp/downloads/release/helios/SR2/eclipse-jee-helios-SR2-linux-gtk.tar.gz&mirror_id=547">这里</a>下载. </li>    <li>下载ADT-0.9.9，地址：<a title="http://dl-ssl.google.com/android/ADT-0.9.9.zip" href="http://dl-ssl.google.com/android/ADT-0.9.9.zip">http://dl-ssl.google.com/android/ADT-0.9.9.zip</a>。本来是可以直接在Eclipse输入<a href="https://dl-ssl.google.com/android/eclipse">https://dl-ssl.google.com/android/eclipse</a>在线安装的，但由于万恶的墙，我这里不行，总出现fetch error。 </li>    <li>进入Eclipse->Help->Install Software进入Install面板，点Add，点archive，将下载的ADT安装。 </li>    <li>下载Android SDK for linux包，地址：<a title="http://dl.google.com/android/android-sdk_r10-linux_x86.tgz" href="http://dl.google.com/android/android-sdk_r10-linux_x86.tgz">http://dl.google.com/android/android-sdk_r10-linux_x86.tgz</a>。 </li>    <li>下载后的SDK不是完整的，需要下载一些其他文件，如api，platforms，本来这是可以直接在SDK Manager里直接更新的，但是由于被墙了，会出现Failed to fetch URL <a href="http://dl-ssl.google.com/android/repository/repository.xml">http://dl-ssl.google.com/android/repository/repository.xml</a>。网上有的方法是设置代理服务器，但我这里没用，只好作罢。 </li>    <li>进入<a href="http://dl-ssl.google.com/android/repository/repository.xml">http://dl-ssl.google.com/android/repository/repository.xml</a>,然后在xml中逐个寻找linux系统的文件，在迅雷里面直接下载下面文件并按下面方法安装（推荐迅雷，否则速度接近20k，拖1G的SDK够你受的）。下面是具体的文件列表（以下文件夹没有可以自行创建） ： </li>    <li>各个API版本，直接解压到add-ons（这个文件夹是上面的android-sdk_r10-linux_x86.tgz解压后得到有）：      <br /><a href="https://dl-ssl.google.com/android/repository/google_apis-8_r02.zip">https://dl-ssl.google.com/android/repository/google_apis-8_r02.zip</a>       <br /><a href="https://dl-ssl.google.com/android/repository/google_apis-7_r01.zip">https://dl-ssl.google.com/android/repository/google_apis-7_r01.zip</a>       <br /><a href="https://dl-ssl.google.com/android/repository/google_apis-6_r01.zip">https://dl-ssl.google.com/android/repository/google_apis-6_r01.zip</a>       <br /><a href="https://dl-ssl.google.com/android/repository/google_apis-5_r01.zip">https://dl-ssl.google.com/android/repository/google_apis-5_r01.zip</a>       <br /><a href="https://dl-ssl.google.com/android/repository/google_apis-4_r02.zip">https://dl-ssl.google.com/android/repository/google_apis-4_r02.zip</a>       <br /><a href="https://dl-ssl.google.com/android/repository/google_apis-3-r03.zip">https://dl-ssl.google.com/android/repository/google_apis-3-r03.zip</a> </li>    <li>各个platforms版本，我只下了两个，解压到platforms：      <br /><a title="https://dl-ssl.google.com/android/repository/android-2.1_r02-linux.zip " href="https://dl-ssl.google.com/android/repository/android-2.1_r02-linux.zip">https://dl-ssl.google.com/android/repository/android-2.1_r02-linux.zip </a>      <br /><a title="https://dl-ssl.google.com/android/repository/android-2.2_r02-linux.zip" href="https://dl-ssl.google.com/android/repository/android-2.2_r02-linux.zip">https://dl-ssl.google.com/android/repository/android-2.2_r02-linux.zip</a> </li>    <li>platform-tools和tools，解压到对应文件夹：      <br /><a title="https://dl-ssl.google.com/android/repository/platform-tools_r03-linux.zip" href="https://dl-ssl.google.com/android/repository/platform-tools_r03-linux.zip">https://dl-ssl.google.com/android/repository/platform-tools_r03-linux.zip</a>       <br /><a title="https://dl-ssl.google.com/android/repository/tools_r10-linux.zip" href="https://dl-ssl.google.com/android/repository/tools_r10-linux.zip">https://dl-ssl.google.com/android/repository/tools_r10-linux.zip</a> </li>    <li>docs和samples以及market_licensing，解压到对应文件夹： <a href="http://dl-ssl.google.com/android/repository/docs-2.2_r01-linux.zip">http://dl-ssl.google.com/android/repository/docs-2.2_r01-linux.zip</a>       <br /><a href="http://dl-ssl.google.com/android/repository/samples-2.1_r01-linux.zip">http://dl-ssl.google.com/android/repository/samples-2.1_r01-linux.zip</a>       <br /><a href="http://dl-ssl.google.com/android/repository/samples-2.2_r01-linux.zip">http://dl-ssl.google.com/android/repository/samples-2.2_r01-linux.zip</a>       <br /><a href="https://dl-ssl.google.com/android/repository/market_licensing-r01.zip">https://dl-ssl.google.com/android/repository/market_licensing-r01.zip</a> </li>    <li>以上文件，要是有几个都解压到相同目录的，则保持原来的文件夹顶层，直接考进去，如google_apis-8_r02.zip 解压到google_apis-8，则直接放入add-ons目录，否则的话，则先将顶层去掉，放入，如docs,tools,platform-tools,market_licensing. </li>    <li>在Eclipse中指定（前提是按2,3两步安好了ADT）SDK目录（help->preference->android）,点apply，出现sdk则成功，有时会出现（在tools的adb找不到，，只需要将platforms-tools里面的adb拷一份到tool是目录即可）。 </li>    <li>将tools和platform-tools加入到环境变量中。 </li> </ol>  <p>另外，我在开发中，发现用ubuntu通过ADB一开始无法连接手机，通过lsusb能发现手机能连上，通过adb device命令得到“？？？？ no permission”的提示，这主要因为权限问题，需要先通过adb kill-server停止adb守护进程，再用sudo adb start-server启动adb。（前提是将adb加入到了root环境变量中，而这最简单的方法是通过ln –s /usr/bin/adb  /path/to/adb 在bin下创建一个到adb的软链接）。</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (15)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">Yan</a></span>
+                        <span class="comment-date">2011-04-29</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你的验证码怎么换了？还有这广告是不是也忒多了点啊。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.v2xy.com" rel="nofollow">xyu_ovi</a></span>
+                        <span class="comment-date">2011-05-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>孙：唉～好吧 dolf你.... 广告这么多？！<br><br /><br><br />dolf：爷的广告 略多略多...<br><br /><br><br />湿傅：唉？dolf的广告多？啊～还真是！多的一比那啥！<br><br />这样即使大家同样浏览量dolf的广告也会有更多展示<br><br />不行不行 你的广告绝对不可以<br><br />不是大家一样没钱赚 不就没有意义了么<br><br /><br><br />孙：貌似是你最想赚最多广告费吧！<br><br /><br><br />湿傅：到了这儿还破坏团队合作，过世的八戒会很伤心的</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-05-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1000023" rel="nofollow">@xyu_ovi</a><br><br />我感觉Yan说的是评论中广告太多了，什么宁波led的。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-05-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1000024" rel="nofollow">@sigma</a><br><br />不对，是南京ledxxx<br><br />这里评论的确广告很多<br><br />http://www.sigma.me/2011/04/23/arm-and-X86-IT-history.html</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">xingzhe1990</span>
+                        <span class="comment-date">2011-05-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>非常感谢，学习中！望多指教</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.v2xy.com" rel="nofollow">xyu_ovi</a></span>
+                        <span class="comment-date">2011-05-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1002009" rel="nofollow">@sigma</a><br><br />反正我也一直开着adblock<br><br />开什么网站都是干干净净的！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.leyond.info" rel="nofollow">Leyond</a></span>
+                        <span class="comment-date">2011-05-04</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>呵呵，现在很多人开始学这个啊</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-05-04</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>不是，我说的是你的AdSense放的是不是太多了。。侧边栏，评论上下都有。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-05-04</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1005002" rel="nofollow">@grapeot</a><br><br />好吧，我承认有点多</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">liwu</span>
+                        <span class="comment-date">2011-06-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>第11条是什么意思啊，看不懂</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-06-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1032017" rel="nofollow">@liwu</a><br><br />就是解压出来的东西是不是直接拷进去，还是先把顶层目录去掉，只考里面的内容</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://odzyhing.com/?p=12" rel="nofollow">教育网 Ubuntu 10.10环境下Android开发环境配置 | 哦叽哼</a></span>
+                        <span class="comment-date">2012-02-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>[...] SDK比较坑爹，去http://developer.android.com/sdk/index.html可以下载到一个android-sdk_r16-linux.tgz，结果解压一看，啥也没有，估计就只是一个模拟器的驱动而已，API啊Platform之类的都得自己另外安装。或者直接用Eclipse里的windos->Android SDK Manager也能在线下载安装，试了一下，速度还行，就直接安装了。如果连不上的话，可以直接自己一个个api下，具体可参考这篇文章：http://www.sigma.me/2011/04/29/linux-install-android-sdk.html [...]</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://mblog.sigma.me/2012/04/02/modify-android-qq-message-tail.html" rel="nofollow">更改Android QQ尾巴（该方法也可用于Android的程序去广告）-Sigma轻博客</a></span>
+                        <span class="comment-date">2012-04-02</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>[...] 安装android SDK，详见：http://www.sigma.me/2011/04/29/linux-install-android-sdk.html [...]</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.heimizhou.com" rel="nofollow">黑米粥</a></span>
+                        <span class="comment-date">2012-05-22</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>以前我都是在windows下开发android，最近被头疼的mupdf搞的要用NDK，就试着用ubuntu了，呵呵，过来学习一下了。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://humeng.org/2012/06/android-development-environment-set-up-and-the-digital-signature-method.html" rel="nofollow">Ubuntu下Android开发环境搭建及数字签名的方法 | 來易來 去難去</a></span>
+                        <span class="comment-date">2013-09-04</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>[...] 更改Android QQ尾巴（该方法也可用于Android的程序去广告） 墙内的Linux(Ubuntu)环境下安装Eclipse+Android SDK(ADT)教程 Java keytool工具的作用及使用方法 Android 数字签名学习笔记 [...]</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

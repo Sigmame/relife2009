@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapreduce简介 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>Mapreduce简介</h1>
+                    <div class="post-date">2011-04-21</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">mapreduce</span>
+                        <span class="tag">Google</span>
+                        <span class="tag">并行编程</span>
+                        <span class="tag">分布式系统</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>今天在Opps里和grapeot，Ouyang等人扯到了mapreduce，感觉这东西还是挺有意思的，并且和分布式系统等体系结构领域有关，我于是花了点时间去看了下（主要是看wiki以及google员工在MIT讲课的课件），在这里对mapreduce做个简要介绍。</p>  <p>Mapreduce是google提出的一种编程模型，该模型最早在OSDI（一个操作系统领域顶级会议） 2004上提出。其主要是用于大规模数据并行处理（如排序，索引），不过现在貌似机器学习（machine learning，ML）上用的也挺多的。其主要有两个步骤，一个是Map（可译为分发，映射），一个是reduce（可译为化简，回收，合并等），这两个概念都是从函数式语言借来的。Map和reduce的两个步骤主要工作如下：</p>  <blockquote>   <p><b>"Map" step:</b> The master node takes the input, partitions it up into smaller sub-problems, and distributes those to worker nodes. A worker node may do this again in turn, leading to a multi-level <a href="http://en.wikipedia.org/wiki/Tree_(data_structure)">tree</a> structure. The worker node processes that smaller problem, and passes the answer back to its master node.</p> </blockquote>  <p>Map阶段主要是主节点把输入划分成一些子问题，并且分发给工作节点。而工作节点有可能继续重复这一工作，直到划分够细，子问题能在规定的时间内有一个工作节点完成为止，形成一个树状结构。下一层的工作节点会将完成的计算结果传输给上一层的（主）节点。</p>  <blockquote>   <p><b>"Reduce" step:</b> The master node then takes the answers to all the sub-problems and combines them in some way to get the output — the answer to the problem it was originally trying to solve.</p> </blockquote>  <p>Reduce阶段把所有的问题，所有的答案按一定的方式组合化简归并，最终形成最初问题的答案并输出。</p>  <p>在这两个阶段中，Map阶段分配后的并行度是很高的，因此很适合一些数据处理的应用，比如说对大量网页文件进行建立索引，因为这时候可以直接把数以亿计的网页直接按数G分给各个工作节点处理（貌似google一般是以64M为单位的）。而reduce阶段的并行度相对不高，但是由于可以层层的reduce，并行度其实也很可观。</p>  <p>为了提高可靠性，每个节点会周期性的把完成的工作和状态的更新报告回来。如果一个节点保持沉默超过一个预设的时间间隔，主节点（类同Google File System中的主服务器）记录下这个节点状态为死亡，并把分配给这个节点的数据发到别的节点。</p>  <p>另外，可以看出，其实这个并行模型和分治法非常像，基本思想几乎一致，感觉是一个基本思想（分治）在大规模数据处理中的一个应用和具体化。</p>  <p>也许也正因为这个原因，mapreduce从技术上没有任何先进之处，感觉其火起来很大一部分是由于云计算泡沫的原因，因此一些传统的数据库领域的人甚至认为其是一种倒退，因为：</p>  <ol>   <li>在大规模的数据密集应用的编程领域，它是一个巨大的倒退 </li>    <li>它是一个非最优的实现，使用了蛮力而非索引 </li>    <li>它一点也不新颖——代表了一种25年前已经开发得非常完善的技术 </li>    <li>它缺乏当前DBMS基本都拥有的大多数特性 </li>    <li>它和DBMS用户已经依赖的所有工具都不兼容   </li> </ol>  <p>顺便说件大傻帽grapeot碰到的傻帽事：</p>  <ol>   <blockquote style="margin-right: 0px" dir="ltr">     <p>求一个图的连通片个数，7M个节点70M条边，在Amazon Elastic EC2上开了16个small instance跑了4个半小时就跑完了。然后我写了个串行的版本，在自己的笔记本上跑。。。90秒。。</p>   </blockquote> 这件事说明，任何事物都具有适用性，反过来说，任何事物都有存在的理由。想用万能的通用结构或者模型高效解决任何问题是不可能的，因此，多样性结构是高效的必要条件，因为应用是多样的。</ol>  <p>不过，相对与传统的牛叉的各种数据库技术，mapreduce能活的这么好，主要原因是：传统的数据库太难用了，传统的并行编程模型也太难用了，而mapreduce简单，因此简单的，易用的往往是最好的，这也是windows能够打败linux的原因之一。而历史上，野蛮的蒙古人就用简单的暴力几乎整个地球上所谓的文明人！</p>  <p>最后，附一张来自google在MIT的课件上的图，来形象的描述mapreduce：    <br /></p>  <p><img title="mapreduce示意图" alt="mapreduce示意图" src="http://3fnp6q.blu.livefilestore.com/y1p2epk5YodhHs_OjM1u3Ll3g5DHcr4KFt-hjtUizL5oTDN3ZS0-C6ptWQCgfTWn5TBXSPgfpS_HZZj8CTh3zSRApf_TROG4m89/mapreduce-outline.jpg?psid=1" /> </p>  <p>参考：</p>  <p>维基：<a href="http://en.wikipedia.org/wiki/MapReduce">http://en.wikipedia.org/wiki/MapReduce</a></p>  <p>google lab：<a href="http://labs.google.com/papers/mapreduce.html">http://labs.google.com/papers/mapreduce.html</a></p>  <p>MIT MapReduce course：<a href="http://sites.google.com/site/mriap2008/home">http://sites.google.com/site/mriap2008/home</a></p>  <p>另附：<a href="http://www.pgsqldb.org/mwiki/index.php/MapReduce:_%E4%B8%80%E4%B8%AA%E5%B7%A8%E5%A4%A7%E7%9A%84%E5%80%92%E9%80%80">MapReduce: 一个巨大的倒退</a>的链接(点前面标题)</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (8)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-04-22</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>为什么shuffle在reducer上完成？感觉这才是map-reduce的核心或者说性能瓶颈，因为这一步很难并行化。可是很多教程讲得都很简略，甚至就没提到。<br><br /><br><br />为什么map-reduce要和DBMS联系起来？它是一种计算模型而不是数据存储模型啊，存储模型应该去看HDFS之类。<br><br /><br><br />关于图的连通片问题，其实map-reduce版算法的效率很高（http://www.cs.columbia.edu/~coms699812/homework2.pdf第2题题目中有介绍），应该说这个问题是适合map-reduce的。我没有在我的机器上架hadoop测试，但怀疑是amazon的map-reduce实现比较挫造成的性能损耗。<br><br /><br><br />还有你才tm大傻帽。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-04-22</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-994010" rel="nofollow">@grapeot</a><br><br />其实维基上讲到了，我懒得翻译，主要shuffle干的事不清不楚的<br><br />后面它要联系起DBMS是因为很多mapreduce处理后的数据一般还需要输入到数据库里吧<br><br />图的连通片的问题，我也觉得是不是问题的问题，而是amazon那种集群结构以及网络负荷导致通信开销太大了，也许map的时间就能算完了<br><br />傻帽就是傻帽，别转移注意力<br><br /></p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-04-22</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>shuffle干的才是有技术含量的事情。。。这个很难并行所以优化一点是一点，怎么不清不楚了。。。<br><br /><br><br />囧。。如果说输出要输入到数据库里，为啥拿map-reduce和DBMS比。。。要联系也是看接口好不好啊。。。就像你拉的屎要掉到马桶里，拿你跟马桶比很奇怪啊。。。<br><br /><br><br />你才傻冒！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-04-22</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1001015" rel="nofollow">@grapeot</a><br><br />我没说shuffle没技术含量，像fft运算，其实shuffle是最难高效实现的，但介绍fft算法的人，很少会去扯shuffle这种细节<br><br />我说他不清不楚，是指它做的事比较不具体，和你后面要怎么reduce有关，其实它可以算在reduce上面，他就是为了方便reduce<br><br />对比的话，不是我干的，我只是列出一个反对观点而已<br><br />起码mapreduce和dbms都是数据处理的,拿来对比也未尝不可，但是你不会说你和马桶都是用来。。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.qhm123.com/" rel="nofollow">鸣</a></span>
+                        <span class="comment-date">2011-04-22</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>高端</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.0532edu.cn" rel="nofollow">青岛西班牙语培训</a></span>
+                        <span class="comment-date">2011-04-27</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>过来看看</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://xianlog.com/nosql%e9%9d%9e%e5%85%b3%e7%b3%bb%e6%95%b0%e6%8d%ae%e5%ba%93%e7%ae%80%e4%bb%8b/" rel="nofollow">NoSQL非关系数据库简介 - 聚对苯二甲酰对苯二胺的笔记</a></span>
+                        <span class="comment-date">2012-12-15</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>[...] 面向可扩展性的分布式数据库(Object Store)：这类数据库想解决的问题就是传统数据库在可扩展性上的缺陷，这类数据库可以适应数据量的增加以及数据结构的变化，Google Appengine的Big Table就是这类的典型代表，并且，BigTable特别适用于Map Reduce处理。 [...]</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.kaifazhe.com/database/244947.html" rel="nofollow">NoSQL非关系数据库简介 - 数据库 - 开发者</a></span>
+                        <span class="comment-date">2013-06-18</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>[...] Appengine的Big Table就是这类的典型代表，并且，BigTable特别适用于Map Reduce [...]</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

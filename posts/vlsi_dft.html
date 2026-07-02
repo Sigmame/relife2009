@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>超大规模集成电路(VLSI)可测性设计(DFT)综述 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>超大规模集成电路(VLSI)可测性设计(DFT)综述</h1>
+                    <div class="post-date">2011-01-06</div>
+                    <div class="post-meta">
+                        <span class="tag">读书笔记</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">芯片测试，可测性设计</span>
+                        <span class="tag">VLSI</span>
+                        <span class="tag">DFT</span>
+                        <span class="tag">IC</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p><strong><span style="color: #ff0000; background-color: #ffffff;">PS:这是我们VLSI可测性的一个课程作业，写完已经交上去了，但想到交上去也没人会认真看，觉得花了的时间不太值，所以贴到这里，希望对想了解可测性设计的同学有点用，也算弥补一下哥的精神损失。强调一下，里面的概念什么的可能不太准确，请以专业的文献为准。</span></strong></p>
+<p><strong> </strong></p>
+<h4>1. 背景介绍</h4>
+<p>随着电子电路集成度的提高，电路愈加复杂，要完成一个电路的测试所需要的人力和时间也变得非常巨大。为了节省测试时间，除了采用先进的测试方法外，另外一个方法就是提高设计本身的可测试性。其中，可测试性包括两个方面：一个是可控制性，即为了能够检测出目的故障（fault）或缺陷（defect），可否方便的施加测试向量；另外一个是可观测性，指的是对电路系统的测试结果是否容易被观测到。</p>
+<p>在集成电路（Integrated Circuit，简称IC）进入超大规模集成电路时代，可测试性设计是电路和芯片设计的重要环节，它通过在芯片原始设计中插入各种用于提高芯片可测试性（包括可控制性和可观测性）的硬件逻辑，从而使芯片变得容易测试，大幅度节省芯片测试的成本。</p>
+<p>后续章节的组织如下，我们将在第二章分析可测试性设计的几个关键问题；第三章分别介绍三种比较成熟的可测试性设计技术；最后一章对可测性设计技术进行了总结和展望。</p>
+<h4>2. 关键问题</h4>
+<p>一个好的可测试性设计技术需要解决以下几个关键问题：</p>
+<p><strong>第一，取得较高的可测试性：</strong>即要求可测试性设计能够尽可能的提高可控制性和可观测性，这就要求设计中必须尽可能多的给每个部分增加控制电路和观测电路。</p>
+<p><strong>第二，取得较低的额外性能和面积消耗（即降低Overhead</strong><strong>）：</strong>由于可测试电路对最终的芯片的实际工作是无益的，因此，必须尽可能的使减少这些逻辑，使之带来的额外的面积，功耗，以及性能消耗最小。</p>
+<p>实际的设计中，必须<strong>平衡并且最优化上面两个目标</strong>，这就要求我们必须设计一种好的逻辑结构或者算法用来输入测试向量以及输出观测结果，并且额外增加的面积和功耗要尽可能小。扫描链（Scan Chain）[4]很好的满足上述特性，因此，无论是在学术界还是工业界的可测性研究中，扫描链都是一种必选的可测性设计基础结构。</p>
+<p>基于对上述目标和认识，学术界和工业界提出了几种比较成熟的可测试性设计技术，主要有扫描路径设计、边界扫描设计、内建自测试等。我们将在下一章节分别介绍这三种芯片可测试性设计技术。</p>
+<h4>3. 几种常见的可测试设计技术</h4>
+<h5>3.1 扫描路径设计(Scan Design)</h5>
+<p>扫描路径法[1][2]（有的地方又译成内部扫描法，扫描设计）是一种针对时序电路芯片的DFT方案.其基本原理是时序电路可以模型化为一个组合电路网络和带触发器（Flip-Flop，简称FF）的时序电路网络的反馈。如图一所示：</p>
+<p><a href="http://www.sigma.me/media/aglkZmxpdWJsb2dyDQsSBU1lZGlhGNqvLAw"><img style="background-image: none; padding-left: 0px; padding-right: 0px; display: block; float: none; margin-left: auto; margin-right: auto; padding-top: 0px; border-width: 0px;" title="clip_image002" src="http://www.sigma.me/media/aglkZmxpdWJsb2dyDQsSBU1lZGlhGIudLQw" border="0" alt="clip_image002" width="390" height="226" /></a></p>
+<p><strong><em>图一. </em></strong><strong><em>插入可测性逻辑前的时序电路</em></strong></p>
+<p><strong><em> </em></strong></p>
+<p>为了控制和观测这些触发器的取值，在扫描设计中，会将这些触发器修改为扫描触发器，并且连接成扫描链（相当于可以移位的寄存器），扫描链的输入可以通过少量的芯片管脚进行输入，观测输出也可以通过少量的芯片管脚进行输出。为了减少输入输出所占用的额外管脚，设计成可以通过扫描输入口把需要的数据通过串行移位的方式输入到扫描链对应的单元；同样，也可以通过扫描输出口串行的观测测试输出（这些扫描寄存器即可以看做输入，也可以看做输出，因此称之为伪输入，伪输出）。</p>
+<p>图二是一个扫描设计示例，图二（a）中，将所有的扫描触发器串在了一起，并且通过SE线号进行统一控制，选择是进行输出扫描向量，还是输出观测结果。图二（b）中，是测试的输入输出示例，在第一个测试中，测试向量110在SE=1时，通过3拍输入到扫描链中，同时在SE=0且下一个时钟沿观测结果输出。</p>
+<p><a href="http://www.sigma.me/media/aglkZmxpdWJsb2dyDQsSBU1lZGlhGKm5Lgw"><img style="background-image: none; padding-left: 0px; padding-right: 0px; display: block; float: none; margin-left: auto; margin-right: auto; padding-top: 0px; border-width: 0px;" title="clip_image004" src="http://www.sigma.me/media/aglkZmxpdWJsb2dyDQsSBU1lZGlhGMreLAw" border="0" alt="clip_image004" width="576" height="202" /></a></p>
+<p><strong><em>图二. </em></strong><strong><em>扫描设计示例</em></strong></p>
+<p>由于考虑到扫描设计本身的硬件代价，实际电路和芯片设计中并不会把所有的触发器替换成扫描触发器（全部替换的称之为“全扫描”），此时的设计称之为“部分扫描”设计。对于部分扫描设计，需要解决两个问题：<strong>一是如何决定扫描那些触发器</strong>，使芯片的可测试性（也即可控制性和可观测性）达到最高，文献[3]就对这一问题进行了研究,并且给出了一个如何设计一个最小化扫描开销（overhead）的部分扫描的方法；<strong>二是当电路进行扫描时，非扫描触发器的状态该如何变化</strong>，由于要保证电路的执行结果和不测试时一样，因此非扫描触发器必须设计成状态保持不变。</p>
+<h5>3.2 内建自测试</h5>
+<p>内建自测试（BIST）设计技术[5][6]通过在芯片的设计中加入一些额外的自测试电路，测试时只需要从外部施加必要的控制信号，通过运行内建的自测试硬件和软件，检查被测电路的缺陷或故障。和扫描设计不同的是，内建自测试的测试向量一般是内部生成的，而不是外部输入的。内建自测试可以简化测试步骤，而且无需昂贵的测试仪器和设备（如ATE设备），但它增加了芯片设计的复杂性。</p>
+<p><a href="http://www.sigma.me/media/aglkZmxpdWJsb2dyDQsSBU1lZGlhGPnILgw"><img style="background-image: none; padding-left: 0px; padding-right: 0px; display: block; float: none; margin-left: auto; margin-right: auto; padding-top: 0px; border-width: 0px;" title="clip_image006" src="http://www.sigma.me/media/aglkZmxpdWJsb2dyDQsSBU1lZGlhGNuvLAw" border="0" alt="clip_image006" width="290" height="207" /></a></p>
+<p><strong><em>图三. </em></strong><strong><em>一个典型的内建可测试结构</em></strong></p>
+<p><strong><em> </em></strong></p>
+<p>图三是一个典型的内建可测试结构，它主要包括四个部分，测试控制部分（BIST Controller）,测试向量生成器（Test Pattern Generater，简称TPG），被测电路（Circuit Under Test，简称CUT）以及测试响应分析器（Output Response Analyzer，简称ORA）。</p>
+<p>这四部分中，最重要的一个部分就是测试向量生成器TPG，因为这个生成器能够产生的测试向量的数目与质量直接决定着这个测试系统的覆盖率和测试质量；TPG一般是一个有限自动状态机，它除了时钟没有其他的输入。典型的TPG是一个线性反馈移位寄存器（Line Feedback Shift Register，简称LFSR）或者一个细胞自动机（Cellular Automata，简称CA）[7]。</p>
+<p>BIST的测试响应分析器ORA是对测试结果进行比较分析，但它通常不会直接对测试响应进行比较，而是先进行压缩，因为对这些测试响应一位一位的进行比较分析会消耗大量额外的片内存储单元。但压缩也会导致混叠（Aliasing）现象，因为对同一个输入，两个不同的电路输出压缩后可能是一样的。</p>
+<p>由于BIST做到了芯片的内部，为了减少测试逻辑在整个芯片面积所占的比例，以及减少测试电路（尤其是在线测试电路）带来的额外的性能以及功耗消耗，设计一个好的BIST系统是一个很复杂的系统工程。因此，BIST加大了芯片设计的复杂度。</p>
+<h5>3.3 边界扫描测试</h5>
+<p>前述两种测试技术都是针对芯片内部的故障或缺陷进行测试。为了对电路板级的逻辑和连接进行测试，工业界和学术界提出了一种边界扫描的设计，边界扫描主要是指对芯片管脚与核心逻辑之间的连接进行扫描。</p>
+<p>由于边界扫描测试涉及不同的芯片的连接，而这些芯片很可能是不同设计者甚至厂家设计的，因此必须对这些测试接口进行标准化，以便不同厂商之间的能够用统一的测试接口。1994年，美国电气电子工程师协会（Institute of Electrical and Electronics Engineers，简称IEEE）制定了一个针对边界扫描测试的标准IEEE 1194.1[8]标准，该标准又称JTAG（Joint Test Action Group）标准。该标准是为了支持板级测试而定义一种国际上通用的芯片边界扫描以及访问端口规范。</p>
+<p><a href="http://www.sigma.me/media/aglkZmxpdWJsb2dyDQsSBU1lZGlhGMnYLgw"><img style="background-image: none; padding-left: 0px; padding-right: 0px; display: block; float: none; margin-left: auto; margin-right: auto; padding-top: 0px; border-width: 0px;" title="clip_image008" src="http://www.sigma.me/media/aglkZmxpdWJsb2dyDQsSBU1lZGlhGPrILgw" border="0" alt="clip_image008" width="421" height="265" /></a></p>
+<p><strong><em>图四. JTAG</em></strong><strong><em>边界扫描设计的基本结构</em></strong></p>
+<p><strong><em> </em></strong></p>
+<p>图四是JTAG边界扫描基本结构图，边界扫描设计主要包括测试访问端口（Test Access Port，简称TAP）控制器、指令寄存器、旁路寄存器、以及边界扫描链（由边界扫描单元构成）。</p>
+<p>JTAG定义了以下测试访问接口</p>
+<p>① TCK（Test Clock）：测试时钟输入；</p>
+<p>② TDI(Test Data In)：测试数据输入，数据通过TDI输入JTAG口；</p>
+<p>③ TDO(Test Data Out)：测试数据输出，数据通过TDO从JTAG口输出；</p>
+<p>④ TMS(Test-Mode Select)：测试模式选择，TMS用来设置JTAG口处于某种特定的测试模式。</p>
+<p>⑤ TRST(Test Reset)：可选引脚，用于测试复位，为输入引脚，低电平有效。</p>
+<p>JTAG内部有一个状态机，称为TAP控制器。TAP控制器的状态机通过图上的TCK和TMS进行状态的改变，实现数据和指令的输入。</p>
+<h4>4. 总结和展望</h4>
+<p>随着各种可测试性设计结构的提出以及实现的成熟，各种EDA工具对可测试性设计设计的支持也越来越好，这加快了可测性设计本身的设计周期以及最终的芯片或系统的测试周期。但是，随着以多核（Multicore）以及片上系统（System On Chip，简称SOC）为代表的芯片复杂度持续提高，迫切需要改进或提出一种新的可测性设计方法，该方法需要符合以下特性：</p>
+<p><strong>第一，通用性</strong>：由于现在芯片的设计愈加复杂，设计周期也愈加长，因此，为每个电路专门设计一个测试电路已经不太实际。因此需要有一个针对更复杂电路(如多核和SOC)可测性设计的通用结构，其中，IEEE 1500[9]标准是这方面的有益尝试。</p>
+<p><strong>第二，可复用性</strong>：芯片设计中，除了需要考虑可测性设计DFT以外，还需考虑（硅后）可调试性设计（Design For Debug，简称DFD）[10]，由于DFT和DFD有很多的共同点，因此，可以考虑将DFT和DFD部分单元进行复用。</p>
+<p><strong>第三，可重构性</strong>：通过可重构的设计方法，可以通过不同的配置，可是实现不同的测试功能，测试芯片的不同部分或功能。</p>
+<p><strong>参考文献</strong><strong> </strong></p>
+<p><a name="scan_design1989"></a>[1]. K.-T. Cheng and V. D. Agrawal, "An economical scan design for sequential logic test generation," in<em>Proc. Fault-Tolerant Comput. Symp.</em> (FTCS-19), June 1989, pp. 28-35.</p>
+<p>[2]. E. Trischler, "Design for testa<a name="scan_design1984"></a>bility using incomplete scan path and testability analysis,"<em>Siemens Forsch.- u. Entwickl.-Ber.</em>, vol. 13, no. 2, pp. 56-61, 1984.</p>
+<p>[3]. C.-C. Lin, M. Marek-Sadowska, K.-T. <a name="part_scan_1996"></a>Cheng, and M. Lee, “Test point insertion: scan paths through combinational logic,” <em>Proc. of Design Automation Conf</em>., 1996, pp. 268-273.</p>
+<p>[4]. Joep Aerts, Erik Jan <a name="scan_chain_1998"></a>Marinissen: Scan chain design for test time reduction in core-based ICs. <em>ITC</em> 1998: 448-457</p>
+<p><a name="bist_1993"></a></p>
+<p>[6]. Vishwani D. Agrawal, Charles R. Kim<a name="bist_1993_2"></a>e, Kewal K. Saluja: A Tutorial on Built-In Self-Test, Part 2: Applications. <em>IEEE Design & Test of Computers 10(2)</em>: 69-77 (1993)</p>
+<p>[7]. S. Wolfram, “Universality and complexit<a name="CA_1984"></a>y of cellular automata,” <em>Physica</em>, 10D, 1984, pp. 1-35.</p>
+<p>[8]. IEEE(1994). “Supplement(B) to IE<a name="JTAG"></a>EE standard test access port and boundary-scan architecture.”</p>
+<p>[9]. IEEE(2005). “IEEE 1500:Standard for E<a name="SECT"></a>mbedded Core Test”</p>
+<p>Bart Vermeulen , Sandeep Kumar Goel<a name="DFD"></a>, Design for Debug: Catching Design Errors in Digital Chips, <em>IEEE Design & Test</em>, v.19 n.3, p.37-45, May 2002</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (4)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-01-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>也算弥补一下哥的精神损失<br><br /><br><br />。。。。我操。。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2011-01-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-693003" rel="nofollow">@grapeot</a><br><br />我辛辛苦苦写了半天，发给老师，两天没回复，哥受打击了<br><br /><br><br />不过，那老师刚回复了</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-01-26</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>dft...discrete fourier transform...</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-01-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-846002" rel="nofollow">@grapeot</a><br><br />知识面狭窄不是你的错……哈哈～</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

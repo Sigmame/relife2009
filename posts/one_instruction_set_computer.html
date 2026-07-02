@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单指令计算机OISC（one instruction set computer） - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>单指令计算机OISC（one instruction set computer）</h1>
+                    <div class="post-date">2011-01-06</div>
+                    <div class="post-meta">
+                        <span class="tag">随感</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">OISC</span>
+                        <span class="tag">Single Instruction Computer</span>
+                        <span class="tag">图灵机</span>
+                        <span class="tag">单指令计算机</span>
+                        <span class="tag">可计算性</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>前几天<a href="http://grapeot.me">grapeot</a>叫我帮他看一些体系结构的题，其中有一道题如下：</p>
+<blockquote><p><span style="background-color: #ffffff;">ISA Design:Describe an instruction set that is both minimal and can support any computation.</span></p></blockquote>
+<p>这道题的意思是设计一个计算机指令系统（I<strong>nstruction Set Architecture, </strong>ISA），要求最少指令，并且要支持任何运算。</p>
+<p>当时，由于我本人是做逻辑设计和验证的，凭直觉以及数理逻辑的知识，知道任何复杂的逻辑（包括计算机硬件系统）都是可以通过与非（NAND）<span style="color: #ff0000;">或者 </span>或非（NOR）堆出来的，而软件能够实现的运算，必然也可以通过硬件实现，因此，我觉得最简指令集就是一条 <strong>NAND指令</strong> 或者 <strong>NOR指令</strong> 。当然，这指令的操作数可以是三个。比如 NAND b,b,a，就是将b、a与非赋给a。</p>
+<p>但是，我当时不太放心，而我这学期恰好学了可计算性（其实不算学，就去了一两节课）和计算复杂性。因此，我考虑了尝试用可计算理论来解决，根据我们学的可计算理论，任何可计算的问题都可以通过以下四条指令编程实现：</p>
+<blockquote><p><span style="background-color: #ffffff;">①自加指令：V=V+1</span></p>
+<p><span style="background-color: #ffffff;">②自减指令：V=V-1</span></p>
+<p><span style="background-color: #ffffff;">③空指令：   V=V</span></p>
+<p><span style="background-color: #ffffff;">④条件跳转指令：if V ≠ 0,GOTO L</span></p></blockquote>
+<p>对于这个答案，我比较自信能够完成所有通用计算。我一直搞不明白的是为什么要加空指令（现在想可能是为了可计算理论里面证明来用的）。</p>
+<p>昨天，和雨聊到自动机的话题，我又想到了这道题，当时我把我的想法说了，但貌似雨不太理解，并且说道如何实现除法操作，我自己都被搞晕了。只是我们都觉得也许从图灵机角度出发会比较好（图灵机其实就是一些状态机的跳转，这些状态机可以用四元组或者五元组构成）。今天恰好不想复习（哎，后面三门连续的考试怎么办啊怎么办），于是又想了下这个问题，但还是想不太明白。</p>
+<p>只好放出最后一招，放狗搜，凭直觉，我觉得肯定有单指令的计算机，于是直接搜“single instruction computer”，搜到了<a href="http://en.wikipedia.org">wikipedia</a>的词条<a href="http://en.wikipedia.org/wiki/One_instruction_set_computer">OISC</a>（one instruction set computer）。看了下，感觉比较靠谱，在这里分享下：</p>
+<p>维基上把一条指令的计算机主要分成了四种：</p>
+<blockquote><p><span style="background-color: #ffffff;">①减并且小于等于0跳转（<a href="http://en.wikipedia.org/wiki/One_instruction_set_computer#Subtract_and_branch_if_less_than_or_equal_to_zero">Subtract and branch if less than or equal to zero</a>）</span></p>
+<p><span style="background-color: #ffffff;">②减并且为负数跳转（<a href="http://en.wikipedia.org/wiki/One_instruction_set_computer#Subtract_and_branch_if_negative">Subtract and branch if negative</a>）</span></p>
+<p><span style="background-color: #ffffff;">③<a href="http://en.wikipedia.org/wiki/One_instruction_set_computer#Reverse_subtract_and_skip_if_borrow">Reverse subtract and skip if borrow</a>（这个貌似翻译成起来很拗口，并且我也没看太懂，所以不翻译）</span></p>
+<p><span style="background-color: #ffffff;">④<a href="http://en.wikipedia.org/wiki/One_instruction_set_computer#Transport_triggered_architecture">Move</a>（不过看了下，貌似它需要有相当于一个ALU功能的ROM，其实这个ROM相当于图灵机里的状态转化的集合F）</span></p></blockquote>
+<p>在这里，我只解释下第一种，第二种与第一种类似，第三种没看懂，第四种，感觉就是个图灵机。</p>
+<p>首先，解释下subleq("SUbtract and Branch if Less than or EQual to zero")的定义，其实它相当于两条指令：</p>
+<blockquote><p>subleq <em>a</em>, <em>b</em>, <em>c</em>   ; Mem[<em>b</em>] = Mem[<em>b</em>] - Mem[<em>a</em>]<br />
+                     ; if (Mem[<em>b</em>] ≤ 0) goto <em>c</em></p></blockquote>
+<p>下面用subleq可以完成一些其他运算，通过部分示例来说明它是可以完成通用计算的：</p>
+<ul>
+<li>无条件跳转
+<pre>    JMP c ==    subleq Z, Z, c   ; Z is a location previously set to contain 0</pre>
+</li>
+</ul>
+<ul>
+<li>加法操作
+<pre>    ADD a, b == subleq a, Z
+                subleq Z, b
+                subleq Z, Z</pre>
+</li>
+</ul>
+<ul>
+<li>MOVE操作
+<pre>    MOV a, b == subleq b, b
+                subleq a, Z
+                subleq Z, b
+                subleq Z, Z</pre>
+<p>从上面，我们几条指令的翻译，我们可以比较自信的下结论，subleq是比较靠谱的。</li>
+</ul>
+<p>从上面几个指令集，很容易发现，貌似条件跳转是一个很核心的东西。</p>
+<p>不过，我还是想，一个NAND指令还是可以实现单指令计算机的，其他算术和逻辑运算肯定是能用NAND完成的，现在只剩下一个条件跳转了。但凭我直接，条件跳转和硬件中的二选一很像，既然，二选一可以用NAND实现，条件跳转肯定也可以。</p>
+<p>ps1：更多关于一条指令的计算机请看google上single instruction computer的<a href="http://www.google.com/search?hl=hl&source=source&q=single+instruction+computer&btnG=btnG&aq=aq&aqi=aqi&aql=aql&oq=oq&gs_rfai=gs_rfai">搜索结果</a>.</p>
+<p>ps2：<span style="color: #ff0000;">我上面说的东西肯定有很多错误，欢迎指正</span>。</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (10)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-01-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>雨是谁？嗯？<br><br /><br><br />哎，后面三门连续的考试怎么办啊怎么办 --- 哈哈哈哈哈，你什么时候考？<br><br /><br><br />那个单指令计算机当时上组成原理还是体系结构的时候就跟你说过的。所以你那不是直觉，是哥的教诲。<br><br /><br><br />可计算理论。。好高深。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2011-01-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-724002" rel="nofollow">@grapeot</a><br><br />雨是谁你还不知道<br><br />我下周一，周三，周四都有考试。。。<br><br />那单指令我记得最早是我说有，然后你不信，但是某一天你说你看到有个sb真造出了这样的计算机<br><br /><br><br />可计算理论其实很sb的，就是什么问题是可以通过图灵机计算的，有些问题是不可以通过图灵机计算，比如说什么停机问题</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-01-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>去你丫的，我怎么不记得前半段了，就是哥的教诲。<br><br /><br><br />哇靠，那（雨）是个自动机小超人，你跟她搞必然要被搞晕的~</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2011-01-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-779002" rel="nofollow">@grapeot</a><br><br />哪前半段，我真不记得了。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-01-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>那单指令我记得最早是我说有，然后你不信，但是某一天你说你看到有个sb真造出了这样的计算机 <br><br />~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br><br /><br><br />这个是前半段</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-01-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>换行害死人啊<br><br /><br><br />那单指令我记得最早是我说有，然后你不信 <-- 这是前半段</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2011-01-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-786001" rel="nofollow">@grapeot</a><br><br />那就是你健忘了。。。<br><br />看来我要把这回复框做小一点，和上面的大小一致</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-01-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>为什么单指令计算机前三个缩写都带个SB。。。SB才是世界的真谛啊</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2011-01-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-788001" rel="nofollow">@grapeot</a><br><br />其实你想说你才是这个世界的真谛，你很重要<br><br />哎，何必这么隐晦呢</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://hupili-blog.appspot.com/2011019_one_instruction_set_computer_oisc.html" rel="nofollow">One Instruction Set Computer(</a></span>
+                        <span class="comment-date">2011-01-09</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><strong> One Instruction Set Computer(OISC) - HU, Pili - Blog ...</strong><br/>[…] Pickup: http://www.sigma.me/2011/01/6/one_instruction_set_computer.h … […]...</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

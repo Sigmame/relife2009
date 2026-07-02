@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>组会随感 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>组会随感</h1>
+                    <div class="post-date">2010-10-13</div>
+                    <div class="post-meta">
+                        <span class="tag">随感</span>
+                        <span class="tag">study</span>
+                        <span class="tag">随感</span>
+                        <span class="tag">paper</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p><font face="微软雅黑">今天下午开例会，在讨论中，感觉受益匪浅，自己也有一些体会，写日志一篇mark之。</font></p>  <p><font color="#4bacc6" face="微软雅黑"><strong>1.关于选题：</strong></font></p>  <blockquote>   <p><font style="background-color: #ffffff" color="#000000" face="微软雅黑">计算机作为一门工程学科，选题其实最大的来源还是工程实践，也就是工程中碰到的一些问题。但是，作为学术研究来讲，就需要把工程中的具体问题挖掘出来，形成一类问题，或者说一个问题模型。比如说，我们在芯片设计中会碰到关于两个时钟域的同步问题，也许从工程角度，我们可以找到一个很简单的方法解决，某个时钟域每隔一定时间发送时钟信息给另外一个时钟域；但是，从研究角度，我们就可以对其进行抽象：其实这问题的本质是一个分别分布式系统的时钟同步问题，这又涉及到了各种情况，节点数的多少，消息传递的延时与误码率，时钟频率是否相同，等各种情况，当我们想到这一层的时候，我们的一个小工程问题就已然变成一类问题或者一个问题模型，其应用领域也大大扩宽。</font></p>    <p><font style="background-color: #ffffff" color="#000000" face="微软雅黑">另外，就是要注重选题对整个学科的意义，这一点对于做理论（发JACM这类的期刊）的尤其重要,比如说上面的时钟问题，其意义就非常重大，现代计算机的任何运算都是通过时钟来同步的，对于分布式系统来说，时钟同步就至关重要。（其实，正如cyj师兄所言，时钟问题在很多领域都是一个大问题，比如说在物理学，把时钟问题搞清楚了，相对论也就出来）。</font></p> </blockquote>  <p><font color="#4f81bd" face="微软雅黑"><strong>2.关于问题的切入点</strong></font></p>  <blockquote>   <p><font style="background-color: #ffffff" face="微软雅黑">对于大部分问题，其可研究的方面有很多，还是拿上面的时钟同步问题来讲，我们可能关注同步的误差，也可能关注同步时间，对于同步所耗的时间，可以细分为平均同步时间，最优以及最差的同步时间。</font></p>    <p><font style="background-color: #ffffff" face="微软雅黑">由于精力与文章篇幅所限，我们不可能对问题的任何方面都去考虑，任何方面都得到一个最优解。这时候就要求我们要从某一个角度去切入。个人认为，最好的切入点就是该点是一个大家普遍关注的点，并且之前没人做过（别人做过的，去优化，除非有本质的提高，比如O(N)变成O(logN)否则意义都不大</font><font style="background-color: #ffffff" face="微软雅黑">），比如说同步时间（之前很多文章都是对误差进行讨论）。</font></p>    <p><font style="background-color: #ffffff" face="微软雅黑">当然，切入问题的最高境界就是发现新的问题，新的领域，比如说关系数据库，图灵机模型，不过，这只是天才才能做到，我等庸人不提也罢。</font></p> </blockquote>  <p><font color="#4f81bd" face="微软雅黑"><strong>3. 关于问题模型的建立</strong></font></p>  <blockquote>   <p><font face="微软雅黑">当问题切入点确定以后，就必须要对所研究的问题进行数学建模，为了简化模型，在对问题结果影响不大的情况下，我们可以在模型中舍弃一些次要参数。</font></p>    <p><font face="微软雅黑">有时候，即使对某些参数进行了舍弃，模型可能还太复杂，这时候我们可以考虑对模型中的某些参数进行限定。而这种限定有的不会减少模型的适用性，有的则会。</font></p>    <p><font face="微软雅黑">还有一个方面的考虑就是纯功利性的，那就是为了使我们所用的算法的结果更好，更有震撼力，从而文章更容易发表，也需要对某些参数进行限定（也许以后的优化工作就可以集中于减少这种限定）。</font></p> </blockquote>  <p><font color="#4f81bd" face="微软雅黑"><strong>4. 关于结果的展示</strong></font></p>  <blockquote>   <p><font style="background-color: #ffffff" face="微软雅黑">当问题模型建立好后，并且我们采用了某种算法进行解决后，就需要展示结果了。</font></p>    <p><font style="background-color: #ffffff" face="微软雅黑">首先，展示的方式，对于理论问题，则往往只需要理论计算和证明；而对于工程问题，最重要的是试验结果（虽然很多实验结果都是在特定参数呈现的），当然，有理论支持更好。</font></p>    <p><font style="background-color: #ffffff" face="微软雅黑">实验结果展示的另一个方面，就是对比，要是前人有做过类似工作，就必须和前人比，尽管可能其切入点不一样。倘若没有前人做过，就必须找一种比较容易想到的算法进行比较。</font></p> </blockquote>  <p>That’s all~</p>  <p> </p>  <p>btw：小记一下今天看到的雷事：</p>  <p>今天在<a href="http://www.mitbbs.com">未名空间</a>看到一个新闻，讲的是我D的记者招待会,有以下雷人内容：</p>  <blockquote>   <p>记者：  LiuXB妻子LiuXia为何被软禁？      <br />马朝旭：我不认识你提到的这个人，你说的情况我也不了解。       <br />记者：  难道你不知道LiuXB吗？       <br />马朝旭：你刚才说的是他妻子。</p> </blockquote>  <p>我觉得甚雷，于是在oops-tech group 上分享了，谁知道，grapeot速度回复了一条更雷的：</p>  <blockquote>   <p>和一个单纯MM聊天 </p>    <p>“你知道武藤兰么?” </p>    <p>(MM摇头)“不知道”  <br />“你知道小泽圆么?”  <br />(MM摇头)“不知道”  <br />“那你知道宋慧乔么?”  <br />(MM大吃一惊)“她也拍那种东西?”</p> </blockquote>  <p>雷事完了，最后说一句，做人莫装纯，装纯遭人轮，人如此。。。</p>  <p><a href="http://home.ustc.edu.cn/~dfliu/images/c9d07051eab1_10E09/dolphin-crash.gif"><img style="display: inline" title="dolphin-crash" alt="dolphin-crash" src="http://home.ustc.edu.cn/~dfliu/images/c9d07051eab1_10E09/dolphin-crash_thumb.gif" width="326" height="223" /></a></p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (4)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">PP</span>
+                        <span class="comment-date">2010-10-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>被砸的痛还是被戳的痛？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">dfliu</span>
+                        <span class="comment-date">2010-10-15</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>@PP 都疼吧，xx都是相互的</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">grapeot</span>
+                        <span class="comment-date">2010-10-15</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>前面记得不错，挺有启发性的。后面。。。这位同学你的思维太跳跃了。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">dfliu</span>
+                        <span class="comment-date">2010-10-15</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>@grapeot 我跳跃，故我在</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

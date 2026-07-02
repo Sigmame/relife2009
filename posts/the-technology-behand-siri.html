@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siri背后的技术 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>Siri背后的技术</h1>
+                    <div class="post-date">2011-10-23</div>
+                    <div class="post-meta">
+                        <span class="tag">IT评论</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">知识计算</span>
+                        <span class="tag">Wolfram|Alpha</span>
+                        <span class="tag">Google</span>
+                        <span class="tag">搜索技术</span>
+                        <span class="tag">Siri</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>今年10月，Apple发布了iphone 4S with IOS 5,其中最大的亮点就是一个语音搜索软件-Siri。一时间，各种geek，伪geek，码农，非码农都流行起调戏siri，各种调戏视频，音频大量出现。不过，常言道“外行看热闹，内行看门道”，作为一个“伪内行”，或者“欲做内行而不得”的人，根据自己的知识，以及一些搜索工具，尝试了解了一下Siri的“门道”，在这里做个总结，列出siri所可能用到的技术（所谓可能，是因为很多是我猜测，或者没有准确的来源的资料）。</p>  <blockquote>   <p>Siri是IOS上的个人助理应用：此软件使用到自然语言处理技术，使用者可以使用自然的对话与手机进行互动，完成搜寻资料、查询天气、设定手机日历、设定闹铃等服务。（来自<a href="http://en.wikipedia.org/wiki/Siri_(software)">维基百科</a>）</p> </blockquote>  <p>Siri所用到的技术，很多人会回答，人工智能以及云计算，的确，总体来说，是这两样技术，不过，这种概述感觉几乎没有任何意义，和不直接说“计算技术”（注意，不是计算机技术）呢。因此，在本文，我将介绍下我了解Siri可能采用的技术（由于有个人猜测，不一定准确）。</p>  <p>首先，在前端方面，即面向用户，和用户交互（User Interface，UI）的技术，主要是<a href="http://www.sigma.me/2011/10/23/the-technology-behand-siri.html#sound">语音识别以及语音合成技术</a>。语音识别技术是把用户的口语转化成文字，其中需要强大的语音知识库，因此需要用到所谓的“云计算”技术。而语音合成则是把返回的文字结果转化成语音输出，这个技术理论上本地就能完成（以前用过科大讯飞的在windows mobile上的本地语音阅读软件，软件很小，但能读的很好，还支持方言），但不知道Siri是否如此，当然，在云端完成也并无不可，在当前无线带宽下，那点语音流量根本不算什么。</p>  <p>其次，后台技术，这些其实才是真正的大角色（当然，普通用户是不会在意的，他们只会觉得前端很炫，哎，这就是做后端的悲哀，小小感叹一下）。这些技术的目的就是处理用户的请求，并返回最匹配的结果，这些请求类型很多，千奇百怪，要处理好并不简单。基本的结构猜测可能是分析用户的输入（已经通过语音转化），根据输入类型，分别采用合适的技术（合适的技术后面）进行处理。这些合适的后台技术包括，①以Google为代表的<a href="http://www.sigma.me/2011/10/23/the-technology-behand-siri.html#search">网页搜索技术</a>；②以Wolfram Alpha为代表的<a href="http://www.sigma.me/2011/10/23/the-technology-behand-siri.html#computational-know">知识搜索技术</a>（或者知识计算技术）；③以Wikipedia为代表的<a href="http://www.sigma.me/2011/10/23/the-technology-behand-siri.html#knowledge">知识库</a>（和Wolfram Alpha不同的是，这些知识来自人类的手工编辑）技术（包括其他百科，如电影百科等）；④以Yelp为代表的<a href="http://www.sigma.me/2011/10/23/the-technology-behand-siri.html#recommend">问答以及推荐技术</a>。</p>  <p>下面，对上面提到的各种技术进行简要介绍（如有空，后面的博文可能会对某些技术详细的介绍，大家耳熟能详的就免了），强调下，介绍的有些参考来源是<a href="http://en.wikipedia.org">维基百科</a>相关词条，下面不一一列出：</p>    <p> </p> <a name="sound">   <h4>语音识别以及语音合成技术</h4> </a>  <p><strong>语音识别</strong>技术，也被称为自动语音识别（英语：Automatic Speech Recognition, ASR），其目标是将人类的语音中的词汇内容转换为计算机可读的输入，例如按键、二进制编码或者字符序列。与说话人识别及说话人确认不同，后者尝试识别或确认发出语音的说话人而非其中所包含的词汇内容。语音识别技术所涉及的领域包括：信号处理、模式识别、概率论和信息论、发声机理和听觉机理、人工智能等等。</p>  <p><b>语音合成</b>是将人类语音用人工的方式所产生。若是将电脑系统用在语音合成上，则称为语音合成器，而语音合成器可以用软/硬件所实现。文字转语音(text-to-speech, TTS)系统则是将一般语言的文字转换为语音，其他的系统可以描绘语言符号的表示方式，就像音标转换至语音一样。</p>  <p>相比于语音识别，语音合成感觉难度要低，并且基本能够在本地完成（很多OS都有内置的语音合成引擎）。而语音识别，由于涉及到语义理解，难度大大加大，需要大量的知识库，一般需要在云端完成。</p>  <p>另外，在国内，这方面做的很好的公司也有，比如鄙人本科所在学校的科大讯飞，就是中文语音合成以及识别的领军企业,在英文语音合成领域其实也很牛，拿过很多奖。国外的话，比较早的应该是IBM ViaVoice。</p> <a name="search">   <h4>网页搜索技术</h4> </a>  <p>这个我想没必要介绍，大家天天用的Google就是这个技术的代表。而国内的话，则以百度为代表。</p> <a name="computational-know">   <h4>知识计算（搜索）技术（Computational Knowledge）</h4> </a>  <p>这个技术的代表是Wolfram|Alpha。</p>  <p>不同于搜索互联网信息，Wolfram|Alpha将从公众的(包括公开的网页等)和获得授权的资源中，发掘、建立起一个异常庞大的经过组织的数据库，再利用高级的自然语言算法进行处理，最终构造出一个类似于谷歌搜索的工具。</p>  <p>和网页搜索技术不同的是，在这个系统中，得到的答案结构化程度很高，比如搜索China，能得到和中国相关的各种参数以及资料，并以接近表格的方式呈现。Wolfram|Alpha也能理解部分自然语言，比如输出How old are you，其会回答Wolfram|Alpha的年龄。想测试这项技术的请移步<a href="http://www.wolframalpha.com">Wolfram|Alpha</a>。</p>  <p>这个技术国内做的应该有，但还没有产品，也许百度的框计算算是半个。所以机会大大的有。</p> <a name="knowledge">   <h4>知识库技术</h4> </a>  <p>这名字是我自己起的，不知道有没有贻笑大方。。。这个技术的代表是维基百科，以及各种专门的百科网站。相比于网页搜索技术，基本以一个词条或者主题为单位，因此得到的数据价值高，知识量大，并且结构化程度好。相比于知识计算技术，这些技术需要人的参与，这有利也有弊，利就是，毕竟暂时人比机器聪明，编辑出来的知识更丰富，准确；弊就是，人力有限，即使像维基那样，发动社区的力量，也不能产生足够的知识，而知识计算，理论上，只需要算法够牛叉，是可以产生“无限”的知识的。</p>  <p>另外，写到这里，我想起Yahoo和Google的故事，当年，Yahoo是搜索老大，就像现在的Wekipedia在知识搜索领域一样，而Google是小弟，就像Wolfram|Alpha在知识搜索领域一样。但后来，却反过来了，Googe成了网页搜索老大，Yahoo成了小弟，原因就是Google相信算法的结果，把所有事都交给算法做，而Yahoo，很多索引都是人工编辑的。我想，也许有一天，Wekipedia和Wolfram|Alpha也会出现这样的情况。</p> <a name="recommend">   <h4>问答推荐技术</h4> </a>  <p>其实这不能称为一个技术，应该属于知识库的技术。不同的是，这个技术针对的是一些生活信息，这些信息的地域化程度很高，典型代表为Yelp。由于这东西比较简单，就不仔细介绍了。</p>  <p>其实在国内，这方面的网站也有，那就是大众点评网这些。</p>  <p> </p>  <p>读完此文，你也许会发现，其实Siri并没有什么革
+命性的技术，其本质是将各种已经比较成熟的技术融合成一个产品，最终呈现给用户，因此，完全没必要对Siri神圣化。</p>  <p>另外，Siri其实是苹果买来的，在苹果买来之前，Siri本来是会推出Android版本的，可是，被苹果购买后，Android版本的Siri遥遥无期了（不过，这为广大的Android开发者以及公司提供了机会）。而Siri之前默默无闻，但是一从苹果推出，却声名鹊起，不得不佩服Apple以及Jobs的眼光以及执行力。</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (18)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://haoxiang.org" rel="nofollow">mr.pppoe</a></span>
+                        <span class="comment-date">2011-10-24</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>其实应该说是一个语音问答系统。问答系统做了很多年了，相比而言，Siri在本地服务支持方面要好很多。<br><br />语音也做了很久了，看起来siri在未经训练的情况下，也有不错的识别率。<br><br />总的来说，技术上貌似没有大的突破。但是工程上做得相当好。<br><br /></p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-10-24</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1168009" rel="nofollow">@mr.pppoe</a><br><br />nod，感觉苹果牛就牛在合适的时机采用了合适的技术<br><br />太早采用，会成为先烈<br><br />太晚，成为炮灰</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">eee</span>
+                        <span class="comment-date">2011-10-24</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>后端人工智能部分好像没提？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">世界</span>
+                        <span class="comment-date">2011-10-24</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>Hi Sigma<br><br />我在cnbeta看到你写的关于Siri的文章，很漂亮，其中涉及一些语音合成的技术对此很感兴趣，可以通过邮件认识一下么？谢谢</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">lirujinzhi</span>
+                        <span class="comment-date">2011-10-24</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>分析的很好。其实国外已经在研究web3.0技术了，并且有许多应用。Siri在语音帮助下，让百姓切身体验到并理解基于知识的搜索技术。iPhone的功劳可能就体现在拉近人与科学技术的距离。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">benjy</span>
+                        <span class="comment-date">2011-10-24</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>为什么最关键的技术被一语带过了。。。<br><br /><br><br />“基本的结构猜测可能是分析用户的输入（已经通过语音转化），根据输入类型，分别采用合适的技术（合适的技术后面）进行处理。”<br><br /><br><br />Siri的革命性在于语义解析，其他基本都是现有技术的整合。从语音识别到后端技术整合这之间才是AI部分。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">passingby</span>
+                        <span class="comment-date">2011-10-24</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>通篇都没有提到，Siri中最重要的技术无疑是语义分析，从而用正确的参数与引擎去给出正确的答案。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-10-24</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1169003" rel="nofollow">@lirujinzhi</a><br><br />对，所以这样的产品能够成功 <br><br />而像linux这样的，虽然作用很大，但还是不能说是成功</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-10-24</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1167005" rel="nofollow">@benjy</a><br><br />你说的很对，Siri很关键一部分是这些的整合，也即所谓的语义解析<br><br />但是语义解析应该也不是siri独有的，这些研究和demo很早就有了，像Wolfram|Alpha也有语义解析，否则不能回答类似how old are you的问题<br><br />我是个“伪内行”而已，所以。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-10-24</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1171005" rel="nofollow">@passingby</a><br><br />我承认这一点是本文的缺陷，谢谢指正<br><br />解释同上</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-10-24</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1171005" rel="nofollow">@passingby</a><br><br />看了这篇文章，感觉语义分析也不是那么牛叉，都是早已经很成熟，Wolfram|Alpha肯定就用了<br><br />http://www.cnbeta.com/articles/159561.htm</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://view.v2xy.com" rel="nofollow">xyu_ovi</a></span>
+                        <span class="comment-date">2011-10-24</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>我晕！昨天在cnbeta上看到这篇！没注意作者！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.rexzhao.com" rel="nofollow">Rex</a></span>
+                        <span class="comment-date">2011-10-24</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>我觉得语义解析应该是个很复杂的事情。没有4S，不敢说。语音到字符、字符到语音都好说，根据字符再到回答这块具体是怎么做的我也很好奇。有空也去关注下！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-10-25</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1172004" rel="nofollow">@Rex</a><br><br />可能我上面那段有点偏，其实我想说的是siri的语义分析不是很牛叉（就是其实有很多问答机器人就有类似的水平），我的来源是这篇文章<br><br />http://www.cnbeta.com/articles/159561.htm<br><br />当然，语义分析整个东西应该是很难的，感觉这算是整个人工智能中一个很大的问题<br><br /></p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">benjy</span>
+                        <span class="comment-date">2011-10-25</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>单句语义解析相对而言不是很复杂，至少是可预见的关键词判断，但Siri的强大在于上下文结合以及数据库扩展性，这要求算法本身就需要非常良好的兼容性，表现在前端就是模拟真实的人机对话，而不是传统意义上的输入输出</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">passingby</span>
+                        <span class="comment-date">2011-10-25</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1167007" rel="nofollow">@Sigma</a><br><br />语义分析离成熟差很远，所以那文章才总结出来那么少（更像是有语法规则的句子），也只是容易识别的部分而已。<br><br />人的每一句话都可以用其它的方式描述，主谓宾什么的并非一成不变。。 <br><br />语义分析成熟的时候，机器高准确度同声传译就没难度了（现在许多都停留在语法分析阶段）。<br><br /><br><br />wolfram上的搜索也只有语法分析，而且支持度有限，测试便知。<br><br /></p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.iphone4c.com/?p=5893" rel="nofollow">Google Voice Search 大戰 apple Siri | iPhone4C – 瘋科技</a></span>
+                        <span class="comment-date">2012-07-03</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>[...] http://mashable.com/2012/07/02/jelly-bean-review/#73481Up-on-Sports http://www.sigma.me/2011/10/23/the-technology-behand-siri.html     Android 大小事, 蘋果新鮮事   ← [...]</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">crazylcy</span>
+                        <span class="comment-date">2012-12-21</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>语义解析技术才是siri最核心的技术，光靠整合是做不出siri的</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

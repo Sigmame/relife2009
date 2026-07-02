@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C语言逗号运算符的一些问题 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>C语言逗号运算符的一些问题</h1>
+                    <div class="post-date">2011-10-16</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">C语言</span>
+                        <span class="tag">编程</span>
+                        <span class="tag">逗号运算符</span>
+                    </div>
+                </header>
+                <div class="post-content">
+前段时间，某童鞋碰到一个和逗号运算符相关的诡异问题，当时我也查了下运算符优先级，仔细想了半天才想明白，当时就想把关于逗号运算符的一些东西写一下，但由于比较忙，一直没写，现在补上。
+
+在这里，为了省事，直接把邮件内容附上（假如那位童鞋你看到了，侵犯了你的版权，别生气哈~），我承认我真的很懒。。。
+
+===============================================
+
+对了能解释下这个问题么?
+<pre class="brush: c; ruler: true ;first-line: 1; highlight: []"> void main ()
+{
+    bool test=false;
+    int a = 1;
+
+    test == true ? printf("hello\	"), printf("world\
+"),a++ :
+    printf("Ha\	"), a++, a++;
+
+    printf("%d", a);
+}</pre>
+Test = false 的时候 a = 3;
+
+Test = true 的时候 a = 4;
+
+
+<pre class="brush: c; ruler: true ;first-line: 1; highlight: []"> void main ()
+{
+    bool test=false;
+    int a = 1;
+
+    test == true ? printf("hello\	"), printf("world\
+"),a++ :
+                         (printf("Ha\	"), a++, a++);
+
+    printf("%d", a);
+}</pre>
+Test = false 的时候 a = 3;
+
+Test = true 的时候 a =1;
+
+最近写程序的时候发现的貌似逗号和问号表达式连用的时候有些奇怪
+
+==================================
+
+在C语言中，逗号运算符优先级是最低的，所以第一个表达式等于：
+
+(test == true ? printf("hello\	"), printf("world\
+"),a++ :
+
+printf("Ha\	")), a++, a++;
+
+所以：
+
+Test = false 的时候 a = 3;
+
+Test = true 的时候 a = 4;
+
+? :运算符一般很容易理解成:管的范围是到分号，而事实上，按优先级，只管到逗号。之后的是另外一个表达式
+
+对于这些不太清楚的优先级，一般都加括号，反正括号优先级够高。
+
+逗号运算符的作用就是将两个表达式连接起来，整个表达式的值，等于最后一个表达式的值。
+
+比如，上面改为：
+
+test = true;
+
+b = (test == true ? printf("hello\	"), printf("world\
+"),a++ :printf("Ha\	"), a++, a++);
+
+printf("%d,%d", a,b);
+
+则输出为 a=4,b=3
+
+反之，如果去掉括号
+
+test = true;
+
+b = test == true ? printf("hello\	"), printf("world\
+"),a++ :printf("Ha\	"), a++, a++;
+
+printf("%d,%d", a,b);
+
+则a=4,b=1(等号的优先级比逗号高，但比?:低)
+
+如果上面的test=false，
+
+test = false;
+
+b = test == true ? printf("hello\	"), printf("world\
+"),a++ :printf("Ha\	"), a++, a++;
+
+printf("%d,%d", a,b);
+
+则a=3,b=3
+
+因为printf的返回值，打印成功的话，返回打印的char个数，否则，返回负数。
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (6)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-10-16</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>好诡异的用法。。。为毛不直接用if。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-10-17</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1162004" rel="nofollow">@grapeot</a><br><br />不知道，其实直接括号括起来也行啊，反正我是这样的，不清楚的就加括号</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">lc</span>
+                        <span class="comment-date">2011-11-16</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>太菜了 没明白。。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">wersfsf</span>
+                        <span class="comment-date">2012-06-15</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>太误人子弟了，用GCC  运行一下  在说~</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2012-06-15</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-3804" rel="nofollow">@wersfsf </a> <br>GCC没跑过，但我用Dev C++跑过，结果如文中所述</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">xiaogang</span>
+                        <span class="comment-date">2012-11-12</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>貌似加括号情况下，当test为true时，打印的a的值为2</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

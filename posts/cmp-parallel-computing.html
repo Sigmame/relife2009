@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMP读书笔记五:通过并行加速程序 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>CMP读书笔记五:通过并行加速程序</h1>
+                    <div class="post-date">2011-04-10</div>
+                    <div class="post-meta">
+                        <span class="tag">读书笔记</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">并行程序</span>
+                        <span class="tag">CMP</span>
+                        <span class="tag">串行程序</span>
+                        <span class="tag">sequential consistency</span>
+                        <span class="tag">顺序一致性</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>前一篇关于<a href="http://www.sigma.me/2011/03/31/CMP-improve-latency.html">降低单任务延时</a>的文章，主要讲的都是在现有的编程模式下，不改变现有串行程序代码下，通过编译器，操作系统，以及处理器自动给程序加速，降低延时。但是，这种加速方法加速很有限，不具有可升级性（scalable）:辅助线程（helper thread）受限于只有一个主线程，一个辅助线程，加速比很难超过2；猜测多线程（TLS）受限于原来串行程序上下文的依赖性，可拆解的部分有限，加速比也不理想。</p>
+<p>为了解决程序在多核系统加速受限的问题，出现了串行程序不同的编程模式，并行编程。和串行程序不同，并行程序设计要求程序员显示的声明程序的那些部分是可以并行的。因此，对于一个习惯于串行程序编写的程序员来说，写并行程序难度要大。</p>
+<p>对于串行程序，只需要输入相同，每次执行的结果是一样的，是确定的。而对于并行程序，执行的结果每次都可能不一样。在这些所有的执行结果中，只需要能够把并行程序串成某个串行程序，并且该串行程序的执行结果和该次并行程序执行结果一致，则认为程序在顺序一致性模型（sequential consistency，SC）下是正确的。顺序一致性的严格定义如下：</p>
+<blockquote><p><em>the result of any execution is the same as if the operations of all the processors were executed in some sequential order, and the operations of each individual processor appear in this sequence in the order specified by its program.</em></p></blockquote>
+<p>意译成中文如下：</p>
+<blockquote><p>并行程序的任何一个执行结果都和某个顺序执行相同，该顺序执行符合：①该顺序执行是将所有处理器执行的并行操作（指令）串起来的。②对于原来任何一个处理器上的并行执行操作，其排序在改顺序执行上的排序一直。（通俗的将，在并行执行中，对于同一个核心的执行A，B，倘若A在B前，在最后的串起来的顺序执行，A还是要在B前）</p></blockquote>
+<p>因为这个一致性模型要求太强了，要保证并行执行符合该模型对硬件要求很高，并且会带来极大的性能损耗，因此，出现了很多弱的一致性模型。</p>
+<p>另外，由于并行程序可能出现的符合一致性要求的结果不止一个，而事实上程序员希望的执行结果可能只有一个或几个，为了解决这个问题，对于要放到不同处理器核心执行的代码，就需要程序员显式的标记那段代码在那段代码之前执行，既需要通过一些barrier来同步不同处理器核心的执行。</p>
+<p>另外，并行执行还涉及到对一些临界资源的访问，对于这些共享的资源，往往只能一个处理器访问，这是就会出现互斥，这时需要一些机制来保证互斥访问，于是出现了锁的机制。但锁很容易导致死锁活锁问题，导致性能极大下降。为了解决这个问题，受数据库启发，出现了事务内存（transaction memory，TM）的概念，但是TM对硬件的改动极大，现在还没有商业的处理器能够实现（之前sun公司的Rock处理器号称要实现，但是直到sun落下，rock也没出来，之后就直接停止了研发）。</p>
+<p><span style="color: #0000ff;">写到这里，突然这个关于并行的题目有点大，有太多的东西需要讲，有太多的东西需要介绍，有种剪不断理还乱，不知从何处下手的感觉。好吧，这篇就先扯到这，让他虎头蛇尾好。</span></p>
+<p>有空的话，我再写些东西把各种一致性，各种编程模型以及事务内存，以及其他的并行相关的东西介绍下~</p>
+<p>最后，秉承每文一图的习惯，附一张顺序一致性的示意图（上面是符合的并行执行，下面是不符合的并行执行）：</p>
+<p><img style="display: block; float: none; margin-left: auto; margin-right: auto;" src="http://3fnp6q.blu.livefilestore.com/y1plmvZVhibPTWqCe8wlo4z2nvUhqDGCJVtOHr7YF9cxvz3XtwfbJMJP67LZLMyLZQ3M0eBYfcCfT2kfeAdSwf5t_mwk_IHP2qB/sequential-consistency.jpg?psid=1" alt="" /></p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (9)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">cyj</span>
+                        <span class="comment-date">2011-04-11</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>并行程序正确性这个问题太复杂，太多似是而非的东西。一般我没有精心准备，不敢讲这个问题，避免误导别人。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-04-11</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-989002" rel="nofollow">@cyj</a><br><br />啊，师兄也还没睡啊~<br><br />我也感觉很复杂，昨天写到后面感觉要解释的东西太多了，并且很多东西我自己都不清楚，所以写不下去了，只好草草收尾<br><br />嗯，以后写东西要注意下准确性了，由于我对很多东西都是一知半解，还好流量小，误导的人不多。。。<br><br />不过我写blog主要是为了整理东西，整理思路，太久没写东西很多时候在键盘前找不到北了</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.nblaser.net" rel="nofollow">打标机</a></span>
+                        <span class="comment-date">2011-04-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>虽然我不懂什么程序，但是蛮有用的，学习下<br><br /></p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.xiaosuzi.info" rel="nofollow">Su</a></span>
+                        <span class="comment-date">2011-04-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>呵呵专业啊不动了啊 广告支持下啊</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.taizihong.com/blog" rel="nofollow">太子虹</a></span>
+                        <span class="comment-date">2011-04-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>这个是没办法看懂的，一点也不明的，哎<br><br /><br><br /><br><br /><br><br /></p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.wukenan.com/" rel="nofollow">七七</a></span>
+                        <span class="comment-date">2011-04-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>来了，还是来顶顶博主的，哈哈</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.nbled.net/" rel="nofollow">宁波LED</a></span>
+                        <span class="comment-date">2011-04-15</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>看都看不懂啊....你写的什么东西</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://ziji.cc" rel="nofollow">小年</a></span>
+                        <span class="comment-date">2011-04-15</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>好难打！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">风雨同行</span>
+                        <span class="comment-date">2012-05-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>也在看本书 博主写的不错</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

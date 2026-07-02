@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>为博客添加分享按钮 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>为博客添加分享按钮</h1>
+                    <div class="post-date">2010-09-24</div>
+                    <div class="post-meta">
+                        <span class="tag">博客相关</span>
+                        <span class="tag">micolog</span>
+                        <span class="tag">addsharebutton</span>
+                        <span class="tag">添加分享按钮</span>
+                        <span class="tag">Micolog</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p><font size="2" face="微软雅黑">有时，我们想为独立博客添加一个类似于分享到的按钮，以便分享到各种SNS网站添加人气。虽然，现在网上提供这种插件的网站，如<a href="http://addthis.org.cn">addthison</a>，<a href="http://www.jiathis.com">jiathis</a>等，但是，这些网站都是商业网站，为了流量，分享时会跳到上述网站，比较不爽。因此，求人不如求己，自己动手，丰衣足食，于是我搜了一下，看网上有没类似的代码，于是得到下述地址：</font></p>
+
+<p><a href="http://blog.csdn.net/skymountain/archive/2010/06/25/5694697.aspx">http://blog.csdn.net/skymountain/archive/2010/06/25/5694697.aspx</a></p>
+
+<p><font size="2" face="微软雅黑">但是，我试用上述代码，发现在我micolog系统里没效，几番更改代码，终于出现了分享按钮图标，但是除图标外，还有一堆文字，看着不美观。于是，我再对代码进行修理，最终得到如下代码,其效果见本文标题下面：</font></p>
+
+<pre class="brush: javascript; ruler: true ;first-line: 1; highlight: [1,14]"> function ShareCode(server_url, server_icon_url,text){
+    var title = encodeURIComponent(document.title.substring(0,76));
+    var url = encodeURIComponent(location.href);
+    server_url = server_url.replace("{title}",title);
+    server_url = server_url.replace("{url}",url);
+
+    return "<a href=\\"javascript:window.open(\\'"
+    + server_url
+    +"'); void 0\\" title =\\"" + text + "\\"><IMG alt="
+    + text + " src=\\""
+    + server_icon_url
+    + "\\"><\\/a>"
+}
+function WriteSNS()
+{
+    document.writeln(ShareCode("http://share.renren.com/share/buttonshare.do?title={title}&link={url}",
+    "http://s.xnimg.cn/favicon-rr.ico?ver=2",
+    "Share to Renren"));
+
+    document.writeln(ShareCode("http://www.kaixin001.com/repaste/share.php?rtitle={title}&rurl={url}",
+    "http://www.kaixin001.com/favicon.ico",
+    "Share to Kaixin"));
+
+    document.writeln(ShareCode("http://v.t.sina.com.cn/share/share.php?title={title}&url={url}",
+    "http://t.sina.com.cn/favicon.ico",
+    "Share to SinaMicroblog"));
+
+    document.writeln(ShareCode("http://www.douban.com/recommend/?url={url}&title={title}",
+    "http://t.douban.com/favicon.ico",
+    "Recomend to Douban"));
+
+    document.writeln(ShareCode("http://apps.hi.baidu.com/share/?title={title}&url={url}",
+    "http://www.baidu.com/favicon.ico",
+    "Forword to BaiduHi"));
+
+
+}
+ </pre>
+
+<p><font size="2" face="微软雅黑">相比于原作者的代码，我做了以下改动：第一，设置分享打开页面为浏览器默认设置，而不会跳转到新的窗口；第二，对打开参数进行精简；第三，删除了按钮旁的文字进行，更加美观；第四，函数不是封装成div，这样可以更方便的贴到某一行内。</font></p>
+
+<p><font size="2" face="微软雅黑">使用方法也很简单，在页面的任何一处假如js引用代码：</font></p>
+
+<pre class="brush: html; ruler: true ;first-line: 1; highlight: []"> <script type="text/javascript" src="/share.js"></script> </pre>
+
+<p><font size="2" face="微软雅黑">在需要插入分享按钮的地方加入js函数调用代码即可：</font></p>
+
+<pre class="brush: html; ruler: true ;first-line: 1; highlight: []"> <script type="text/javascript">WriteSNS();</script></pre>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (3)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.cs.pitt.edu/~ouyang/wordpress" rel="nofollow">ouyang</a></span>
+                        <span class="comment-date">2011-05-03</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>这个语法高亮是syntax highlighter？跟syntax highlighter evolved有啥区别么？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-05-03</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1001028" rel="nofollow">@ouyang</a><br><br />我也不知道，我一直想加上verilog支持，但一直没加上</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://zzzany.site50.net/http:/zzzany.site50.net/add-share-button-to-blog.html" rel="nofollow">为blog添加分享按钮 | Create Happiness</a></span>
+                        <span class="comment-date">2012-09-29</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>[...] 一直想为博客添加一个分享按钮，刚好今天又很早下班，于是网上搜了搜方法，参考别人的教程，开始动手做了咯~~~ [...]</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

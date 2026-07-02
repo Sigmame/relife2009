@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>漫谈云计算 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>漫谈云计算</h1>
+                    <div class="post-date">2011-05-21</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">云设备</span>
+                        <span class="tag">云软件</span>
+                        <span class="tag">云平台</span>
+                        <span class="tag">PaaS</span>
+                        <span class="tag">SaaS</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p><em><font style="background-color: #ffffff" color="#0000ff">原来计划每周五晚上都写一两篇日志的，算是对当周关注的东西的一些总结。以便若干年后，回想起来，能大概知道我曾经都学过什么，思考过什么。也便若干年后，看曾经的自己是如何的幼稚，肤浅，也许会为自己讶然一笑。可是这周五，想了半天也没想到该写些什么，这周前几天改模拟器，改得很郁闷，后面为实验室的工程做验证，倒还好。不过总体感觉什么都没做，什么也没学，或者说什么都没做成，感觉虚度了，所以也就感觉写不出什么东西来。但是，一想到，好不容易有个好习惯，得坚持，自己最缺的就是执行力，我必须写点东西，于是就把前一阵看过的关于云计算的一些东西在这扯扯，算是凑数。下面进入正题：</font></em></p>  <p><b>云计算</b>（<b>Cloud computing</b>），是一种基于互联网的计算方式，通过这种方式，共享的软硬件资源和信息可以按需提供给计算机和其他设备。狭义云计算指IT基础设施的交付和使用模式，指通过网络以按需、易扩展的方式获得所需资源；广义云计算指服务的交付和使用模式，指通过网络以按需、易扩展的方式获得所需服务。（From 维基百科和百度百科）。</p>  <p>云计算该宁最早可以追溯到1983年太阳公司（Sun Microsystems，这是我最敬佩的一个计算机企业，只可惜她最后被我不敬佩的Oracle收购了）提出来的，当时他们提出“网络是电脑”（“The Network is the Computer”）的概念，算是云计算的雏形。</p>  <p>而云计算最早真正被市场关注，商业化则是到了2006年3月，亚马逊（Amazon）推出了弹性计算云（Elastic Computing Cloud，EC2）服务。其实其本质和之前的主机服务是一样的，不一样的是，他的收费方式，他是按你使用的资源收费的。</p>  <p>同年8月9日，google CEO Eric Schmidt在搜索引擎大会上首次提出了云计算（Cloud Computing）的概念。2006年google还发布了其第一个云产品，google apps，包括在一个域名下集成google mail，google calendar，以及 google talk等套件。随后2008年推出了自家的云计算服务，Google App Engine，简称GAE（本博客就是搭建在GAE上的）。</p>  <p>云计算从提供的资源类型的抽象层次，以及具体软硬件资源对用户的可见性，分为三层，即：云设备，云平台，云软件，英文分别简称为IaaS，PaaS，以及SaaS。</p>  <ol>   <li>第一类是设备即服务(Infrastructure as a Service,IaaS)，以亚马逊的EC2为代表，其实这基本上就是主机出租，整个虚拟机都是对用户可见的，用户具有root权限，整个计算机环境用户都可以配置，和传统不同的是，其付费方式的创新，它是通过按使用计费的； </li>    <li>第二类是平台即服务(PlatformasaService,PaaS)，以google appengine为代表，主要是提供一个架构（现在只支持python和java，最新版本已经支持google自家的Go语言），用户必须在该平台提供的api上开发程序（现在主要都是一些web程序）。 </li>    <li>第三类是软件即服务(SoftwareasaService,SaaS)，代表为google apps（包括google docs，google域名邮箱），软件都不用用户开发，直接用云端已经开发好的软件即可。另外，现在的Web App Store也许也算这类。 </li> </ol>  <ol>个人感觉云计算（尤其是IaaS）本质是一个商业模式的创新，把之前粗粒度的出租计算资源（以前用户租用主机等必须租用很久，并且不是按使用计费的）变成了细粒度，变成了pay for use。从用户来说，降低了成本，这样中小企业可以没有自己的服务器，需要计算资源时临时使用云端资源即可。而从资源出租者来说，由于用户很多，而所有用户不可能同时都对某类资源具有很高的需求，这样的话，资源出租者就可以利用这个很大的调度池内调度，可以充分利用资源，实现双赢。</ol>  <ol>另外，对于PaaS,还有个好处是，由于对硬件进行了抽象，进行了透明化处理，对开发者是件很好的事，这样对所有的开发者来讲，所面对的资源都是一样的，没有差异，而不必学习不同环境下的开发，比如说windows和linux，X86和ARM。开发出来的软件也不存在可重用的问题。</ol>  <ol>而SaaS则更彻底，直接软件都开发好了，企业只需要使用这套软件就可以搭建一套企业内部的邮箱，日历，文档，甚至工程管理系统，而不需要自己买服务器，请管理员搭建维护。</ol>  <p>现在的云计算除了以上几家外，很多厂商都在搞，比如最近Red Hat就推出了Openshift，Dotcloud推出了Dotcloud，国内的新浪推出了SAE，华为中兴阿里也在搞各自的云计算平台。</p>  <p>云计算通过虚拟化提供统一平台，灵活定制，动态可扩展性，高可靠性和安全性，高性价比等优点，但是也有一些缺点。那就是由于虚拟化技术所带来的效率和性能可能不是很高，对于很多应用并不适合云平台上面跑，这也就是解释了为什么现在大量使用的云计算都是云存储以及各类web应用，而一些传统的科学计算：生物医药研究，物理研究等计算还需要在超算中心完成。另外一个就是数据的安全问题，一个企业总是不太敢把自己的核心数据放到别家的服务器上。    <br /><img src="http://3fnm6q.blu.livefilestore.com/y1pVAaBbh_vq0k-GwH8RQq579Ena-0mMJeFjD6e1WdjEBpAjsK7gG7_ndOuVamzY0rl2dfBoUsK-EPSPIwKcdwNypCQ0fl-rkHD/cloud-computing.jpg?psid=1" /></p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (5)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">Yan</a></span>
+                        <span class="comment-date">2011-05-21</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>这图真丑</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-05-22</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1034014" rel="nofollow">@Yan</a><br><br />比你如何</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.soxxn.com/" rel="nofollow">化十</a></span>
+                        <span class="comment-date">2011-05-22</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>华为的云计算能超过谷歌吗？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.feizhuming.net" rel="nofollow">非著名博客</a></span>
+                        <span class="comment-date">2011-05-22</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>这是一个云的世界  到处都是“云”</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.wefdc.com/?p=5816" rel="nofollow">漫谈Google的Native Client技术（一）–历史动力篇（Web本地计算发展史） | Flash开发者大会</a></span>
+                        <span class="comment-date">2012-03-22</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>[...] 再往后，随着网络带宽的增长，以及服务器存储能力的提高，出现了大量的数据中心，为了提高这些中心的利用率，出现了云计算。在云计算时代，用户可以把很多数据都放在云端，并且访问这些应用的方法都是统一的。开发者在云服务器开发程序的接口也是统一的（PaSS），这就可以很容易实现跨平台，给用户一个统一的体验。 [...]</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redis实现之虚拟存储系统（VM）实现(四)--线程式虚存（Threaded VM）交换 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>Redis实现之虚拟存储系统（VM）实现(四)--线程式虚存（Threaded VM）交换</h1>
+                    <div class="post-date">2011-08-06</div>
+                    <div class="post-meta">
+                        <span class="tag">数据库</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">虚拟存储</span>
+                        <span class="tag">多线程</span>
+                        <span class="tag">Redis</span>
+                        <span class="tag">IO线程</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<h4>非阻塞虚存的几种实现选择</h4>  <p>由于<a href="http://www.sigma.me/2011/07/24/redis-vm-implement-blocking-vm.html">阻塞式虚存实现有各种缺点</a>，因此，Redis实现了非阻塞式的虚存系统。实现非阻塞式虚存系统有以下几种方法：</p>  <ol>   <li>最显然的方法，就是把整个redis做成多线程的，每个数据库操作都是自动分配到某个线程（或者fork一个新的线程），这样就不存在阻塞的问题。但是这对redis不是一个好的解决方案，因为为了实现提高操作速度，redis没有锁，保证原子性是通过顺序执行来保证的，因此整个redis引入多线程要增加锁，导致速度变慢（也许多核上能快点），并且极大增加代码量（现在redis只有1万行代码）。 </li>    <li>通过非阻塞式IO实现，由于redis是基于事件循环的（event-loop based），可以采用非阻塞IO。但redis的作者基于以下两点把这个否了：①非阻塞文件操作不像sockets，会导致很多不兼容的问题，这和操作系统紧密相关，要做很多和操作系统相关的工作。②另外一个原因就是，在虚存中，文件IO操作仅仅是一部分，还有很多事件花在数据的编解码上面（编解码成交换文件swap file）。 </li>    <li>于是就剩下最后一种方法，通过增加IO线程来完成数据交换。 </li> </ol>  <p>下面，具体介绍第三种实现，即IO线程：</p>  <h4>IO线程</h4>  <p>IO线程的设计目标依重要性排列如下：</p>  <ul>   <li>实现简单：尽量减少数据冲突（race）的可能性；用简单的锁；VM的代码要能够和Redis的其他代码分离（个人感觉这符合设计正交性原则）。 </li>    <li>高性能，对于客户端访问数据不会造成锁（等待）。 </li>    <li>IO线程要能够编解码交换文件（针对第二种实现的缺点2）。 </li> </ul>  <p>鉴于以上目标，Redis 的非阻塞VM实现的方式为，实现了一个redis主线程（实际和客户端交互的线程，处理请求），以及一些通过一个简单的信号量（mutex）和任务队列进行通信的IO进程。简单的说，主线程将IO请求交给IO线程进行后台处理（通过将一个（IO）任务结构交给server.io_newjobs队列）。假如没有IO进程，则新建一个。有些IO进程完成IO任务后，结果将发送到server.io_processed队列。IO进程将通过UNIX管道给主进程一个信号，以便告知已经完成，可以继续新的任务。</p>     <p>iojob的数据结构如下：</p>  <pre class="brush: c; ruler: true ;first-line: 1; highlight: []"> typedef struct iojob {
+    int type;   /* Request type, REDIS_IOJOB_* */
+    redisDb *db;/* Redis database */
+    robj *key;  /* This I/O request is about swapping this key */
+    robj *val;  /* the value to swap for REDIS_IOREQ_*_SWAP, otherwise this
+                 * field is populated by the I/O thread for REDIS_IOREQ_LOAD. */
+    off_t page; /* Swap page where to read/write the object */
+    off_t pages; /* Swap pages needed to save object. PREPARE_SWAP return val */
+    int canceled; /* True if this command was canceled by blocking side of VM */
+    pthread_t thread; /* ID of the thread processing this entry */
+} iojob;
+ </pre>
+
+<p>IO进程仅仅能处理三种类型的任务(通过上面的type域定义)：</p>
+
+<ul>
+  <li>REDIS_IOJOB_LOAD：将给定key的对象从交换空间load回主存。 </li>
+
+  <li>REDIS_IOJOB_PREPARE_SWAP:计算将val指向的对象交换到交换空间所需要的页数，计算的结果放在page域。 </li>
+
+  <li>REDIS_IOJOB_DO_SWAP:将val指向的对象交换到交换空间。 </li>
+</ul>
+
+<p>主线程除了以上三项工作不做以外，其他的工作都是主线程完成的，比如通过算法找到需要交换出去的对象之类的。</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (7)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-08-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>为毛你推荐的广告是“第二代 让男人省事，让女人不省人事”。。。<br><br /><br><br />感觉有必要把技术类blog和生活/评论类blog分开，这样有利于提高流量。至少要分到不同的tags下，方便分别订阅。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-08-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1082008" rel="nofollow">@grapeot</a><br><br />哈哈，肯定是百度更懂中国人，知道你的喜好~ <br><br />话说google pagerank就和你博客的主题有关，要是大杂烩，pr值很低，并且google adsense匹配也不好，容易封号 <br><br />现在我在这个博客基本不写生活类等不关痛痒的东西，否则好不容易搞来的订阅量又下去了（之前经常出现我没发一篇文章，订阅量瞬间降了几个，之后又慢慢升上来，现在基本不会了） <br><br />小炫耀一下，我的这个博客pr值已经是4是4是4啦</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-08-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>牛逼。。。4了。。。<br><br /><br><br />我的意思不是生活类，而是大家都能看得懂或者受众面广的东西。这个redis的原理是不是太专业了？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-08-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>查了一下哥的才2。。。主要的确没多少人链过去。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-08-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1084007" rel="nofollow">@grapeot</a><br><br />大家都能看懂的，大众的，肯定很多人写，权重就低了，哥现在主要还是要靠搜索引擎，权重很重要<br><br />只要我写过的，都得排前面才行，否则就白写了<br><br />（其实sigma很多人搜，我排名也比较前，但是没转化成流量，主要搜索出来的结果都是我这个博客的介绍，而不是介绍sigma这个词的文章）</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-08-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>有道理，如何选一个大家感兴趣但能写（或者能写得好看）的人又不多的领域就是学问了。这就是重要的东西。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-08-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1089009" rel="nofollow">@grapeot</a><br><br />嗯，感觉很多时候只能挖小的，之后慢慢积累，豆瓣就是这样发起来的</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

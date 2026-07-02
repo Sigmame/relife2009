@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubuntu/Debian从源码编译debian包 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>Ubuntu/Debian从源码编译debian包</h1>
+                    <div class="post-date">2012-12-01</div>
+                    <div class="post-meta">
+                        <span class="tag">贝壳</span>
+                        <span class="tag">ubuntu</span>
+                        <span class="tag">Debian</span>
+                        <span class="tag">dpkg</span>
+                        <span class="tag">Linux</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<h2>Ubuntu源里有的软件：</h2>
+ubuntu源里有的软件，理论上不用自己编译debian包，但是有时候，我们想对源里的软件做些修改，打些patch，就可以用这种方法，具体为：
+
+<strong>1.获取源文件</strong>
+
+源码包中通常包含3个文件，分别以dsc，orig.tar.gz和diff.gz为后缀名。
+其中 .orig.tar.gz 是软件原始源码包，没有经过任何修改； .diff.gz 是将源码包 debian 化的文件，包含一些补丁和编译规则；.dsc 描述了源码包的信息，上述命令是解压源码和打补丁的综合操作。
+使用apt-get source命令来获取源码包，它会将源码包下载到用户当前目录，并在命令执行过程中，调用dpkg-source命令，根据dsc文件中的信息，将源码包解压到同名目录中，应用程序的源代码就在这里面。
+sudo apt-get source tree
+另外，有时想用的源码包不是最新版本的，而是一些老版本。可以在新立得里面先强制版本。之后在执行命令。或者直接去old_archive.ubuntu.com上找老版本的dsc,orig.tar.gz,diff.gz等。
+要强调的是，在下载源码包前，必须确保安装了dpkg-dev（执行”apt-get install dpkg-dev”来安装），否则，只会下载源码包的3个文件，但不会解压缩源码包。当然你也可以自己用dpkg-source命令去解压缩源码包：
+dpkg-source -x tree-1.5.1.2.dsc
+
+<strong>2.获取依赖文件</strong>
+在编译源码包前，需要安装具有依赖关系的相关软件包。使用apt-get build-dep命令可以主动获取并安装所有相关的软件包。
+sudo apt-get build-dep tree
+
+<strong>3.打补丁或者修改源码：</strong>
+进入解压后的目录，直接修改源码，或者用补丁文件打上补丁。
+patch -p0 < xxx.patch
+其中-p0选项表示是从patch的diff文件路径的第一层开始找。
+
+<strong>4.编译源码包</strong>
+首先进入源码所在目录，使用dpkg-buildpackage命令来编译源码包，它会将生成的Deb软件包放置在上层目录中。
+cd tree-1.5.1.2
+sudo dpkg-buildpackage
+这样就会在当前目录编译生成可执行文件，并在上层目录生成tree-1.5.1.2-1_i386.deb
+<h2>第三方软件：</h2>
+这类软件是指ubuntu源里没有的第三方软件，制作成debian包可以供别人安装。具体方法为：
+
+<strong>1.首先需要安装dh-make:</strong>
+sudo apt-get install dh-make
+
+<strong>2.下载第三方源码并解压并作一些预处理</strong>
+$ tar xvjf tree-1.5.2.src.tar.bz2 // 解包
+$ mv tree tree-1.5.2 // 改目录名为 包名-版本号
+
+<strong>3.生成debian目录以及修改配置文件</strong>
+$ cd tree-1.5.2
+$ dh_make -s -e xieyan0811@sina.com.cn -f ../tree-1.5.2.src.tar.bz2 // 生成制作deb包所需的默认信息
+此时当前目录下生成了debian目录，此时通常修改两个文件：
+修改debian/control文件，配置你的信息，具体字段见参考部分
+修改debian/rules脚本，它决定编译参数
+
+<strong>4.使用dpkg-buildpackage编译</strong>
+$ dpkg-buildpackage -rfakeroot
+此时可以看到，上层目录中已建立了deb包
+<h2>参考资料：</h2>
+ubuntu 编译源码包 dsc diff.gz orig.tar.gz：  http://hi.baidu.com/avr_tutorial/item/624a6899b404da81591461da
+
+制作Ubuntu deb包使用方法：http://os.51cto.com/art/201001/176881.htm
+
+ 
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

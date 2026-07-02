@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>适用于micolog的windows live writer语法高亮插件 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>适用于micolog的windows live writer语法高亮插件</h1>
+                    <div class="post-date">2010-10-06</div>
+                    <div class="post-meta">
+                        <span class="tag">micolog</span>
+                        <span class="tag">博客相关</span>
+                        <span class="tag">Micolog</span>
+                        <span class="tag">blog-post</span>
+                        <span class="tag">code-hilighter</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>对于我等码农来说，在博客上贴代码是家常便饭，为了让代码更好看，代码高亮是必须的，作为离线博客最常用工具，windows live writer这方面的插件有不少，但很遗憾的是，我在网上花了九牛二虎之力，也没搜到适合我的博客平台micolog的语法高亮插件。</p>
+<p>既然放搜狗不行，那只好自己动手，丰衣足食。于是我找了个适用于wordpress的语法高亮插件，将其更改了下，貌似原来的名字叫做HiLi,现在已经既不清了，原网址也记不清了，貌似是下网址的主人写的：</p>
+<p><a href="http://www.badder.cn/">http://www.badder.cn/</a></p>
+<p>我主要对代码进行了如下改动：</p>
+<blockquote>
+	<p><span style="background-color: #ffffff">1. 对micolog和wordpress的高亮插件的语法进行了比较分析，从而对高亮语法的头的生成代码进行了更改，从而使值适用于micolog。</span></p>
+	<p><span style="background-color: #ffffff">2. 对html一些特殊字符进行了自动替换，如”>”替换成”&gt”,使高亮后的代码末尾不会出现类似”<stdio.h>”的多余代码。</span></p>
+	<p><span style="background-color: #ffffff">3. 增加了对某些行进行高亮的功能，这个功能对于比较长的代码中需要强调某行代码是很有用的。</span></p>
+</blockquote>
+<p>完成后的软件界面如下：</p>
+<p><a href="http://home.ustc.edu.cn/~dfliu/images/b341c4e5772e_14880/image.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="http://home.ustc.edu.cn/~dfliu/images/b341c4e5772e_14880/image_thumb.png" width="530" height="388" /></a></p>
+<p>下面是上面这段代码的高亮结果：</p>
+
+<pre class="brush: cpp; ruler: true ;first-line: 1; highlight: [1,4]">  using namespace std;
+
+int main()
+{
+  cout << "test"<<endl;
+}
+ </pre>
+<p>下载地址：</p>
+<p>编译好的dll：
+	<iframe style="padding-bottom: 0px; background-color: #fcfcfc; padding-left: 0px; width: 98px; padding-right: 0px; height: 115px; padding-top: 0px" title="Preview" marginheight="0" src="http://cid-264d14feb8ab1b38.office.live.com/embedicon.aspx/.Public/code/Dfliu.LiveWriterPlugins.MicoSynHighlighter.dll" frameborder="0" marginwidth="0" scrolling="no">
+	</iframe> 源码：
+	<iframe style="padding-bottom: 0px; background-color: #fcfcfc; padding-left: 0px; width: 98px; padding-right: 0px; height: 115px; padding-top: 0px" title="Preview" marginheight="0" src="http://cid-264d14feb8ab1b38.office.live.com/embedicon.aspx/.Public/code/micolog^_syntax^_highlighter.zip" frameborder="0" marginwidth="0" scrolling="no">
+	</iframe>
+</p>
+<p>使用方法：把dll考入windows live writer 插件目录（默认是C:\\Program Files\\Windows Live\\Writer\\Plugins）即可.</p>
+<p>enjoy~</p>
+<p><span style="color:#4f81bd;">btw：问一个在windows live writer上发micolog日志的问题</span></p>
+<p><span style="color:#4f81bd;">我用wlw发日志的时候，发现其slug无效，感觉是slug没被传输，有人碰到类似问题并且找到了解决方案吗？有的话在留言里告诉我，谢谢~</span></p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (1)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.epinv.com/" rel="nofollow">亿品元素</a></span>
+                        <span class="comment-date">2011-02-13</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>WLW不错的</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

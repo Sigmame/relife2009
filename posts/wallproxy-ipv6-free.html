@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教育网（ipv6）利用GAE(wallproxy)实现免费上网并且翻墙（附Wallproxy下载） - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>教育网（ipv6）利用GAE(wallproxy)实现免费上网并且翻墙（附Wallproxy下载）</h1>
+                    <div class="post-date">2010-09-24</div>
+                    <div class="post-meta">
+                        <span class="tag">未分类</span>
+                        <span class="tag">ipv6</span>
+                        <span class="tag">免费上网</span>
+                        <span class="tag">wallproxy</span>
+                        <span class="tag">翻墙</span>
+                        <span class="tag">下载</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p><span style="color: #ff0000;">注：没有ipv6该方法也有效，也可以实现翻墙，只是不能免费上网。只需跳过修改hosts，从注册GAE那步开始做即可。</span></p>
+<p><span style="color: #ff0000;">update 2011-04-15 貌似wallproxy现在已经死了，google已经无法下载，这里我附上我保留的备份版本下载（见文章最后）。</span></p>
+<p><span style="font-family: 微软雅黑; font-size: small;">现在很多高校的上网机制都是按流量计费，比如说中科院研究生院，研一就只有1G国际和2G的国内免费流量，这对现在多媒体横行的互联网来说是远远不够的，每次看到一个视频点的时候都要犹豫半天，其中辛酸只有局中人可知。而研二以上就直接没免费流量了，要上网还要交钱，并且当超了流量之后上网费用颇为可观。</span></p>
+<p><span style="font-family: 微软雅黑; font-size: small;">很不幸，我就是这些人中的一员。于是我在原来学校搭了一个代理服务器，由于中科院连我们学校是不计流量费的，因此可以实现免费上网（各位想要搭建的可以使用ccproxy+proxycap搭建，具体教程放狗搜）。但是，真正使用时发现，由于我用来搭建代理的服务器只有国内访问权限，因此有些国外网站或者ip在国外的网站，如听歌的网站xiami，就无法访问，很是郁闷。</span></p>
+<p><span style="font-family: 微软雅黑; font-size: small;">天无绝人之路，上面这条路走不通了，或者说走得比较郁闷，就必须找新的出路。万幸的是，现在ipv6还处于实验网阶段，是免费的，因此可能通过ipv6实现免费上网，于是我放狗搜“ipv6 免费上网”，知道了veno这个软件，它在ipv6环境下可以实现免费上网，但是，他是具有试用期的，试用期过后是需要付费的，这条路终非长久之计。</span></p>
+<p><span style="font-family: 微软雅黑; font-size: small;">于是，我想到了Gapproxy这个软件，网上很多人用它作为翻墙工具，那也就是一个代理，他是基于</span><a href="https://appengine.google.com"><span style="font-family: 微软雅黑; font-size: small;">Google App Engine（GAE）</span></a><span style="font-family: 微软雅黑; font-size: small;">的，而GAE是可以通过ipv6访问的，因此我们可以实现一个ipv6toipv4的免费代理，从而实现免费上网。其实，之前本科就用过Gapproxy来翻墙，但是当时Gapproxy还很不稳定，经常掉线，只好作罢。现在重操旧业，但是发现Gapproxy对于SSL（443端口）加密貌似支持还不够好，导致经常无法登陆facebook,twitter等网站。这条路也比较郁闷，于是继续放狗搜，终于搜到一条twitter推荐的翻墙软件-wallproxy，粗略的看了下，感觉靠谱，于是实验了一下，发现果然好用，并且功能也很强大，可配置性也很好。本文的剩余部分就将描述如何通过wall proxy实现免费上网并且翻墙。</span></p>
+<p><span style="font-family: 微软雅黑; font-size: small;">首先，为了节省安装过程的流量，这一步也是用wall proxy免费上网的必做步骤，先要<strong>修改hosts</strong>，网上有一份不定期的google ipv6 hosts文件，其可以在如下地址下载，如果因为被盾了，无法下载，大家可以搜一下，看看能否通过网页缓存看到，实在没办法，可以在本文后留言，我可以把它发给需要的人（我不敢在我的blog公布该份hosts，因为我还是怕我的blog被盾的）</span><span style="color: #ff0000;">在最后的那个包里也有最新的google ipv6 hosts，可直接下载那个包。</span></p>
+<p><span style="font-family: 微软雅黑; font-size: small;"> </span><a href="https://docs.google.com/Doc?docid=0ARhAbsvps1PlZGZrZG14bnRfNjFkOWNrOWZmcQ&hl=en"><span style="font-family: 微软雅黑; font-size: small;">https://docs.google.com/Doc?docid=0ARhAbsvps1PlZGZrZG14bnRfNjFkOWNrOWZmcQ&hl=en</span></a></p>
+<p><span style="font-family: 微软雅黑; font-size: small;">具体改host过程可以网上搜，其实只需要简单的进行hosts文件替换即可，如windows下为C:\\Windows\\System32\\drivers\\etc\\hosts,linux下为/etc/hosts。</span></p>
+<p><span style="font-family: 微软雅黑; font-size: small;">hosts改好以后，就可以访问google的大部分服务，包裹youtube，picasa，Gmail的chat栏也多了一个call phone的图标，可以打几个免费电话了。</span></p>
+<p><span style="font-family: 微软雅黑; font-size: small;">hosts只是准备工作之一，另外一个准备工作就是<strong>注册</strong></span><a href="https://appengine.google.com"><span style="font-family: 微软雅黑; font-size: small;"><strong>GAE</strong></span></a><span style="font-family: 微软雅黑; font-size: small;">了，GAE是google推出的一个云计算服务，用户可以在上面运行python的java程序，就像在自己的机器上一样。GAE在如下地址注册，和一般google服务不同的是，为了规避恶意注册，GAE需要手机认证，防止有些用户注册一堆账号，把各种乱七八糟的程序都放到上面跑。具体注册过程可以查看下文：</span></p>
+<p><a href="http://www.allengao.com/blog/register-gae-google-app-engine-apply.html"><span style="font-family: 微软雅黑; font-size: small;">http://www.allengao.com/blog/register-gae-google-app-engine-apply.html</span></a></p>
+<p><span style="color: #ff0000;">以下两步是为了给想体验下GAE本地开发的人的，假如只想上传，可以直接只下载SDUpload，文章最后的包里也有。</span></p>
+<p><span style="font-family: 微软雅黑; font-size: small;">注册完后，就要去<strong>下个GAE SDK</strong>，可以到</span><a href="http://code.google.com/appengine/"><span style="font-family: 微软雅黑; font-size: small;">http://code.google.com/appengine/</span></a><span style="font-family: 微软雅黑; font-size: small;">下载，只需要下载python版的，其链接是</span><a title="http://code.google.com/appengine/downloads.html#Google_App_Engine_SDK_for_Python" href="http://code.google.com/appengine/downloads.html#Google_App_Engine_SDK_for_Python"><span style="font-family: 微软雅黑; font-size: small;">http://code.google.com/appengine/downloads.html#Google_App_Engine_SDK_for_Python</span></a></p>
+<p><span style="font-family: 微软雅黑; font-size: small;">最后一步就是<strong>下载GAE的运行环境python</strong>了（linux用户很多默认系统就装了python，可跳过此步），需要下载3.0版本以下的，推荐2.5版本的，由于现在python已经更新到了3.x了，2.5版本的比较难找，我这里给出一个ftp下载地址</span><a href="http://www.python.org/ftp/python/2.5.1/"><span style="font-family: 微软雅黑; font-size: small;">http://www.python.org/ftp/python/2.5.1/</span></a></p>
+<p><span style="font-family: 微软雅黑; font-size: small;">以上只是先期准备工作，就绪后就可以正式开工了。</span></p>
+<p><span style="font-family: 微软雅黑; font-size: small;">先去wall proxy的google code 主页<strong>下载wallproxy</strong>，下载后解包，按照readme安装即可，具体过程如下（以下文字直接引用自wall proxy）：</span></p>
+<ul>
+<li>试用：<tt>WallProxy</tt>提供了两个试用服务端，普通Windows用户下载<a href="http://code.google.com/p/wallproxy/downloads/detail?name=wallproxy-win.rar&can=2&q=">Windows打包</a>后解压运行local目录下的proxy.exe或<tt>WallProxy.exe</tt>；安装有Python的Windows/Linux用户下载<a href="http://code.google.com/p/wallproxy/downloads/detail?name=wallproxy.tar.gz&can=2&q=">源码打包</a>后解压运行local目录下的proxy.py（依赖python-openssl包）。修改浏览器代理为127.0.0.1:8086或通过代理扩展设置127.0.0.1:8086为代理（使用了代理扩展的话，建议在配置文件proxy.conf中“AUTOPROXY_LIST = ”这行前面加一个#注释掉该行以加快代理选择速度）。打开<a href="http://twitter.com/">http://twitter.com</a>查看是否成功（<em>试用服务端屏蔽了www.youtube.com，建议搭建自己的服务端</em>）。</li>
+<li>搭建自己的服务端：终究用自己的服务端会更好，建议搭建自己的服务端。GAE版修改gae_server/app.yaml中your-gae-id后上传gae_server文件夹（<a href="http://code.google.com/intl/zh-CN/appengine/docs/python/tools/uploadinganapp.html#Uploading_the_App">如何上传</a>，也可使用SDUpload update gae_server上传），每个Google账户可创建10个GAE服务端；PHP版上传php_server文件夹下fetch.php到PHP空间www根目录。所得服务端地址为http://你的域名/fetch.php，将此地址修改到配置文件中即可。</li>
+<li>导入根证书：将ca.crt导入为根证书，以后遇到https链接就不会弹出证书无效的警告了。首次运行程序后会生成cert/ca.crt，Windows下IE等浏览器双击ca.crt选择导入证书按提示操作即可；Firefox依次操作：首选项->高级->加密->查看证书->证书机构->导入->选择ca.crt文件->选中第一项->确定；Linux下Chrome按照<a href="http://code.google.com/p/chromium/wiki/LinuxCertManagement">LinuxCertManagement</a>操作。导入后最好将以前添加例外的网站全部删除以避免冲突。</li>
+<li><tt>WallProxy</tt>使用了memcache缓存来节约流量和API调用（thx fcicq）,可以打开<a href="http://wallproxy/cache">http://wallproxy/cache</a>查看缓存情况，或者<a href="http://wallproxy/cache/reset">http://wallproxy/cache/reset</a>清除缓存。</li>
+<li>在GAE的Log查看界面可以看到每次访问的url/响应原始流量/传输流量。</li>
+</ul>
+<p><span style="font-family: 微软雅黑; font-size: small;">上述过程也比较简单，在此就不再赘述，如有问题可以放狗搜，或者直接留言。</span></p>
+<p><span style="font-family: 微软雅黑; font-size: small;">当一切工作都顺利完成以后，只需要将浏览器代理设为127.0.0.1:8086，你就可以开始体验通过ipv6免费上网，并且是在没有墙的世界畅游了。</span></p>
+<p><span style="font-family: 微软雅黑; font-size: small;">不过这还不够，有时本游走各种上网环境，难免会去没ipv6的环境，这是还要改代理感觉很麻烦。因此，还必须找一个快速切换代理的方法，于是我在chrome下找到了<strong>Proxy Switchy!</strong>这个插件，发现其管理和切换代理还是挺方便的，其下载地址为：</span></p>
+<p><a href="https://chrome.google.com/extensions/detail/caehdcpeofiiigpdhbabniblemipncjj"><span style="font-family: 微软雅黑; font-size: small;">https://chrome.google.com/extensions/detail/caehdcpeofiiigpdhbabniblemipncjj</span></a></p>
+<p><span style="font-family: 微软雅黑; font-size: small;">具体的安装使用可以参考下面这篇博文：</span></p>
+<p><span style="font-family: 微软雅黑; font-size: small;"><a href="http://www.laogeng.org/archives/670.html">http://www.laogeng.org/archives/670.html</a></span></p>
+<p><span style="color: #ff0000;">PS：本来貌似GAE是有1G上传和下载流量限制的，但是由于我们是用ipv6和GAE通讯的，因此貌似也是不计流量的~ </span></p>
+<p><span style="color: #ff0000;">如觉得本文对你有用，请点击标题下的分享到各种SNS的按钮，让更多人可以实现免费上网，顺便看看墙外的世界~</span></p>
+<p><span style="color: #ff0000;">Wallproxy下载地址（包括上文提到的各种辅助包）：</span><br />
+<span><iframe title ="Preview" scrolling="no" marginheight="0" marginwidth="0" frameborder="0" style="width:98px;height:115px;padding:0;background-color:#fcfcfc;" src="https://skydrive.live.com/embedicon.aspx/.Public/software/wallproxy^_etc.zip?cid=264d14feb8ab1b38&sc=documents"></iframe></span></p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (12)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">PP</span>
+                        <span class="comment-date">2010-10-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>技术流~</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.qhm123.com/" rel="nofollow">鸣</a></span>
+                        <span class="comment-date">2011-05-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你现在还在用吗？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">Yan</a></span>
+                        <span class="comment-date">2011-05-21</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-71002" rel="nofollow">@PP</a><br><br />技术流<br><br /></p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">aaron</span>
+                        <span class="comment-date">2011-05-31</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>求一份ipv6的host，万分感谢，louqun@foxmail.com</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-05-31</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1027016" rel="nofollow">@aaron</a><br><br />下载我文章最后的压缩包，那里面有</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://simple-man.tk/" rel="nofollow">简单点</a></span>
+                        <span class="comment-date">2011-10-24</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>教育网的孩子伤不起啊<br><br /><br><br />非教育网的也被学校关死了，电信屁都不敢放一个</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">Echo</span>
+                        <span class="comment-date">2011-10-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>本真学习的想法试了下，没有成功 直接访问 app.appspot.com/fetch.php 转到一个叫和谐社的twitterblog，但是通过更改 代理ip为127...就不行了。应该是wallproxy的配置有问题，请问您能详细讲下wallproxy的配置么<br><br />谢谢啦</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">IamFangqing</span>
+                        <span class="comment-date">2011-11-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>师兄好厉害，搞不懂~研究生院禁止流量就算了，有时候回来分不到Ip,这是什么原因啊？求解</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-11-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>ip资源太少了，上网高峰期青年公寓经常这样。。。<br>即使分到的ip也是别人刚下的，甚至是电脑关机或者死机，还没离线的ip</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">yaoyao5271</span>
+                        <span class="comment-date">2012-04-12</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>看不到最后的下载包，求发送！yaoyao5271@163.com</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2012-04-12</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-3010" rel="nofollow">@yaoyao5271 </a> <br>https://skydrive.live.com/?cid=264d14feb8ab1b38&id=264D14FEB8AB1B38%21794</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">yaoyao5271</span>
+                        <span class="comment-date">2012-04-12</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>下到了！谢谢!</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>
