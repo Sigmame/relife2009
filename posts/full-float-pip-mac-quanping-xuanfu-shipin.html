@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FullFloatPiP：让视频悬浮在 Mac 全屏应用之上 - Sigma</title>
+    <meta name="description" content="Mac 上全屏写代码时，Chrome 的画中画总被全屏应用挡住。于是我写了 FullFloatPiP——一个开源的 Chrome 扩展加 Swift 原生小工具，让视频窗口真正悬浮在全屏 IDE、终端之上，一边写代码一边看视频。">
+    <meta name="keywords" content="Mac 全屏 画中画, 全屏应用上方悬浮视频, 一边写代码一边看视频, macOS 视频置顶, Chrome 画中画 全屏失效, B站 YouTube 悬浮窗 Mac, 摸鱼看视频, FullFloatPiP, full-float-pip">
+    <meta name="author" content="Sigma">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://www.sigma.me/posts/full-float-pip-mac-quanping-xuanfu-shipin.html">
+    <link rel="alternate" hreflang="zh" href="https://www.sigma.me/posts/full-float-pip-mac-quanping-xuanfu-shipin.html">
+    <link rel="alternate" hreflang="en" href="https://www.sigma.me/posts/full-float-pip-picture-in-picture-above-fullscreen-mac.html">
+    <link rel="alternate" hreflang="x-default" href="https://www.sigma.me/posts/full-float-pip-picture-in-picture-above-fullscreen-mac.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="FullFloatPiP：让视频悬浮在 Mac 全屏应用之上">
+    <meta property="og:description" content="Mac 上全屏写代码时，Chrome 的画中画总被全屏应用挡住。于是我写了 FullFloatPiP——一个开源小工具，让视频窗口真正悬浮在全屏 IDE、终端之上。">
+    <meta property="og:url" content="https://www.sigma.me/posts/full-float-pip-mac-quanping-xuanfu-shipin.html">
+    <meta property="og:site_name" content="Sigma">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:locale:alternate" content="en_US">
+    <meta property="article:published_time" content="2026-06-14T00:00:00+08:00">
+    <meta property="article:author" content="https://github.com/Sigmame">
+    <meta property="article:tag" content="画中画">
+    <meta property="article:tag" content="macOS">
+    <meta property="article:tag" content="Chrome 扩展">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="FullFloatPiP：让视频悬浮在 Mac 全屏应用之上">
+    <meta name="twitter:description" content="Mac 全屏写代码时 Chrome 画中画总被挡住，于是我写了这个开源小工具，让视频悬浮在全屏 IDE、终端之上。">
+
+    <link rel="stylesheet" href="../style.css">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BlogPosting",
+          "@id": "https://www.sigma.me/posts/full-float-pip-mac-quanping-xuanfu-shipin.html#article",
+          "headline": "FullFloatPiP：让视频悬浮在 Mac 全屏应用之上",
+          "description": "Mac 上全屏写代码时，Chrome 的画中画总被全屏应用挡住。于是我写了 FullFloatPiP——一个开源的 Chrome 扩展加 Swift 原生小工具，让视频窗口真正悬浮在全屏 IDE、终端之上。",
+          "datePublished": "2026-06-14T00:00:00+08:00",
+          "dateModified": "2026-06-14T00:00:00+08:00",
+          "inLanguage": "zh-CN",
+          "mainEntityOfPage": "https://www.sigma.me/posts/full-float-pip-mac-quanping-xuanfu-shipin.html",
+          "author": { "@type": "Person", "name": "Sigma", "url": "https://github.com/Sigmame" },
+          "publisher": { "@type": "Person", "name": "Sigma", "url": "https://www.sigma.me" },
+          "keywords": "Mac 全屏 画中画, 全屏应用上方悬浮视频, 一边写代码一边看视频, macOS 视频置顶, FullFloatPiP",
+          "about": { "@id": "https://github.com/Sigmame/full-float-pip#software" }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://github.com/Sigmame/full-float-pip#software",
+          "name": "FullFloatPiP",
+          "alternateName": "full-float-pip",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "macOS 12+",
+          "url": "https://github.com/Sigmame/full-float-pip",
+          "sameAs": "https://github.com/Sigmame/full-float-pip",
+          "softwareHelp": "https://github.com/Sigmame/full-float-pip#readme",
+          "programmingLanguage": ["Swift", "JavaScript"],
+          "license": "https://opensource.org/licenses/MIT",
+          "author": { "@type": "Person", "name": "Sigma", "url": "https://github.com/Sigmame" },
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>我写了个 FullFloatPiP：让视频真正悬浮在 Mac 全屏应用之上</h1>
+                    <div class="post-date">2026-06-14</div>
+                    <div class="post-meta">
+                        <span class="tag">macOS</span>
+                        <span class="tag">Chrome 扩展</span>
+                        <span class="tag">画中画</span>
+                        <span class="tag">Swift</span>
+                        <span class="tag">开源</span>
+                        <span class="tag">效率工具</span>
+                    </div>
+                </header>
+                <div class="post-content">
+                    <blockquote>🌐 Read this in English: <a href="full-float-pip-picture-in-picture-above-fullscreen-mac.html">Floating Video Above Fullscreen Apps on macOS</a></blockquote>
+
+                    <p>我几乎所有活都在全屏下干。一个 Space 放编辑器，一个放终端，一个放浏览器——没有标题栏，没有 Dock，清清爽爽。这种方式我很喜欢，直到我想一边写代码一边看点视频。</p>
+
+                    <p>场景大概是这样：跟着一个技术分享听，或者瞄一眼直播，又或者就想在屏幕角落挂个视频放着背景音，然后闷头改代码。在 Windows 上、或者 Mac 上不开全屏的时候，Chrome 自带的<strong>画中画（Picture-in-Picture）</strong>干这事完全没问题。可只要我的编辑器一进全屏，那个悬浮的画中画窗口就消失在它后面了。它确实还"置顶"着——只不过是在<em>另一个 Space</em> 上置顶。被这事烦了太久，我干脆自己写了个工具，并且开源了出来：<a href="https://github.com/Sigmame/full-float-pip">GitHub 上的 FullFloatPiP</a>。</p>
+
+                    <h2>为什么 Mac 上 Chrome 的画中画飘不到全屏应用之上？</h2>
+
+                    <p>这事我一开始以为是 bug，认真查下去才发现，不是 bug，是两个设计叠在一起的结果。</p>
+
+                    <p>第一个是 <strong>macOS 的 Spaces（桌面空间）机制</strong>。当你把一个应用切到全屏，macOS 不只是把窗口最大化，而是把这个应用单独丢进一个专属的 Space。你那些普通窗口，包括 Chrome 弹出来的画中画小窗，还留在桌面那个 Space 上。你一切进全屏 IDE，桌面 Space 上的东西按定义就被挡住了。所谓"置顶"，只是"在它自己那个 Space 里置顶"而已，而全屏应用相当于给自己砌了一堵墙。</p>
+
+                    <p>第二个是<strong>浏览器沙箱</strong>。出于很正当的安全考虑，Chrome 没有权限去创建那种能凌驾在全屏应用之上的系统级窗口——这个权限浏览器根本就没有。所以不管你写多么巧妙的 JavaScript，或者装多牛的画中画插件，只要窗口是 Chrome 自己创建的，它就盖不住全屏应用。这个能力在浏览器<em>下面</em>，在操作系统那一层。</p>
+
+                    <p>我把能找到的"窗口置顶"工具和画中画插件挨个试了一遍，全都撞在同一堵墙上：开全屏之前一切美好，全屏一开，窗口就没了。</p>
+
+                    <h2>我到底想要什么</h2>
+
+                    <p>需求其实很短，但是很固执：</p>
+
+                    <ul>
+                        <li>一个真正能盖在<strong>全屏 IDE 或终端之上</strong>的悬浮视频窗口；</li>
+                        <li>能跨 Space，切桌面的时候跟着我走，而不是被落在原地；</li>
+                        <li>支持我真正在看的网站——YouTube、B站、Twitch，而不只是通用的 HTML5 视频；</li>
+                        <li>外观干净、无边框，只有鼠标悬停时才冒出控制条。</li>
+                    </ul>
+
+                    <p>现成的东西没有一个能同时满足这四条。于是某个周末，我不找了，开始自己写。</p>
+
+                    <h2>于是有了 FullFloatPiP</h2>
+
+                    <p><a href="https://github.com/Sigmame/full-float-pip">FullFloatPiP</a> 就是那个我一直希望存在的工具：一个在 macOS 上真正"始终置顶"的悬浮视频窗口，<em>哪怕另一个应用在全屏，它也稳稳待在上面</em>。我可以把一个 YouTube 教程丢进角落的小窗，把编辑器切全屏，视频还在那儿，悬浮在一切之上。现在大家管这叫"vibe coding"，也可以叫摸鱼写代码：全屏终端，角落挂个直播或者 lo-fi，全程不用来回切窗口。这正是它要解决的场景。</p>
+
+                    <h2>它是怎么实现的</h2>
+
+                    <p>核心思路是：别再逼浏览器去做它没权限做的事。FullFloatPiP 是一个<strong>混合架构</strong>——一个 Chrome 扩展，加上一个用 Swift 写的原生 macOS 小程序，两者通过 Chrome 的 <strong>Native Messaging</strong> 协议通信。</p>
+
+                    <ul>
+                        <li><strong>Chrome 扩展</strong>负责浏览器擅长的部分：检测页面上的视频（图标上的角标会告诉你检测到几个）、抓到正确的视频流、处理各个网站的特殊情况。</li>
+                        <li><strong>Swift 原生程序</strong>负责浏览器被禁止做的部分：用 <code>NSPanel</code> 把真正的悬浮窗口渲染出来，设成最高的窗口层级，再配上合适的 collection behavior，让它能跨所有 Space 显示、并盖在全屏应用之上。</li>
+                    </ul>
+
+                    <p>正因为这个窗口是由系统层面的原生进程创建的——而不是被沙箱关着的浏览器——它终于能待在我一直想要的位置上了。视频加载也是分层的：能直接从 <code>&lt;video&gt;</code> 元素拿就直接拿；YouTube 走一个带正确 Referer 头的本地 HTTP 小服务器；B站、Twitch 这类用各站点专门的嵌入播放器；实在不行就整页加载、注入 JavaScript 兜底。</p>
+
+                    <h2>我每天都在用的功能</h2>
+
+                    <ul>
+                        <li><strong>盖在一切之上</strong>，包括全屏应用，并且跨 Space 都能看见。</li>
+                        <li><strong>干净的无边框窗口</strong>，鼠标悬停时浮出一条 YouTube 风格的控制条：播放/暂停、拖动进度、快进 10 秒、音量与静音、当前时间/总时长。</li>
+                        <li><strong>自动检测视频</strong>，角标显示当前页面有几个视频。</li>
+                        <li>拖动边角缩放时<strong>锁定宽高比</strong>。</li>
+                        <li><strong>记住窗口位置</strong>，下次打开还在原地。</li>
+                        <li>拖标题栏可以移动；按 <code>ESC</code> 关闭。</li>
+                    </ul>
+
+                    <h2>支持哪些网站</h2>
+
+                    <p>开箱即用地支持 <strong>YouTube、哔哩哔哩（B站）、Twitch、优酷、爱奇艺、腾讯视频、抖音</strong>，其它网站则用通用的 HTML5 视频检测兜底。</p>
+
+                    <h2>怎么装</h2>
+
+                    <p>你需要 macOS 12（Monterey）或更高版本、Google Chrome，以及 Xcode 命令行工具。然后克隆下来跑一个脚本就行：</p>
+
+                    <pre>git clone https://github.com/Sigmame/full-float-pip.git
+cd full-float-pip
+chmod +x scripts/install.sh
+./scripts/install.sh</pre>
+
+                    <p>脚本会编译 Swift 程序、安装可执行文件、配置好 Chrome Native Messaging，并引导你在 <code>chrome://extensions</code> 里加载扩展。装完之后：打开一个支持的视频网站，点 FullFloatPiP 图标，选一个视频，点 <strong>Float（悬浮）</strong>，然后随便切到哪个全屏应用都行。完整说明在 <a href="https://github.com/Sigmame/full-float-pip#readme">GitHub 上的 README</a> 里。</p>
+
+                    <h2>现在还做不到的事</h2>
+
+                    <p>与其吹得天花乱坠，不如老实交代：</p>
+
+                    <ul>
+                        <li><strong>有 DRM 保护的内容</strong>（Netflix、Disney+）放不了——Widevine 不允许它在这种隔离的悬浮窗里播放。</li>
+                        <li>部分 <code>blob:</code> 地址会退回到整页加载。</li>
+                        <li>登录/Cookie 状态不会和你主 Chrome 会话共享。</li>
+                        <li>它<strong>只支持 macOS</strong>——整个核心就是那层原生窗口，所以没有 Windows 和 Linux 版本。</li>
+                    </ul>
+
+                    <h2>它是开源的，欢迎来玩、来拆、来改</h2>
+
+                    <p>FullFloatPiP 采用 MIT 许可证，放在 GitHub 上。我写它纯粹是为了挠自己的痒，但如果你也常年泡在全屏里、也一直想让视频能浮在全屏之上，那它说不定也能挠到你的痒处。如果真用上了，点个 star 能帮更多人找到它，issue 和 PR 也都非常欢迎。</p>
+
+                    <p>👉 <strong>源码在这里：<a href="https://github.com/Sigmame/full-float-pip">github.com/Sigmame/full-float-pip</a></strong></p>
+
+                    <p>如果你也把整套工作流都建在全屏应用上，又一直默默怀念那种"干着活还能顺手看点东西"的状态——这个小工具帮我把它找回来了，希望也能帮到你。</p>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma.</p>
+        </div>
+    </footer>
+</body>
+</html>

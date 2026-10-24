@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Micolog添加自定义模块 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>Micolog添加自定义模块</h1>
+                    <div class="post-date">2010-10-23</div>
+                    <div class="post-meta">
+                        <span class="tag">blog-related</span>
+                        <span class="tag">code</span>
+                        <span class="tag">micolog</span>
+                        <span class="tag">blog-related</span>
+                        <span class="tag">Micolog</span>
+                        <span class="tag">code</span>
+                        <span class="tag">self-model</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p><span style="font-family: 微软雅黑;">有时，我们的博客需要经常更新一些模块的内容，如广告栏，以及一些其他不同的人设置不一样的工具。为了方便管理，这些模块最好都要移到后台，这样就可以经常更改模块内容而不用更改博客源码重新上传。之前，我在</span><a href="http://colin-young.appspot.com"><span style="font-family: 微软雅黑;">colin-young</span></a><span style="font-family: 微软雅黑;">的博客上看到了一篇如何后台管理侧边栏模块的文章，受此启发，我想也可以把任何位置的模块都实现后台管理，经过尝试发现可行，具体效果直接看本文的中间和下面，左边的广告条以及aboutme就行了。在此简述一下实现方法（和colin-young的方法几乎一样，只是将其推广了）。</span></p>
+<ul>
+<li>在“\\micolog\\model.py”搜索“blognotice=db.TextProperty(default='')”，在其后加入：
+<pre class="brush: py; ruler: true ;first-line: 1; highlight: []"> YouModelName=db.TextProperty(default='') </pre>
+</li>
+<li>在“\\micolog\\views\\admin\\setup.html”搜索“blog.blognotice”，在30行处关于设置blognotice的代码，仿照其语法，添加如下代码：
+<pre class="brush: html; ruler: true ;first-line: 1; highlight: []"><tr valign="top">
+<th scope="row">{% trans "YouModelName:"%}</th>
+<td><textarea id="YouModelName" style="width:95%" cols="45" rows="2" name="YouModelName">{{blog.YouModelName|escape}}</textarea>
+</td>
+</tr> </pre>
+<br />继续搜索blognotice，大概170行有如下代码
+<pre class="brush: html; ruler: false; first-line: 1"><input value="title,subtitle,...,default_link_format,blognotice" type="hidden" name="str_options" /></pre>
+在blognotice附近添加你的模块名 </li>
+<li>在需要调用该模块的地方，如sidebar.html,single.html等模板文件中，加入调用代码：
+<pre class="brush: html; ruler: false; first-line: 1"><div id="YouModelName" class="widget widget_YouModelName">
+<h3>YouModelName</h3>
+<ul>
+{{blog.YouModelName}}
+</ul>
+</div></pre>
+</li>
+<li>上传部署，在后台即可以看到模块设置了，支持任何html标签（注意，不能够转义，默认的blognotice转义了，即上面那步为{{blog.YouModelName}}而不是{{blog.YouModelName|escape}}） </li>
+</ul>
+<p>Done & enjoy~</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (14)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">fulee</span>
+                        <span class="comment-date">2010-10-23</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>老是调用不成功，网站程序可不可以提供一下啊？fulee12@gmail.com</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.debuglife.tk" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2010-10-23</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>@fulee 好的，请查收，有问题可以在在此留言~</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">漫步者</span>
+                        <span class="comment-date">2010-11-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>我和一楼的一样调用不成功，麻烦博主也发给我一份： 42557252@qq.com  谢谢！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.debuglife.tk" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2010-11-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-406002" rel="nofollow">@漫步者</a><br><br />已发，请查收~<br><br />btw：你的邮箱不用给的，只需要回复的email一栏填就行了，这样不会被垃圾邮件骚扰</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.air-randy.us/" rel="nofollow">air jordans</a></span>
+                        <span class="comment-date">2010-12-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>希望楼主能分享给我下，我也不行。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://cvwyg-blog.appspot.com" rel="nofollow">cvwyg</a></span>
+                        <span class="comment-date">2010-12-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>楼主也给俺一个吧~~随便问下楼主的Advertisement是如何申请的~~？呵呵·~~</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.debuglife.tk" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2010-12-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-622001" rel="nofollow">@cvwyg</a><br><br />呵呵，看了楼上的网站貌似不是用我的主题，并且问的人太多了，我发不太过来<br><br />那ads是在google adsense申请的，www.google.com/adsense</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://simuvip.appspot.com/" rel="nofollow">kmppp</a></span>
+                        <span class="comment-date">2011-01-18</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>给俺一个吧~~<br><br />多谢楼主</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.chanue.com" rel="nofollow">许岑</a></span>
+                        <span class="comment-date">2011-04-23</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>哈，从google竟然搜到你这来了，写得很详细，调用成功！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-04-23</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1001017" rel="nofollow">@许岑</a><br><br />呵呵，有人用我很欣慰~</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://flyfire-blog.appspot.com" rel="nofollow">flyfire</a></span>
+                        <span class="comment-date">2011-05-04</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>麻烦楼主发一份哈，谢谢了！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.jiek.co.cc" rel="nofollow">jia</a></span>
+                        <span class="comment-date">2011-12-02</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>博主你好 看到你主题我就很喜欢 我是用GAE空间 装上你的主题后边栏部分标题都是英文 麻烦能教我改下吗</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://m.biyeg.com" rel="nofollow">碧叶阁</a></span>
+                        <span class="comment-date">2012-02-13</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>我的模板是英文的，该主题有没有中文啊？？？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2012-02-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-2534" rel="nofollow">@碧叶阁 </a> <br>我改过一个中文的，但是不一定能直接用 你要中文其实可以自己改，基本上只需要改sidebar.html single.html 以及comments.html就ok了，并且改动不多</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

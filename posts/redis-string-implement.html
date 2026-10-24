@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>非关系型数据库(NoSQL)Redis实现之String实现 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>非关系型数据库(NoSQL)Redis实现之String实现</h1>
+                    <div class="post-date">2011-06-25</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">数据库</span>
+                        <span class="tag">非关系型数据库</span>
+                        <span class="tag">Redis</span>
+                        <span class="tag">NoSQL</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>Redis是一个性能非常优异的<a href="http://www.sigma.me/2011/06/11/intro-to-nosql.html">非关系型数据库</a>，有测试表明，在Linux 2.6, Xeon X3320 2.5Ghz配置的系统中，Redis性能能够达到SET操作每秒钟 110000 次，GET操作每秒钟 81000 次。</p>  <p>其本质上是一个键值(Key-Value)数据库，类似于memcache，但其支持存储的value类型相对更多，包括string(字符串)、list(链表)、set(集合)和zset(有序集合)。据新浪微博首席架构师透露，新浪微博系统里就采用了Redis数据库。Redis的最新版本是2.2.11，现在开发非常活跃，更新非常快。</p>  <p>Redis有四种数据类型：string,list,set及sorted set。其中，String是最基本的数据类型，也是其他几种数据类型的基础，其中所有的key值就是String类型的。下面介绍string类型的数据结构及操作：</p>  <p>Redis的String实现是在sds.c文件中实现的（sds代表Simple Dynamic Strings）。</p>  <p>String的结构体定义sdshdr在sds.h中定义：</p>  <pre class="brush: c; ruler: true ;first-line: 1; highlight: []"> struct sdshdr {
+    long len;
+    long free;
+    char buf[];
+};
+ </pre>
+
+<p> </p>
+
+
+
+<p>buf区域是存储真正的string值，len域是为了能够在O(1)时间获取buf的长度，free是指buf中的剩余比特数。</p>
+
+<p>在sds.h中，还定义了一个字符串指针类型,名为sds，意思是指向buf区的指针：</p>
+
+<pre class="brush: c; ruler: true ;first-line: 1; highlight: []"> typedef char *sds;
+ </pre>
+
+<p>在sds.c中，有一个创建redis string的函数，该函数会在内存中创建一个sdshdr结构体，并且返回buf区域的指针,可以实现快速的创建Redis string并返回sh-buf:</p>
+
+<pre class="brush: c; ruler: true ;first-line: 1; highlight: []"> sds sdsnewlen(const void *init, size_t initlen) {
+    struct sdshdr *sh;
+
+    sh = zmalloc(sizeof(struct sdshdr)+initlen+1);
+#ifdef SDS_ABORT_ON_OOM
+    if (sh == NULL) sdsOomAbort();
+#else
+    if (sh == NULL) return NULL;
+#endif
+    sh->len = initlen;
+    sh->free = 0;
+    if (initlen) {
+        if (init) memcpy(sh->buf, init, initlen);
+        else memset(sh->buf,0,initlen);
+    }
+    sh->buf[initlen] = '\\0';
+    return (char*)sh->buf;
+}
+ </pre>
+
+<p>给定一个buf，在sds.c中第一个函数快速的返回该buf对应Redis string的len值函数sdslen:</p>
+
+<pre class="brush: c; ruler: true ;first-line: 1; highlight: []"> size_t sdslen(const sds s) {
+    struct sdshdr *sh = (void*) (s-(sizeof(struct sdshdr)));
+    return sh->len;
+}
+ </pre>
+
+<p>在这里解释下，结构体的sizeof值不包括指针的值，我原来以为指针是int型（32位机器），应该算一个int，而事实上，通过实验，sdshdr的sizeof值就是len+free的size。所以上面s-(sizeof(strcut sdshdr))就是指向原来的sdshdr结构体的指针。</p>
+
+<p>在这里，很多人也许对sdsnewlen以及sdslen这两个函数觉得奇怪，为什么sdsnewlen不直接返回sdshdr结构体，sdslen为什么不直接用shshdr做参数。个人感觉这里为了提高性能，在sdsnewlen中，直接返回最常需要的值：buf区的内容（比如我们查询key，我们不会关注len以及free，一般都是buf的值）；而在sdslen中，由于我们经常使用buf，所以也只知道buf的指针，而不知道sdshdr的指针，因此，直接用sds指针方便。</p>
+
+<p>另外，我看代码时有另外一个疑问，sizeof这东西会不会很占时间，后来想了想，对于这种定长的结构（包括元数据类型，数据，结构体等），sizeof应该是编译时确定的，直接静态链接，不会消耗运行时间。因此对性能没有影响。后来上网查了下，并自己写了些代码编译成汇编码，确认了我的想法。</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (7)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.ch678.com" rel="nofollow">代孕</a></span>
+                        <span class="comment-date">2011-06-27</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>我来逛逛，顺便帮博主顶一下，嘿嘿。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.nblipin.net/" rel="nofollow">宁波礼品公司</a></span>
+                        <span class="comment-date">2011-06-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>第一次来观摩此博客 留个记号 方便下次造访 谢谢博主<br><br /></p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">Yan</a></span>
+                        <span class="comment-date">2011-06-29</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你怎么对NoSQL数据库这么感兴趣？这两天在搞SQL Server性能调优，苦逼啊。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-06-29</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1062003" rel="nofollow">@Yan</a><br><br />你怎么又玩SQL sever了。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">pally</span>
+                        <span class="comment-date">2011-07-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>谢谢分享！<br><br /></p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">张禄</span>
+                        <span class="comment-date">2014-02-25</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>请问struct sdshdr *sh = (void*) (s-(sizeof(struct sdshdr)))这句看不懂，到底是怎么实现sds到sdshdr的？？？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">张禄</span>
+                        <span class="comment-date">2014-02-25</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-93811" rel="nofollow">@张禄 </a> 我懂了，不过谢谢你的文章。它是根据地址来找到一个sdshdr结构</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

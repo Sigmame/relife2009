@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>处理器的存储子系统（二）-- Cache - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>处理器的存储子系统（二）-- Cache</h1>
+                    <div class="post-date">2011-01-13</div>
+                    <div class="post-meta">
+                        <span class="tag">读书笔记</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">study</span>
+                        <span class="tag">Cache</span>
+                        <span class="tag">CPU</span>
+                        <span class="tag">Sigma</span>
+                        <span class="tag">memory system</span>
+                        <span class="tag">处理器</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>趁着刚考完高性能，还能记得一点东西，赶快写些cache相关的，算是回应之前那篇关于<a href="http://www.sigma.me/2010/12/28/mem_system_summary.html">存储概述</a>的文章.</p>
+<p>在现在的CPU里，Cache所占的晶体管数目都达到80%以上，所以设计一个高速度低功耗的Cache很重要。</p>
+<p>具体见下表（片内RAM主要就是指Cache，表引自老大的ppt）：</p>
+<table border="0" cellspacing="0" cellpadding="2" width="522">
+<tbody>
+<tr>
+<td width="133" valign="top">Processor</td>
+<td width="133" valign="top">% Area (­cost)</td>
+<td width="254" valign="top">%Transistors(­power)</td>
+</tr>
+<tr>
+<td width="133" valign="top">Alpha 21164</td>
+<td width="133" valign="top">37%</td>
+<td width="254" valign="top">77%</td>
+</tr>
+<tr>
+<td width="133" valign="top">StrongArm SA110</td>
+<td width="133" valign="top">61%</td>
+<td width="254" valign="top">94%</td>
+</tr>
+<tr>
+<td width="133" valign="top">Pentium Pro</td>
+<td width="133" valign="top">64%</td>
+<td width="254" valign="top">88%</td>
+</tr>
+</tbody>
+</table>
+<p>首先，Cache的作用，这个大家都知道，就是为了加快访存速度，尽量能将CPU喂得饱一点。</p>
+<p>其次，Cache的内容，这个大家也都知道，一般就是tag和数据，需要注意的是，数据一般不会是只有一个字节，一般都有32个字节或以上，这些所有数据组成一个Cache行（Cache Line，有时译作Cache块），这时候会有一个offset的概念，就是指在Cache Line内的偏移量。</p>
+<p>再次，Cache的相连方式，有全相连，组相连，直接相连，全相连Cache利用率最高，但是，由于Tag位数很多，并且需要全比较，硬件复杂，功耗也高，基本没用。而直接相连Cache利用率太低了，所以几乎不用。一般只用组相连，并且当组数大于8时，增加组数利用率提高不了多少。至于具体的相连方式，随便翻本书，讲的详细的很，不再赘述。</p>
+<p>还有一些关于Cache的就是发生Cache Miss时的处理策略，比如说替换算法，写策略（比如写穿透，写分配），但这些东西也是很容易找到的，本文也不赘述，下面重点讲讲设计一个高速度低功耗的Cache系统的主要技术.其实提高速度和减少功耗往往也不一定是矛盾的，某种方法对这两方面都有提高。</p>
+<h2>1. 提高Cache速度方面的设计技术</h2>
+<p>主要有增大Cache容量，增大块大小（可能会增加伪共享），增加相连度等方法，但这些都比较容易理解。下面主要讲一下现代处理器设计里面的常用到的虚地址Cache。</p>
+<p>一般来说，Cache里面的地址索引都是用物理地址索引，不会用虚地址索引，但这就会导致一个问题，由于程序里面所用到的地址都是虚地址，因此，这些地址需要先进行转化，转化成物理地址(后面关于TLB的文章会讲到，这就是页表)，才能用来索引访问Cache，这就导致了访问Cache的时间增加了转化时间。那有没有办法把这些转化时间减去呢，答案是有，那就是虚地址Cache，实地址和虚地址Cache的比较如下图：</p>
+<p><img style="display: block; float: none; margin-left: auto; margin-right: auto;" src="http://3fnp6q.blu.livefilestore.com/y1pc40achaiMSlUbAgHrEoXLB1jmWKT7ZvQ0AlaSmbSBGg8u-S6O01xx1GlNGVUAnsKUTbvja5TcXW9hi__udOcuoILDeGztuk0/cache_va_pa.jpg?psid=1" alt="" width="251" height="181" /><br />
+但是，用虚地址索引会导致一个问题，那就是两个进程的虚地址可能是一样的,而其物理地址不一样，这就会导致一个“错误共享”问题。解决这个问题的一个办法就是每次切换进程都刷一次Cache，但这会增加Cache冷失效，导致很高的代价。另一个方法是在Cache Line 上加一个进程id号的域，这会增加Cache面积，尤其是进程号的取值可以很大的时候。</p>
+<p>还有一个问题就是别名问题，和“错误共享”相反，这个问题是，本来需要共享的（比如为了进程中通信），但是由于两个进程对应同一物理地址的虚拟地址不一样，导致共享不成功。解决这一问题的方法是虚索引实Tag技术（<strong>Virtually indexed, physically tagged, VIPT</strong>）,即在用Index从cache中读Tag的同时，进行虚实地址转换，可以使用物理地址做tag来比较确定选用索引出来的数据。但这会导致一个问题，就是当页大小（Page size）小于一个Cache组大小的时候，无法保证虚索引和实索引的一致性，此时需要用到也着色技术（Page coloring），这需要操作系统支持。具体如下图：<br />
+<img style="display: block; float: none; margin-left: auto; margin-right: auto;" src="http://3fnp6q.blu.livefilestore.com/y1p9hARoz8qRe4hec5ws0yo2To98yrPHEsnjjLuUerw_TxzF_CQsmqiPLlyOk4pOFju4b5GbKCmp7iN7f0zoOaT6AKxsZUFU7Oz/cache_vipt.jpg?psid=1" alt="" width="492" height="142" /></p>
+<h2>2. 降低Cache功耗方面的设计</h2>
+<p>这可以从两方面考虑，一方面是降低失效，可以有Victim Cache技术，硬件预取技术等。其中Victim Cache是在原来的Cache旁加一个小的Buffer（叫做Victim Cache），当换出来的块可以先放到Victim Cache（Victim Cache一般采用全相连），这样的话，下次用到可以直接在此取，不用去主存取，降低了Cache容量缺失率，减少时间的同时也降低了功耗。预取就是当访存总线空闲的时候，把可能用到的数据先取到Cache.</p>
+<p>另外一个比较重要的技术就是路预测，比如对于8路组相连的Cache，index索引后会有八个结果，一般情况下需要将Tag和这八个结果一一比较，会消耗比较多的功耗。路预测就是根据局部性原理，猜测会用那路，这样只和那一路比较，只有比较失败的时候才和其他的比较。当预测准确率较高时，可以大大减少比较次数，降低功耗。</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (1)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">cc16</span>
+                        <span class="comment-date">2014-01-19</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你好~有幸拜读大作，受益良多。近期正在找讲cache的书，请您推荐两本可以吗？最好是中文的。谢谢。</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

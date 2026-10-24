@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>程序(进程)在内存中的组织-由ld_brk_point以及brk函数谈起 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>程序(进程)在内存中的组织-由ld_brk_point以及brk函数谈起</h1>
+                    <div class="post-date">2012-04-09</div>
+                    <div class="post-meta">
+                        <span class="tag">编译技术</span>
+                        <span class="tag">贝壳</span>
+                        <span class="tag">编译</span>
+                        <span class="tag">内存分配</span>
+                        <span class="tag">Linux</span>
+                    </div>
+                </header>
+                <div class="post-content">
+今天调龙芯模拟器，发现里面有个ld_brk_point,一直不知道是啥东西，后来搜了下，发现就是malloc函数申请空间的起始地址。改值可以通过brk()以及sbrk函数设置。为了说清楚这个问题，有必要先了解下Linux下程序运行时（进程）在内存中的组织。
+
+<figure><a href="http://www.sigma.me/wp-content/uploads/2012/04/linuxFlexibleAddressSpaceLayout.png"><img class="size-full wp-image-1174233  " title="linuxFlexibleAddressSpaceLayout" src="images/2012/04/linuxFlexibleAddressSpaceLayout.png" alt="linux Flexible Address Space Layout" width="600" height="513" /></a></figure>
+
+如上图，总体来说，对于32位的linux程序，总共可访问的地址空间为4G，但是由于有1G预留给了内核，因此用户程序空间才3G，而这3G空间（实际程序用到的空间一般小于这个值），又分为代码段（Text segment），常量数据段（Data segment），BSS段（BSS segment）以及堆栈段，一般来说，各段存储的数据如下：
+<ul>
+	<li>代码段(Text segment):程序的二进制代码，一般来说，程序PC的范围就在这段(执行动态链接库代码例外)。</li>
+	<li>常量数据段（Data segment）:存储常量数据(初始化好了的全局变量以及静态变量)，如常量字符串，一般全局常量都放在此处，但是局部常量分配和编译器相关。</li>
+	<li>BSS段(BSS segment):存储未初始化的静态变量等。</li>
+</ul>
+<p style="padding-left: 30px;">以上程序段，都是通过操作系统的load程序在程序加载时分配的，不会动态管理。下面的堆栈段就需要动态管理了。</p>
+
+<ul>
+	<li>堆（Heap），这些内存由操作系统的提供的malloc等系统调用管理。其中就会用到brk以及sbrk这些函数，来设置新空间分配的起始地址，堆一般比较大，地址向上增长。</li>
+	<li>栈（Stack），这些空间一般由用户程序自行管理，如函数调用中传参以及返回值就需要用到该段，地址向下增长。假如堆顶和栈顶地址想撞了，malloc函数申请空间就会失败（一般来说，malloc申请空间时，回比较ld_brk_point和栈顶指针sp的值）。</li>
+</ul>
+下面给出一个程序的memory dump:
+<pre class="brush: actionscript3; gutter: true">======= Memory map: ========
+08048000-08118000 r-xp 00000000 08:07 32899      /home/sim-wattch-1.02e/sim-outorder
+08118000-0811c000 rw-p 000cf000 08:07 32899      /home/sim-wattch-1.02e/sim-outorder
+0811c000-09ffa000 rw-p 00000000 00:00 0          [heap]
+b7dde000-b7dfb000 r-xp 00000000 08:07 83724      /lib/libgcc_s.so.1
+b7dfb000-b7dfc000 rw-p 0001c000 08:07 83724      /lib/libgcc_s.so.1
+b7e0c000-b7e64000 rw-p 00000000 00:00 0 
+b7e64000-b7fa4000 r-xp 00000000 08:07 91024      /lib/i686/cmov/libc-2.11.2.so
+b7fa4000-b7fa6000 r--p 0013f000 08:07 91024      /lib/i686/cmov/libc-2.11.2.so
+b7fa6000-b7fa7000 rw-p 00141000 08:07 91024      /lib/i686/cmov/libc-2.11.2.so
+b7fa7000-b7faa000 rw-p 00000000 00:00 0 
+b7faa000-b7fce000 r-xp 00000000 08:07 91008      /lib/i686/cmov/libm-2.11.2.so
+b7fce000-b7fcf000 r--p 00023000 08:07 91008      /lib/i686/cmov/libm-2.11.2.so
+b7fcf000-b7fd0000 rw-p 00024000 08:07 91008      /lib/i686/cmov/libm-2.11.2.so
+b7fde000-b7fe2000 rw-p 00000000 00:00 0 
+b7fe2000-b7fe3000 r-xp 00000000 00:00 0          [vdso]
+b7fe3000-b7ffe000 r-xp 00000000 08:07 81305      /lib/ld-2.11.2.so
+b7ffe000-b7fff000 r--p 0001a000 08:07 81305      /lib/ld-2.11.2.so
+b7fff000-b8000000 rw-p 0001b000 08:07 81305      /lib/ld-2.11.2.so
+bffeb000-c0000000 rw-p 00000000 00:00 0          [stack]
+</pre>
+至于brk以及sbrk的用法，由于资料二说得比较清楚，在此不在赘述。
+
+参考资料：
+<a href="http://stackoverflow.com/questions/6988487/what-does-brk-system-call-do">http://stackoverflow.com/questions/6988487/what-does-brk-system-call-do</a>
+<a href="http://www.kernel.org/doc/man-pages/online/pages/man2/brk.2.html">http://www.kernel.org/doc/man-pages/online/pages/man2/brk.2.html</a>
+
+图片来源：<a href="http://duartes.org/gustavo/blog/post/anatomy-of-a-program-in-memory">http://duartes.org/gustavo/blog/post/anatomy-of-a-program-in-memory</a>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (1)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">hello</span>
+                        <span class="comment-date">2012-12-12</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>address space layout里 program break 是什么意思？</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

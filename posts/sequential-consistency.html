@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>存储一致性之顺序一致性（Sequential consistency） - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>存储一致性之顺序一致性（Sequential consistency）</h1>
+                    <div class="post-date">2011-05-06</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">存储一致性</span>
+                        <span class="tag">线性化</span>
+                        <span class="tag">顺序一致性</span>
+                        <span class="tag">共享存储</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>定义（Lamport ,1979）：</p>  <blockquote>   <p><i>the result of any execution is the same as if the operations of all the processors were executed in some sequential order, and the operations of each individual processor appear in this sequence in the order specified by its program</i></p> </blockquote>  <p>中译为：</p>  <blockquote>   <p>任意一次执行的结果都像所有处理器的操作以某种顺序的次序执行所得到的一样，而且各处理器的操作都按照各自程序所指定的次序出现在这个顺序中。 </p> </blockquote>  <p>这个定义意味着，当程序在各个机器上并行运行时，任何一种有效的交错存储器访问顺序都是可认可的行为，但所有处理器必须看见的是同样的访问顺序。如果一个进程（处理器）看见的是一种交错，另一进程看见的是另一种交错，则这样的存储器不是一个顺序一致性的存储器。然而，同一程序再次并行运行，其存储器访问的交错次序会不同于上次的交错次序，这是允许的。在一块存储器中，若一个进程（或处理机）看到一种交错，另一进程看到另一个交错，这就不是顺序一致存储器。注意，这与时间无关，没有最近存入的概念。在这里，进程可以看到所有进程写，但只能看到本进程读。</p>  <p>在顺序一致性中衍生了一个可线性化概念：</p>  <blockquote>   <p>线性化是一种弱于<a href="/2011/05/6/strict-consistency.html">严格一致性</a>但又强于顺序一致性的一致性模型。这种模型假设操作具有一个全局的时间戳。设TSop(x)表示在x上的操作op执行时的时间戳， op可以是读操作，也可以是写操作。如果TSop1(x)< TSop2(y)，则在顺序一致性模型中的读/写操作顺序下，操作op1(x)必须在操作op2(y)之前。 </p> </blockquote>  <p>线性化的数据存储也是顺序一致的。它们的区别在于：线性化是根据时间戳确定操作顺序的。在实际应用中，线性化主要用于并发算法的形式验证。线性化的实现比顺序一致性的实现开销更大。</p>  <p>最后，给一张顺序一致性的示意图：   <br />    <p><img style="display: block; float: none; margin-left: auto; margin-right: auto" src="http://public.blu.livefilestore.com/y1p6T0297SeM7Wtn-TETmFaYozNNrzEs_bujvz0G6myNyn2TROPuIQZxf62tge41JmGJ3Up9vddckQ6WWd7kNFGDw/sequential-consistency.jpg?psid=1" width="506" height="178" /></p></p>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

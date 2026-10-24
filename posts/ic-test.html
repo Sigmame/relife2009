@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>芯片设计中的测试(Test) - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>芯片设计中的测试(Test)</h1>
+                    <div class="post-date">2011-02-06</div>
+                    <div class="post-meta">
+                        <span class="tag">芯片设计</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">QA</span>
+                        <span class="tag">Sigma</span>
+                        <span class="tag">测试</span>
+                        <span class="tag">芯片设计</span>
+                        <span class="tag">质量保证</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>这几天Intel Sandy Bridge 所用芯片组的缺陷的事情闹得沸沸扬扬，其比较早的说法如下：</p>
+<blockquote><p>The flaw, which is found in the comany’s recently released Intel 6-series “Cougar Point” chipset, could cause the Serial-ATA(SATA) ports within the chipset to degrade over time, according to Intel. This could potentially affect the performance or functionality of any hard drive, DVD drive, and other device connected to the SATA port.</p></blockquote>
+<p>上文的大概意思是Intel确认了其6系列（学名“Cougar Point”?）的芯片组存在缺陷。会导致SATA接口老化，会影响所有的SATA设备，如硬盘，DVD等。</p>
+<p>作为一个以后很可能在芯片领域混的码农，对这件事还是比较关注的，但是，貌似具体的技术细节没有透露（当然，也可能是因为我搜索能力不行），但可以肯定的是，除了设计者外，测试者的责任最大。因此，在这里，顺便谈谈芯片中的测试：</p>
+<p>在现代的芯片设计中，质量保证（Qualification assurance，QA）的两个重要环节是<a href="/2011/02/19/IC-verify.html">验证</a>和测试，验证一般和设计同步进行，并且一般是硅前的。而测试，往往是硅后的，是工程样片回来后进行的，是芯片投入市场-量产前的最后一道QA程序。</p>
+<p>测试的目的就是保证产品不存在或者尽量少存在缺陷（fault），其基本方法就是通过大量的测试向量来发现缺陷从而进行修复。因此，测试向量的好坏直接关系到测试的质量，评价测试向量的两个主要指标有测试向量的覆盖率（Coverage）以及测试向量的大小。覆盖率直接关系着测试的质量，覆盖率越高，意味着测试越充分，被测物未测出的缺陷越少；测试向量越小，意味着测试所需要的时间越少，从样片到量产的时间越短，对一个商业公司来说，这也是非常重要的，提早一个月发布往往意味着抢占了市场先机。在当今的学术界和工业界，测试向量生成一直是一个热门的话题。</p>
+<p>另外一个缩短测试时间的方法是提高测试本身的可测性，包括可控制性和可观测性，这需要额外的可测性设计，具体见之前的<a href="/2011/01/6/VLSI_DFT.html">可测性设计DFT</a>。</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (8)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-02-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>科普帝，沙发</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-02-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-929007" rel="nofollow">@grapeot</a><br><br />嗯，想到biabia了，这家伙貌似很久没在这出现了</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-02-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>哟，小样今天起得好早啊。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-02-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>底下无觅推荐的都是啥。。太不靠谱了吧。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-02-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>为啥cookies里面有个BAIDUID。。。你用了BAIDU的什么服务了？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-02-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>对了你是怎么上网的。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-02-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>嗯？人不见了。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-02-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-930006" rel="nofollow">@grapeot</a><br><br />手机做猫上的，刚出去了下<br><br />我用了百度统计，他的实时性很好<br><br />那无觅的算法的确很垃圾，不过还是每天能带来一点流量，所以留着</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

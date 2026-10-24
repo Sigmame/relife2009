@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Darwin(Mac OS X内核)特有的命令 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>Darwin(Mac OS X内核)特有的命令</h1>
+                    <div class="post-date">2012-12-05</div>
+                    <div class="post-meta">
+                        <span class="tag">贝壳</span>
+                        <span class="tag">Mac</span>
+                        <span class="tag">Unix</span>
+                    </div>
+                </header>
+                <div class="post-content">
+Mac OS X的内核是darwin，是一个BSD Unix的内核，相对于原始版本的unix，Apple在上面加了一些自己的命令，其中有些命令还是挺实用的，比如ditto，可以直接拷目录，并且在拷贝时压缩和解压缩（哥一直希望scp也支持压缩和解压缩）。下面是老外整理的一份列表（来源：<a href="http://www.matisse.net/osx/darwin_commands.html" target="_blank">http://www.matisse.net/osx/darwin_commands.html</a>）
+<table border="0" cellspacing="2" cellpadding="3" width="100%">
+<tbody>
+<tr>
+<td><small>Based on OS X 10.4.2, August 2005.</small></td>
+<td><small>Compiled in August 2005 by Matisse Enzer</small></td>
+<td></td>
+</tr>
+<tr>
+<td>COMMAND(man SEC.)</td>
+<td>DESCRIPTION</td>
+<td>INSTALLED LOCATION</td>
+</tr>
+<tr>
+<td><code>BuildStrings(1)</code></td>
+<td><small>Programmer tool to generate .h and .r files.</small></td>
+<td><code>/Developer/Tools</code></td>
+</tr>
+<tr>
+<td><code>ConsoleMessage(8)</code></td>
+<td><small>Send a message to SystemStarter.</small></td>
+<td><code>/usr/libexec</code></td>
+</tr>
+<tr>
+<td><code>CpMac(1)</code></td>
+<td><small>Copy files preserving metadata and forks.</small></td>
+<td><code>/Developer/Tools</code></td>
+</tr>
+<tr>
+<td><code>DeRez(1)</code></td>
+<td><small>Decompiles resources (programmer tool)</small></td>
+<td><code>/Developer/Tools</code></td>
+</tr>
+<tr>
+<td><code>DirectoryService(8)</code></td>
+<td><small>DirectoryService daemon. See also dscl(1).</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>GetFileInfo(1)</code></td>
+<td><small>Get Mac-only attributes of files & directories.</small></td>
+<td><code>/Developer/Tools</code></td>
+</tr>
+<tr>
+<td><code>MergePef(1)</code></td>
+<td><small>Programmer tool. Merges "PowerPC </small><small>Executable Format" (PEF) files.</small></td>
+<td><code>/Developer/Tools</code></td>
+</tr>
+<tr>
+<td><code>MvMac(1)</code></td>
+<td><small>Move files, preserving metadata and forks.</small></td>
+<td><code>/Developer/Tools</code></td>
+</tr>
+<tr>
+<td><code>PPCExplain(1)</code></td>
+<td><small>Programmer help for PPC assembly code.</small></td>
+<td><code>/Developer/Tools</code></td>
+</tr>
+<tr>
+<td><code>ResMerger(1)</code></td>
+<td><small>Programmer tool for merging resource data.</small></td>
+<td><code>/Developer/Tools</code></td>
+</tr>
+<tr>
+<td><code>Rez(1)</code></td>
+<td><small>Programmer tool to compile resources.</small></td>
+<td><code>/Developer/Tools</code></td>
+</tr>
+<tr>
+<td><code>RezWack(1)</code></td>
+<td><small>Programmer tool to flatten file.</small></td>
+<td><code>/Developer/Tools</code></td>
+</tr>
+<tr>
+<td><code>SetFile(1)</code></td>
+<td><small>Set Mac attributes of files and directories.</small></td>
+<td><code>/Developer/Tools</code></td>
+</tr>
+<tr>
+<td><code>SplitForks(1)</code></td>
+<td><small>Divide two-fork HFS file into AppleDoubleresource and data files.</small></td>
+<td><code>/Developer/Tools</code></td>
+</tr>
+<tr>
+<td><code>StartupItemContext(8)</code></td>
+<td><small>Execute a program in StartupItem context.</small></td>
+<td><code>/usr/libexec</code></td>
+</tr>
+<tr>
+<td><code>SystemStarter(8)</code></td>
+<td><small>Start, stop, and restart system services.</small></td>
+<td><code>/sbin</code></td>
+</tr>
+<tr>
+<td><code>UnRezWack(1)</code></td>
+<td><small>Split a RezWack file into separate files.</small></td>
+<td><code>/Developer/Tools</code></td>
+</tr>
+<tr>
+<td><code>WaitingForLoginWindow(8)</code></td>
+<td><small>Draws to the screen until LoginWindowis ready.</small></td>
+<td><code>/usr/libexec</code></td>
+</tr>
+<tr>
+<td><code>agvtool(8)</code></td>
+<td><small>Apple-generic versioning tool for Xcode.</small></td>
+<td><code>/Developer/Tools</code></td>
+</tr>
+<tr>
+<td><code>asr(8)</code></td>
+<td><small>Apple Software Restore; copy volumes(e.g. from disk images)</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>authopen(1)</code></td>
+<td><small>Open file with OS X authorization.</small></td>
+<td><code>/usr/libexec</code></td>
+</tr>
+<tr>
+<td><code>bless(8)</code></td>
+<td><small>Set volume bootability and startupdisk options.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>blued(8)</code></td>
+<td><small>The Mac OS X bluetooth daemon.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>bootpd(8)</code></td>
+<td><small>DHCP/BOOTP/NetBoot server.</small></td>
+<td><code>/usr/libexec</code></td>
+</tr>
+<tr>
+<td><code>cd9660.util(8)</code></td>
+<td><small>ISO 9660 file system utility.</small></td>
+<td><code>/System/Library/Filesystems/cd9660.fs</code></td>
+</tr>
+<tr>
+<td><code>chkpasswd(8)</code></td>
+<td><small>Verifies user password againstvarious systems.</small></td>
+<td><code>/usr/libexec</code></td>
+</tr>
+<tr>
+<td><code>coreaudiod(1)</code></td>
+<td><small>Daemon for CoreAudio related purposes.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>crashdump(8)</code></td>
+<td><small>Crash reporting tool.</small></td>
+<td><code>/usr/libexec</code></td>
+</tr>
+<tr>
+<td><code>crashreporterd(8)</code></td>
+<td><small>Crash detection and panic logging daemon.</small></td>
+<td><code>/usr/libexec</code></td>
+</tr>
+<tr>
+<td><code>create_nidb(8)</code></td>
+<td><small>Creates a NetInfo database from flat files.</small></td>
+<td><code>/usr/libexec</code></td>
+</tr>
+<tr>
+<td><code>defaults(1)</code></td>
+<td><small>Read and set Mac OS X user defaults.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>diskarbitrationd(8)</code></td>
+<td><small>Disk arbitration daemon.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>disklabel(8)</code></td>
+<td><small>Manipulate and query Apple Label disk label.</small></td>
+<td><code>/sbin</code></td>
+</tr>
+<tr>
+<td><code>diskutil(8)</code></td>
+<td><small>Modify, verify and repair local disks.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>ditto(1)</code></td>
+<td><small>Copy files and directories, provides Mac-specific options not available in cp.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>dnsextd(8)</code></td>
+<td><small>BIND Extension Daemon.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>dscl(1)</code></td>
+<td><small>Directory Service command line utility.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>dsconfigad(8)</code></td>
+<td><small>Configure the Active Directory Plug-in.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>dsconfigldap(1)</code></td>
+<td><small>Add/remove LDAP server configurations.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>dseditgroup(1)</code></td>
+<td><small>Manipulate groups in Directory Service.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>dsenableroot(8)</code></td>
+<td><small>Enable or disable the root account.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>dsidentity(1)</code></td>
+<td><small>Add/remove "identity" (non-login) user accounts.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>fibreconfig(8)</code></td>
+<td><small>Configure settings for Fibre Channel disks.</small></td>
+<td><code>/sbin</code></td>
+</tr>
+<tr>
+<td><code>fsaclctl (no man page)</code></td>
+<td><small>Enable/disable Access Control Lists (ACLs).</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>hdid(8)</code></td>
+<td><small>Disk Image loading and decompression.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>hdiutil(1)</code></td>
+<td><small>Manipulate disk images (preferred over hdid.)</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>hfs.util(8)</code></td>
+<td><small>HFS/HFS+ file system utility.</small></td>
+<td><code>/System/Library/Filesystems/hfs.fs</code></td>
+</tr>
+<tr>
+<td><code>ifcstart(8)</code></td>
+<td><small>Rebuilds file caches used by International</small></td>
+<td><code>/usr/libexec</code></td>
+</tr>
+<tr>
+<td></td>
+<td><small>components.</small></td>
+<td></td>
+</tr>
+<tr>
+<td><code>installer(8)</code></td>
+<td><small>System software and package installer tool.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>kerberosautoconfig(8)</code></td>
+<td><small>Configure Kerberos for Open Directory.</small></td>
+<td><code>/sbin</code></td>
+</tr>
+<tr>
+<td><code>kextcache(8)</code></td>
+<td><small>Creates or updates kernel extension caches.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>kextd(8)</code></td>
+<td><small>Loads kernel extensions on demand.</small></td>
+<td><code>/usr/libexec/kextd</code></td>
+</tr>
+<tr>
+<td><code>kextload(8)</code></td>
+<td><small>Loads, validates, and generates symbols for a kernel extension.</small></td>
+<td><code>/sbin</code></td>
+</tr>
+<tr>
+<td><code>kextstat(8)</code></td>
+<td><small>Display status of dynamically loaded kext's.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>kextunload(8)</code></td>
+<td><small>Terminates and unloads kernel extensions.</small></td>
+<td><code>/sbin</code></td>
+</tr>
+<tr>
+<td><code>kuncd(8)</code></td>
+<td><small>The Kernel User Notification Center daemon.</small></td>
+<td><code>/usr/libexec</code></td>
+</tr>
+<tr>
+<td><code>launchctl(1)</code></td>
+<td><small>Command-line interface to launchd.</small></td>
+<td><code>/bin</code></td>
+</tr>
+<tr>
+<td><code>launchd(8)</code></td>
+<td><small>System wide and per-user daemon/agent manager.</small></td>
+<td><code>/sbin</code></td>
+</tr>
+<tr>
+<td><code>launchd.conf(5)</code></td>
+<td><small>Commands for launchctl to run when launchd starts.</small></td>
+<td><code>man page, not a command.</code></td>
+</tr>
+<tr>
+<td><code>launchd.plist(5)</code></td>
+<td><small>Documentation for launchd configuration files.</small></td>
+<td><code>man page, not a command.</code></td>
+</tr>
+<tr>
+<td><code>launchd_debugd(8)</code></td>
+<td><small>Simple HTTP server to display launchd job data.</small></td>
+<td><code>See man page.</code></td>
+</tr>
+<tr>
+<td><code>launchproxy(8)</code></td>
+<td><small>Provides inetd emulation for launchd.</small></td>
+<td><code>/usr/libexec</code></td>
+</tr>
+<tr>
+<td><code>lookupd(8)</code></td>
+<td><small>Directory information and cache daemon.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>mdcheckschema(1)</code></td>
+<td><small>Schema validation tool for mdimport files.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>mdfind(1)</code></td>
+<td><small>Command-line version of Spotlight search.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>mdimport(1)</code></td>
+<td><small>Import file hierarchies into the Spotlight datastore,</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>mdls(1)</code></td>
+<td><small>Lists the metadata attributes for the specified file.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>mdutil(1)</code></td>
+<td><small>Manage the metadata stores used by Spotlight.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>memberd(8)</code></td>
+<td><small>Group membership resolution daemon.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>memberd.plist</code></td>
+<td><small>File located at /usr/share/man/man8/memberd.plist</small></td>
+<td><code>Not a command.</code></td>
+</tr>
+<tr>
+<td><code>mkextunpack(8)</code></td>
+<td><small>Programmer tool for multikext (mkext) archives.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>mount_cddafs(8)</code></td>
+<td><small>Mount an Audio CD.</small></td>
+<td><code>/sbin</code></td>
+</tr>
+<tr>
+<td><code>newfs_hfs(8)</code></td>
+<td><small>Construct a new HFS Plus (HFS+) file system.</small></td>
+<td><code>/sbin</code></td>
+</tr>
+<tr>
+<td><code>nibtool(1)</code></td>
+<td rowspan="2"><small>Programmer tool to print, verify, and update nib files(nib files contain user interface objects.)</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>niutil(1)</code></td>
+<td><small>NetInfo utility - read and write NetInfo data.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>ntfs.util(8)</code></td>
+<td><small>NTFS file system utility.</small></td>
+<td><code>/System/Library/Filesystems/ntfs.fs</code></td>
+</tr>
+<tr>
+<td><code>osacompile(1)</code></td>
+<td><small>Compile AppleScripts and other OSA language scripts.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>osalang(1)</code></td>
+<td><small>Show information about installed OSA languages.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>osascript(1)</code></td>
+<td><small>Execute AppleScripts and other OSA language scripts.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>pbcopy(1)</code></td>
+<td><small>Copy from STDIN to the pasteboard (Clipboard.)</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>pbpaste(1)</code></td>
+<td><small>Paste from the pasteboard (Clipboard) to STDOUT.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>pbhelpindexer(1)</code></td>
+<td><small>Index the HTML documentation for Developer Tools.</small></td>
+<td><code>/Developer/Tools</code></td>
+</tr>
+<tr>
+<td><code>pbprojectdump</code></td>
+<td><small>Takes an Xcode project file and outputs a more nestedversion of the project structure.</small></td>
+<td><code>No man page.</code></td>
+</tr>
+<tr>
+<td><code>pl(1)</code></td>
+<td><small>Converts between ASCII and binary plist formats.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>plist(5)</code></td>
+<td><small>Property list format documentation.</small></td>
+<td><code>Not a command.</code></td>
+</tr>
+<tr>
+<td><code>plutil(1)</code></td>
+<td><small>Check property list syntax and/or convert format.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>pmset(1)</code></td>
+<td><small>Modify power management settings.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>say(1)</code></td>
+<td><small>Convert text to audible speech.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>screencapture(1)</code></td>
+<td><small>Capture screenshots to file or Clipboard.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>screenreaderd(8)</code></td>
+<td><small>VoiceOver daemon, gives audible feedback on useractivity and responds to user requests forVoiceOver feedback.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>scsid(8)</code></td>
+<td><small>SCSI subsystem daemon.</small></td>
+<td><code>/usr/libexec</code></td>
+</tr>
+<tr>
+<td><code>securityd(1)</code></td>
+<td><small>Security context daemon for Authorization and cryptographic operations.</small></td>
+<td><code>/usr/libexec</code></td>
+</tr>
+<tr>
+<td><code>softwareupdate(8)</code></td>
+<td><small>Mac OS X System Software Update tool.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>sw_vers(1)</code></td>
+<td><small>Show operating system version information.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>system_profiler(8)</code></td>
+<td><small>Show system hardware and software configuration.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>textutil(1)</code></td>
+<td><small>Convert between various file formats.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>ufs.util(8)</code></td>
+<td><small>UFS file system utility</small></td>
+<td><code>/System/Library/Filesystems/ufs.fs</code></td>
+</tr>
+<tr>
+<td><code>uninstall-devtools.pl(8)</code></td>
+<td><small>Remove Xcode Tools or Developer installation.</small></td>
+<td><code>/Developer/Tools</code></td>
+</tr>
+<tr>
+<td><code>uuidgen(1)</code></td>
+<td><small>Utility to generate a new Universally Unique ID (UUID.)</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>vpnd(8)</code></td>
+<td><small>Mac OS X VPN service daemon.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td><code>wait4path(1)</code></td>
+<td><small>Wait for given path to show up in the file system.</small></td>
+<td><code>/bin</code></td>
+</tr>
+<tr>
+<td><code>xcodebuild(1)</code></td>
+<td><small>Build an Xcode project.</small></td>
+<td><code>/usr/bin</code></td>
+</tr>
+<tr>
+<td><code>xgridctl(8)</code></td>
+<td><small>Xgrid daemons control interface.</small></td>
+<td><code>/usr/sbin</code></td>
+</tr>
+<tr>
+<td colspan="3"></td>
+</tr>
+</tbody>
+</table>
+ 
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (2)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://louisvuittonoutlets5.blogspot.com/2013/05/louis-vuitton-outlet-real-reviews.html" rel="nofollow">Louis Vuitton Outlet Real Reviews</a></span>
+                        <span class="comment-date">2013-05-17</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>LV Outlet San Diego California</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.klupp-machine.com" rel="nofollow">吹塑机</a></span>
+                        <span class="comment-date">2013-06-02</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>博客，不错，支持一个！</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

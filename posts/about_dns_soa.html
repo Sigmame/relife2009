@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNS 的 SOA 记录简介 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>DNS 的 SOA 记录简介</h1>
+                    <div class="post-date">2011-01-01</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">dns</span>
+                        <span class="tag">soa</span>
+                        <span class="tag">webmaster</span>
+                        <span class="tag">Google</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>今天登入<a href="https://www.google.com/webmasters">google webmaster</a>，发现有好多crawl错误，一看，都是<font color="#ff0000">Domain name not found</font><font color="#000000">,连sitemap都是如此，</font><font color="#000000">感觉比较严重，于是搜了下该错误，发现还是挺多人碰到该问题，但貌似都没有说什么具体好的解决方法，但有一个回答里提到了一个DNS网站分析网站<a href="http://www.intodns.com">http://www.intodns.com</a>，于是，试着分析了下我的网站<a href="http://www.intodns.com/sigma.me">DNS信息</a>，发现竟然有个大红的警告信息，一看是SOA有问题，貌似是我的域名所用的两个DNS服务器ns01.domaincontrol.com，ns02.domaincontrol.com的SOA域信息（主要是序列号）不一致所致，一看具体记录信息，一个是2010122301一个是2010122401，导致google crawler无法验证我的dns服务器。</font></p>  <p><font color="#000000">之后，我想到这应该是由于godaddy自动分配给我的DNS服务器有问题，于是，我想应该换个DNS服务器，但换几个好呢，于是试着查了下<a href="http://grapeot.me">grapeot.me</a>的DNS信息，发现其DNS没有错误，于是也把我域名的DNS服务器改成了他所用的ns51和ns52。改好后，等了几分钟貌似就生效了，查了下，貌似没问题，recrawl，成功crawl了！</font></p>  <p><font color="#000000">下面就简要的介绍下 DNS 的 SOA记录吧：</font></p>  <p><font color="#000000">在任何 DNS 记录文件（Domain Name System (DNS) Zone file）中， 都是以SOA（Start of Authority）记录开始。SOA 资源记录表明此 DNS 名称服务器是为该 DNS 域中的数据的信息的最佳来源。</font><font color="#000000">SOA 记录与 NS 记录的区别:简单讲，</font><font color="#000000">NS记录表示域名服务器记录，用来指定该域名由哪个DNS服务器来进行解析;SOA记录设置一些数据版本和更新以及过期时间的信息.</font></p>  <p><font color="#000000">下面用我的 DNS 的 SOA 记录为例来说明其结构：</font></p>  <blockquote>   <p>The SOA record is:      <br />Primary nameserver: <strong>ns51.domaincontrol.com</strong>       <br />Hostmaster E-mail address: <strong>dns.jomax.net</strong>       <br />Serial #: <strong>2010123100</strong>       <br />Refresh: <strong>28800</strong>       <br />Retry: <strong>7200 </strong>      <br />Expire: <strong>604800   1 weeks</strong>       <br />Default TTL: <strong>86400</strong></p> </blockquote>  <p><strong>源主机（Primary nameserver）：</strong></p>  <blockquote>   <p>DNS记录文件所在的主机位置。</p> </blockquote>  <p><strong>联系邮箱（Hostmaster E-mail address）：</strong></p>  <blockquote>   <p>记录主机管理员的联系方式，其中第一个点表示的是@。</p> </blockquote>  <p><strong>序列号（Serial）</strong>：</p>  <blockquote>   <p>格式为yyyymmddnn，nn代表这一天是第几次修改。辅名字服务器通过比较这个序列号是否加载一份新的区数据拷贝。</p> </blockquote>  <p><strong>refresh（刷新）：</strong></p>  <blockquote>   <p>告诉该区的辅名字服务器相隔多久检查该区的数据是否是最新的。</p> </blockquote>  <p><strong>retry（重试）：</strong></p>  <blockquote>   <p>如果辅名字服务器超过刷新间隔时间后无法访问主服务器，那么它就开始隔一段时间重试连接一次。这个时间通常比刷新时间短，但也不一定非要这样。</p> </blockquote>  <p><strong>expire（过期或期满）：</strong></p>  <blockquote>   <p>如果在期满时间内辅名字服务器还不能和主服务器连接上，辅名字服务器就使用这个我失效。这就意味着辅名字服务器将停止关于该区的回答，因为这些区数据太旧了，没有用了。设置时间要比刷新和重试时间长很多，以周为单位是较合理的。</p> </blockquote>  <p><strong>否定缓存TTL（生存期）：</strong></p>  <blockquote>   <p>这个值对来自这个区的权威名字服务器的否定响应都适用。</p> </blockquote>  <p>一个Microsoft DNS服务器的SOA记录的数据结构如下：</p>  <pre>@   IN  SOA     nameserver.place.dom.  postmaster.place.dom. (
+                               1            ; serial number
+                               3600         ; refresh   [1h]
+                               600          ; retry     [10m]
+                               86400        ; expire    [1d]
+                               3600 )       ; min TTL   [1h]</pre>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (2)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-01-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>傻冒</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2011-01-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-743001" rel="nofollow">@grapeot</a><br><br />你才傻帽！</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

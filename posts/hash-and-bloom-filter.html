@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash和Bloom Filter - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>Hash和Bloom Filter</h1>
+                    <div class="post-date">2011-09-13</div>
+                    <div class="post-meta">
+                        <span class="tag">数据库</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">Bloom Filter</span>
+                        <span class="tag">Hash</span>
+                        <span class="tag">哈希</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>这几天的“科研”中涉及到了一个概念，Bloom Filter（有的中文翻译为布隆过滤器，不知道正确否），今天看了下相关的资料，发现这东西和Hash还挺有关系的，在这里一并讲下。</p>
+<h4>Hash（函数/表）</h4>
+<p>Hash （中译为哈希，或者散列）函数在计算机领域，尤其是数据快速查找领域，加密领域用的极广。其作用是将一个大的数据集映射到一个小的数据集上面（这些小的数据集叫做哈希值，或者散列值）。<strong>Hash table（</strong><strong>散列表</strong>，也叫<strong>哈希表</strong>），是根据哈希值(Key value)而直接进行访问的数据结构。也就是说，它通过把哈希值映射到表中一个位置来访问记录，以加快查找的速度。下面是一个典型的hash函数/表示意图：</p>
+<p><img src="https://public.sn2.livefilestore.com/y1pIA_mDjb1iqJlSsRG4JiamMcrAwGa1kYPBpdmc6oEIhYaPpFl2nZVckqjV2BfSwZr06jSSQzghaSVaFcfNypRfA/Hash_table.jpg?psid=1" alt="" /></p>
+<p>哈希函数有以下两个特点：</p>
+<ul>
+<li>如果两个散列值是不相同的（根据同一函数），那么这两个散列值的原始输入也是不相同的。</li>
+<li>散列函数的输入和输出不是唯一对应关系的，如果两个散列值相同，两个输入值很可能是相同的。但也可能不同，这种情况称为“散列碰撞”（或者“散列冲突”）。上图中，John Smith和Sandra Dee就存在hash冲突。</li>
+</ul>
+<p>Hash一个应用就是对数据集分类，比如上图，Hash值为0的表示可能在A集合中，Hash值为2的表示B集合中，依次类推，值为15的表示F集合中。但Hash冲突会在这里会导致严重的问题，对于一个未知的新值，其可能不属于上面任何一个集合，但由于冲突，其Hash值和上面的某一个相同，导致误报（因为事先我们不可能做一个含有无限多项输入的完整的Hash表，也就是原来的Hash函数不可能是完美的）。并且，hash冲突也会导致查找效率低下。</p>
+<h4>Bloom Filter</h4>
+<p>Bloom Filter是1970年由Bloom提出的。它实际上是一个很长的二进制向量和一系列随机映射函数（Hash函数）。布隆过滤器可以用于检索一个元素是否在一个集合中。它的优点是空间效率和查询时间都远远超过一般的算法，缺点是有一定的误识别率和删除困难。Bloom Filter广泛的应用于各种需要查询的场合中，如Orocle的数据库，Google的BitTable也用了此技术。</p>
+<p>如果想判断一个元素是不是在一个集合里，一般想到的是将所有元素保存起来，然后通过比较确定。链表，树等等数据结构都是这种思路. 但是随着集合中元素的增加，我们需要的存储空间越来越大，检索速度也越来越慢(<em>O</em>(<em>n</em>),<em>O</em>(log<em>n</em>))。</p>
+<p>这时候就可以利用哈希表这个数据结构（它可以通过一个Hash函数将一个元素映射成一个位阵列（Bit array）中的一个点）。这样一来，我们只要看看这个点是不是1就知道可以集合中有没有它了。这就是Bloom Filter的基本思想。</p>
+<p>但这时，哈希冲突会是一个问题：假设Hash函数是良好的，如果我们的位阵列长度为<em>m</em>个点，那么如果我们想将冲突率降低到例如 1%, 这个散列表就只能容纳<em>m</em>/100个元素。显然这就不叫空间效率了（Space-efficient）了。解决方法也简单，就是使用多个Hash，如果它们有一个说元素不在集合中，那肯定就不在。如果它们都说在，虽然也有一定可能性它们都在说谎，不过直觉上判断这种事情的概率是比较低的。这种多个Hash组成的数据结构就叫Bloom Filter。</p>
+<p>一个Bloom Filter是基于一个m位的位向量（b1,…bm），这些位向量的初始值为0。另外，还有一系列的hash函数（h1,…hk），这些hash函数的值域属于1~m。下图是一个bloom filter插入x,y,z并判断某个值w是否在该数据集的示意图：</p>
+<p><img src="https://public.sn2.livefilestore.com/y1pqk9RgvVl_2zxaVbEDpbeVxFfe-z2sSdXdjbe4hWG7yBH3wmNB1Wz9sNwBy4oBwLhealr4aJoutIkhu8iYDp0iQ/Bloom_filter.jpg?psid=1" alt="" /></p>
+<p> </p>
+<p>上图中，m=18，k=3；插入x是，三个hash函数分别得到蓝线对应的三个值，并将对应的位向量改为1，插入y，z时，类似的，分别将红线，紫线对应的位向量改为1。查找时，当查找x时，三个hash值对应的位向量都为1，因此判断x在此数据集中。y，z也是如此。但是查找w时，w有个hash值对应的位向量为0，因此可以判断不在此集合中。但是，假如w的最后那个hash值比上图中的大1，这是就会认为w在此集合中，而事实上，w可能不在此集合中，因此可能出现误报。显然的，插入数据越多，1的位数越多，误报的概率越大。</p>
+<p>Wiki的Bloom Filter词条有关于误报的概率的详细分析：<a href="http://en.wikipedia.org/wiki/Bloom_filter#Probability_of_false_positives">Probability of false positives</a>。从分析可以看出，当k比较大时，误报概率还是比较小的，因此这存储还是很空间有效滴。</p>
+<p>Bloom Filter有以下几个特点：</p>
+<ol>
+<li>不存在漏报（False Negative），即某个元素在某个集合中，肯定能报出来。</li>
+<li>可能存在误报（False Positive），即某个元素不在某个集合中，可能也被爆出来。</li>
+<li>确定某个元素是否在某个集合中的代价和总的元素数目无关。</li>
+</ol>
+<p><strong>优点：</strong></p>
+<blockquote>
+<p>相比于其它的数据结构，Bloom Filter在空间和时间方面都有巨大的优势。Bloom Filter存储空间和插入/查询时间都是常数。另外, Hash函数相互之间没有关系，方便由硬件并行实现。Bloom Filter不需要存储元素本身，在某些对保密要求非常严格的场合有优势。</p>
+</blockquote>
+<p><strong>缺点：</strong></p>
+<blockquote>
+<p>另外，一般情况下不能从Bloom Filter中删除元素. 我们很容易想到把位列阵变成整数数组，每插入一个元素相应的计数器加1, 这样删除元素时将计数器减掉就可以了。然而要保证安全的删除元素并非如此简单。首先我们必须保证删除的元素的确在Bloom Filter里面. 这一点单凭这个过滤器是无法保证的。另外计数器回绕也会造成问题。</p>
+</blockquote>
+<p>参考资料：</p>
+<ol>
+<li>http://en.wikipedia.org/wiki/Hash_function</li>
+<li>http://en.wikipedia.org/wiki/Bloom_filter</li>
+<li>http://antognini.ch/papers/BloomFilters20080620.pdf</li>
+</ol>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (12)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://Grapeot.me" rel="nofollow">Yan</a></span>
+                        <span class="comment-date">2011-09-13</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>为毛突然对这个感兴趣了。。。这个的缺点是没有具体说哈希函数怎么取。无法实现基于内容的信息检索。还是lsh(locavity sensitive hashing)靠谱。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://Grapeot.me" rel="nofollow">Yan</a></span>
+                        <span class="comment-date">2011-09-13</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>靠，locality.</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-09-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1127002" rel="nofollow">@Yan</a><br><br />hash函数应该很好取吧，只需要得出的hash值够随机就可以了<br><br />话说bloom filter主要应该是硬件好实现，n个hash一起算<br><br />lsh是什么，没听过。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-09-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1121003" rel="nofollow">@sigma</a><br><br />一般的Hash函数好取，想做到内容相关就不好取了。比如两篇文章讲的都是911，希望他们的Hash值相同，或者两个图像都含有树，希望他们Hash值相近等等。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-09-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1123002" rel="nofollow">@grapeot</a><br><br />看了下lsh，一看到表达式那么复杂，还有积分微分。。。<br><br />就没仔细看下去，那你觉得这东西用硬件实现回非常复杂么</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-09-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>它的输入是一个高位向量，输出是一坨bit，因为涉及到单精度数的线性运算，从这个角度来说，实现不是那么简单。<br><br />但它实际的算法很直观，全程只涉及线性运算比如切割超平面之类，如果你玩过水果忍者会有深刻的体会。所以如果你不怕浮点数的话，实现不会很困难。<br><br />里面的数学是一堆科学家在那证误差的理论上限。不看也罢。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">大哥</span>
+                        <span class="comment-date">2011-09-15</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>请教一下，什么是不带引号的科研，什么是带引号的科研</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.coder4.com" rel="nofollow">赫</a></span>
+                        <span class="comment-date">2011-09-20</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>搜Cloudflare居然遇到了ICT的同门～<br><br />哈希函数无论怎么取都避免不了冲突的吧，一般来说，取8倍于N，k=3时，False Positive概率可以控制到2%左右。<br><br />欢迎围观我的BloomFilter的开源实现<br><br />https://github.com/liheyuan/BloomFilter-For-KeSeek</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-09-20</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1133001" rel="nofollow">@赫</a><br><br />哈哈，世界真小～<br><br />膜拜了下师兄的代码，大牛啊～</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.coder4.com" rel="nofollow">赫</a></span>
+                        <span class="comment-date">2011-09-20</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1134001" rel="nofollow">@sigma</a><br><br /><<Currently, I'm a first year Ph.D. student<<<br><br />我是Master Second Year...我应该叫师兄……</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-09-20</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1132002" rel="nofollow">@赫</a><br><br />。。。。<br><br />其实我现在也还是master。。。刚second year</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.yankay.com/%e6%9f%a5%e8%af%a2%e5%88%a9%e5%99%a8-bloom-filter%e8%af%a6%e8%a7%a3/" rel="nofollow">查询利器-bloom-filter详解 | 我自然</a></span>
+                        <span class="comment-date">2011-11-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>[...] 布隆过滤器的原理不难理解。相对于一个精简的HashMap的数据结构，存入数据的时候，不存入数据本身，只保存其Hash的值。可以用于判断该数据是否存在。其本质是用Hash对数据进行"有损压缩"的位图索引。详细参见。 [...]</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

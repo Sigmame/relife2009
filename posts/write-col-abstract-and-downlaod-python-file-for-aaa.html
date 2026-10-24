@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>写了个整理AAAI论文摘要的脚本 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>写了个整理AAAI论文摘要的脚本</h1>
+                    <div class="post-date">2011-12-01</div>
+                    <div class="post-meta">
+                        <span class="tag">小工具</span>
+                        <span class="tag">论文</span>
+                        <span class="tag">小工具</span>
+                        <span class="tag">AAAI</span>
+                        <span class="tag">python</span>
+                    </div>
+                </header>
+                <div class="post-content">
+这几天需要扫AAAI的摘要及论文，但是一看AAAI每年有几百篇，我就傻眼了，加之本人有个习惯，善其事之前，总是喜欢利其器，于是花了个把小时写了个把AAAI的摘要爬出来并整理成一个html文件的程序。
+
+<pre class="brush: python; gutter: true">#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+#
+# Copyright 2011 Sigma  http://www.sigma.me.
+#
+#
+#######usage#######
+# $python
+# >>>from get_abstract_aaai import *
+# >>> get_allyear_abstract(<DBLP_conf_link>)
+# or
+# >>> get_allyear_pdf(<DBLP_conf_link>)
+# DBLP_conf_link is like "http://www.informatik.uni-trier.de/~ley/db/conf/aaai/"
+#  OR just modify the main function and then
+# $python get_abstract_aaai.py
+import os
+import urllib
+import urllib2
+import httplib #for https link
+import re
+import socket
+import locale,string
+import codecs
+
+title_regx=r'<div id="title">([\\s\\S]+)</h3></div>'
+author_regx=r'<div id="author"><em>([\\s\\S]+)</em></div>'
+abstract_regx=r'<h4>Abstract</h4>\
+\	<br />\
+\	<div>([\\s\\S]*)</div>\
+\	<br />\
+\	</div>'
+article_link_regx=r'</b><br><a href="http://www.aaai.org/ocs/index.php/AAAI/AAAI([a-zA-Z0-9-\\s\\.\\/]+)">'
+dblp_oneyear_regx=r'http://www.informatik.uni-trier.de/~ley/db/conf/aaai/aaai([\\s\\S]*).html'
+year_link_regx=r'<a href="([a-zA-Z0-9-\\s\\.\\/]+)">Contents</a>'
+#pdf_link_regx=r'href="([a-zA-Z0-9-\\s\\.\\/]+)" class="action" target="_parent">PDF</a>'
+pdf_link_regx=r'Full Text:\
+\	\	\	\	\	\	\	\	\	\	\	\	\	\	<a href="([\\s\\S]+)" class="action" target="_parent">PDF</a>'
+
+#get_allyear_abstract("http://www.informatik.uni-trier.de/~ley/db/conf/aaai/")
+
+def get_allyear_abstract(url):
+    page=urllib.urlopen(url).read()
+    year_links=re.findall(year_link_regx,page)
+    for link in year_links:
+        expend_link=url+link
+        print expend_link
+        get_oneyear_abstract(expend_link)
+
+
+
+def get_oneyear_abstract(url):
+    year=re.findall(dblp_oneyear_regx,url)[0]
+    print year
+    page=urllib.urlopen(url).read()
+    links=re.findall(article_link_regx,page)
+    articles=[]
+    if links is not None:
+        for link in links:
+            url='http://www.aaai.org/ocs/index.php/AAAI/AAAI'+link.replace('view','viewPaper')
+            article=get_aaai_abstract_from_url(url)
+            if article is not None:
+                articles.append(article)
+        article_write2file(articles,year)
+    return
+
+def get_aaai_abstract_from_url(url):
+    page=urllib.urlopen(url).read()
+    title_val=extractAttrValue_mask(title_regx,page)
+#    print title_val
+    author_val=extractAttrValue_mask(author_regx,page)
+#    print author_val
+    abstract_val=extractAttrValue_mask(abstract_regx,page)
+#    print abstract_val
+    ret_val={'title':title_val.decode('UTF-8'),'author':author_val.decode('UTF-8'),'abstract':abstract_val.decode('UTF-8'),}
+    print ret_val
+    return ret_val
+
+def article_write2file(articles,year):
+    html_file_name='aaai'+year+'.html'
+    html_head=u'<HTML>\
+<HEAD>\
+<TITLE>AAAI '+year+u' Publication & Abstract List</TITLE>\
+<META Http-equiv="Content-Type" Content="text/html; charset=utf-8">\
+</HEAD>\
+<BODY>\
+<H1><FONT COLOR="#365f91">AAAI '+year+u' Publication &amp;Abstract List</FONT></H1>\
+'
+    html_foot=u'</BODY>\
+</HTML>'
+    html_file=codecs.open(html_file_name,'w','utf-8')
+    html_file.write(html_head)
+    for article in articles:
+        html_file.write(u'<H3><FONT COLOR="#4f81bd">'+article['title']+u'</FONT></H3>\
+')
+        html_file.write(article['author']+u'\
+')
+        html_file.write(u'<P><strong>Abstract:</strong>'+article['abstract']+u'</P>\
+')
+    html_file.write(html_foot)
+    html_file.close()
+
+def extractAttrValue_mask(regx,allstring):
+    infos = re.findall(regx,allstring)
+    attrValue = 'no infomation in AAAI database'
+    if(infos):
+		    attrValue = infos[0]
+    return attrValue
+
+if __name__ == "__main__":
+    print "main"
+#    get_allyear_abstract('http://www.informatik.uni-trier.de/~ley/db/conf/aaai/')</pre>
+实际使用中发现，貌似08年以前的论文摘要在AAAI网站上没有，并且很多论文直接用google scholar也搜不到，不过我想，只要对python熟悉些，根据这段代码，还是很容易改革能用的（前提是abstract以及pdf链接不是通过js获得的，果如此，得用一些高级的python库）。
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (4)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">syoummer</span>
+                        <span class="comment-date">2011-12-03</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>批量下载论文是不符合数据库的版权规定的。。。。。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-12-03</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1973" rel="nofollow">@syoummer </a> <br>好吧，速度把下论文部分去掉</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.decocity.cn" rel="nofollow">MiaQ</a></span>
+                        <span class="comment-date">2011-12-21</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>继续学习 收藏</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">cyj</span>
+                        <span class="comment-date">2011-12-30</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>我没你这么高级的技术，我只是肉眼+手动把isca, hpca, micro一年的论文下下来看了一遍。</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>近场通讯(Near Field Communication,NFC)简介，兼谈NFC在未来的机遇 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>近场通讯(Near Field Communication,NFC)简介，兼谈NFC在未来的机遇</h1>
+                    <div class="post-date">2011-05-27</div>
+                    <div class="post-meta">
+                        <span class="tag">IT评论</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">移动互联网</span>
+                        <span class="tag">评论</span>
+                        <span class="tag">物联网</span>
+                        <span class="tag">近场通讯</span>
+                        <span class="tag">NFC</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>前几天google推出了手机支付谷歌钱包（google wallet）,wallet的技术基础就是近场通讯（NFC）技术，因此我关注了下相关NFC技术，在这里记录一下以便备忘顺便分享。</p>  <p><b>近场通信</b>（Near Field Communication，NFC），又称<b>近距离无线通信</b>，是一种短距离的高频无线通信技术，允许电子设备之间进行非接触式点对点数据传输（在十厘米内）交换数据。这个技术由免接触式射频识别（<a href="http://zh.wikipedia.org/wiki/RFID">RFID</a>）演变而来，并向下兼容RFID，最早由Philips、Nokia和Sony主推，主要可能用于手机等手持设备中。由于近场通讯具有天然的安全性，因此，NFC技术被认为在手机支付等领域具有很大的应用前景。</p>  <h4>NFC技术简介</h4>  <h5>NFC工作模式</h5>  <p><strong>卡模式(Card emulation)</strong>：这个模式其实就是相当于一张采用RFID技术的IC卡（个人理解）。可以替代现在大量的IC卡（包括信用卡）场合商场刷卡、公交卡、门禁管制，车票，门票等等。此种方式下，有一个极大的优点，那就是卡片通过非接触读卡器的 RF 域来供电，即便是寄主设备（如手机）没电也可以工作。 </p>  <p><strong>点对点模式(P2P mode):</strong>这个模式和红外差不多，可用于数据交换，只是传输距离比较短，传输建立速度快很多，传输速度也快些，功耗低（蓝牙也类似）。将两个具备 NFC 功能的设备链接，能实现数据点对点传输，如下载音乐，交换图片或者同步设备地址薄。因此通过NFC,多个设备如数字相机，PDA，计算机，手机之间，都可以交换资料或者服务。 </p>  <p><strong>读卡器模式(Reader/writer mode)：</strong>作为非接触读卡器使用，比如从海报或者展览信息电子标签上读取相关信息。</p>  <h5>NFC技术和蓝牙以及红外技术的比较</h5>  <p>这三种技术的简要对比如下图：</p>  <table border="0" cellspacing="0" cellpadding="2" width="605"><tbody>     <tr>       <td valign="top" width="100"> </td>        <td valign="top" width="170">NFC</td>        <td valign="top" width="152">蓝牙</td>        <td valign="top" width="181">红外</td>     </tr>      <tr>       <td valign="top" width="100">网络类型</td>        <td valign="top" width="170">点对点</td>        <td valign="top" width="152">单点对多点</td>        <td valign="top" width="181">点对点</td>     </tr>      <tr>       <td valign="top" width="100">使用距离</td>        <td valign="top" width="170"><=0.1m</td>        <td valign="top" width="152"><=10m</td>        <td valign="top" width="181"><=1m</td>     </tr>      <tr>       <td valign="top" width="100">速度</td>        <td valign="top" width="170">106, 212, 424 kbps          <br />规划速率可达868 kbps           <br />721 kbps 115kbps</td>        <td valign="top" width="152">         <p>2.1 Mbps</p>       </td>        <td valign="top" width="181">         <p>~1.0 Mbps</p>       </td>     </tr>      <tr>       <td valign="top" width="100">建立时间</td>        <td valign="top" width="170">< 0.1s</td>        <td valign="top" width="152">  6s </td>        <td valign="top" width="181">0.5s          <br /></td>     </tr>      <tr>       <td valign="top" width="100">安全性 </td>        <td valign="top" width="170">具备, 硬件实现</td>        <td valign="top" width="152">具备，软件实现</td>        <td valign="top" width="181">不具备, 使用IRFM 时除外</td>     </tr>      <tr>       <td valign="top" width="100">通信模式</td>        <td valign="top" width="170">主动-主动/被动</td>        <td valign="top" width="152">主动－主动</td>        <td valign="top" width="181">主动－主动</td>     </tr>      <tr>       <td valign="top" width="100">成本</td>        <td valign="top" width="170">低</td>        <td valign="top" width="152">中</td>        <td valign="top" width="181">低</td>     </tr>   </tbody></table>  <p>和另外两种技术相比，NFC具有天然的安全性，以及模式多（和IC卡相比也是如此）等优点。并且除了和RFID兼容外，还可能能够和蓝牙设备进行通讯。</p>  <h4>NFC技术在未来的机遇</h4>  <p>其实现在已经出现了很多基于NFC的应用，如移动（电子）票务，移动/手机支付（前述的google wallet），数据共享。</p>  <p>而在未来，尤其是方兴未艾的物联网和移动互联网则赋予了NFC技术更多的前景，比如：</p>  <ol>   <li>各种电子标签识别：在物联网时代，任何物品都是数字化的，因此，很可能具有一个电子标签，这个电子标签可能就是一个RFID tag（类似取代现在的条形码，但成本高点，但高不了多少），只需要将NFC设备（如手机）靠近任何物品/商品。即可以通过网络获取物品的相关信息（对于有些商品，可以直接将信息存储在电子标签里，但可能会增加成本）。 </li>    <li>点对点付款，这和普通的手机支付不同，点对点付款是指两个人直接用NFC设备（如手机）进行交易，比如A要给B n元钱，直接两个人连上就可以完成转账。（这个安全性很重要，而NFC的安全性貌似有很多保障，手机掉了通过远程手段锁定NFC功能）。 </li>    <li>各种身份识别，也许未来，可能做到，一个带NFC的手机就能作为身份的证明（不过这也感觉很可怕）。 </li>    <li>各种场合的信息记录，如医院，也许以后病例直接能够写到NFC设备中。 </li> </ol>  <p>一句话，也许在未来，各种卡片，各种门票，火车票，各种证件都会消失，只剩下一个手机（就像手机曾经干掉MP3，MP4一样），而一个手机，里面几乎能干所有的事。    <br /><img style="display: block; float: none; margin-left: auto; margin-right: auto" src="http://3fnm6q.blu.livefilestore.com/y1pyxFyeHdr-GK0UPNnHqF6BTfFHdRweO8L2gWKf6pmO922YIkPf7A0qWETR4vcan4fdmmCUst1OaD_TbBs_1_aPaO_dCh7oKSQ/near-field-technology.jpg?psid=1" /></p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (14)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.codecho.com" rel="nofollow">代码回音</a></span>
+                        <span class="comment-date">2011-05-29</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>呵呵，无法想象 以后做啥就带个手机...</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.nbjlza.com/" rel="nofollow">宁波藏獒园</a></span>
+                        <span class="comment-date">2011-05-31</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>技术是越来越好了，生活也越来越方便了</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="https://heiher.info" rel="nofollow">Heiher</a></span>
+                        <span class="comment-date">2011-06-03</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>话说你啥都研究啊，太牛了！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.equn.tk" rel="nofollow">grid</a></span>
+                        <span class="comment-date">2011-07-18</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>最后一张图片配的不好。苹果至今没有宣布支持nfc.</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-07-21</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>我的American Express卡后面印了个图上的射频图标，不知何解。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-07-22</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1081002" rel="nofollow">@grapeot</a><br><br />没有说明书？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-07-22</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>囧，没有拿到银行卡看说明书的习惯。。。等下。。。为毛银行卡有说明书啊？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-07-23</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1081003" rel="nofollow">@grapeot</a><br><br />网上总有卡各个区域的说明吧</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-07-23</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>没找到。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-07-23</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你家银行卡上有各个区域的说明啊！不就卡号多少，持卡人之类的么。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-07-24</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1086002" rel="nofollow">@grapeot</a><br><br />靠，新事物总有人介绍下吧，在中国，与众不同的不都要大吹特吹么</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-07-24</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>也是哦。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://dgdfg" rel="nofollow">Jing</a></span>
+                        <span class="comment-date">2011-09-15</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>诺基亚手机是最先支持NFC的</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://doandroid.info/?p=1749" rel="nofollow">在移动支付领域各大近场通讯(NFC)技术支持商介绍</a></span>
+                        <span class="comment-date">2011-12-16</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>[...] 博客sigma 提到了未来的一些NFC的应用前景： NFC技术在未来的机遇 [...]</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

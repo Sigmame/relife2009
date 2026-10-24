@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Android下调用传感器（温度，亮度方向，地磁等，附源码） - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>Android下调用传感器（温度，亮度方向，地磁等，附源码）</h1>
+                    <div class="post-date">2011-04-29</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">code</span>
+                        <span class="tag">源码</span>
+                        <span class="tag">xml</span>
+                        <span class="tag">传感器</span>
+                        <span class="tag">java</span>
+                        <span class="tag">Android</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>装好Adroid SDK后，在sample的指导下，写了几个简单的类似hello world的程序，在这里介绍一下所写的在android下调用传感器的程序。</p>  <p>Android中支持的几种传感器：</p>  <blockquote>   <p>Sensor.TYPE_ACCELEROMETER：加速度传感器。      <br />Sensor.TYPE_GYROSCOPE：陀螺仪传感器。       <br />Sensor.TYPE_LIGHT：亮度传感器。       <br />Sensor.TYPE_MAGNETIC_FIELD：地磁传感器。       <br />Sensor.TYPE_ORIENTATION：方向传感器。       <br />Sensor.TYPE_PRESSURE：压力传感器。       <br />Sensor.TYPE_PROXIMITY：近程传感器。       <br />Sensor.TYPE_TEMPERATURE：温度传感器。</p> </blockquote>  <p>使用传感器最关键的一些知识是：SensorManager是所有传感器的一个综合管理类，包括了传感器的种类、采样率、精准度等。我们可以通过getSystemService方法来取得一个SensorManager对象。使用传感器时，需要通过registerListener函数注册传感器，使用完后需要通过unregisterListener取消注册。</p>  <p>百闻不如一见，还是直接讲代码：</p>  <p>新建一个Sensors的工程，创建一个Sensors.java，内容如下：</p>  <pre class="brush: java; ruler: true ;first-line: 1; highlight: []"> package me.sigma.sensors;
+
+
+import android.app.Activity;
+import android.hardware.SensorListener;
+import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.widget.TextView;
+
+public class Sensors extends Activity {
+    TextView myTextView1;//t
+    //gen
+    TextView myTextView2;//x
+    TextView myTextView3;//y
+    TextView myTextView4;//z
+    //acc
+    TextView myTextView5;//x
+    TextView myTextView6;//y
+    TextView myTextView7;//z
+   //ori
+    TextView myTextView8;//x
+    TextView myTextView9;//y
+    TextView myTextView10;//z
+    //Light
+    TextView myTextView11;//z
+
+    SensorManager  mySensorManager;//
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+        myTextView1 = (TextView) findViewById(R.id.myTextView1);
+        myTextView2 = (TextView) findViewById(R.id.myTextView2);
+        myTextView3 = (TextView) findViewById(R.id.myTextView3);
+        myTextView4 = (TextView) findViewById(R.id.myTextView4);
+        myTextView5 = (TextView) findViewById(R.id.myTextView5);
+        myTextView6 = (TextView) findViewById(R.id.myTextView6);
+        myTextView7 = (TextView) findViewById(R.id.myTextView7);
+        myTextView8 = (TextView) findViewById(R.id.myTextView8);
+        myTextView9 = (TextView) findViewById(R.id.myTextView9);
+        myTextView10 = (TextView) findViewById(R.id.myTextView10);
+        myTextView11 = (TextView) findViewById(R.id.myTextView11);
+        mySensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+    }
+    private SensorListener mySensorListener = new SensorListener(){
+    	@Override
+    	public void onAccuracyChanged(int sensor, int accuracy) {}
+    	@Override
+    	public void onSensorChanged(int sensor, float[] values) {
+    		if(sensor == SensorManager.SENSOR_TEMPERATURE){
+    			myTextView1.setText("Current Temprature："+values[0]);
+    		}else if(sensor == SensorManager.SENSOR_MAGNETIC_FIELD){
+    			myTextView2.setText("Current Magnetic x："+values[0]);
+    			myTextView3.setText("Current Magnetic y："+values[1]);
+    			myTextView4.setText("Current Magnetic z："+values[2]);
+    		}else if(sensor == SensorManager.SENSOR_ACCELEROMETER){
+    			myTextView5.setText("Current Accelero x："+values[0]);
+    			myTextView6.setText("Current Accelero y："+values[1]);
+    			myTextView7.setText("Current Accelero z："+values[2]);
+    		}else if(sensor == SensorManager.SENSOR_ORIENTATION){
+    			myTextView8.setText("Current Oraenttation x："+values[0]);
+    			myTextView9.setText("Current Oraenttation y："+values[1]);
+    			myTextView10.setText("Current Oraenttation z："+values[2]);
+    		}else if(sensor == SensorManager.SENSOR_LIGHT){
+    			myTextView11.setText("Current Oraenttation x："+values[0]);
+    		}
+    	}
+    };
+    @Override
+    protected void onResume() {
+    	mySensorManager.registerListener(
+    			mySensorListener,
+    			SensorManager.SENSOR_TEMPERATURE |
+    			SensorManager.SENSOR_MAGNETIC_FIELD |
+    			SensorManager.SENSOR_ACCELEROMETER |
+    			SensorManager.SENSOR_LIGHT |
+                        SensorManager.SENSOR_ORIENTATION,
+    			SensorManager.SENSOR_DELAY_UI
+    			);
+    	super.onResume();
+    }
+    @Override
+    protected void onPause() {
+    	mySensorManager.unregisterListener(mySensorListener);
+    	super.onPause();
+    }
+}
+ </pre>
+
+<p>更改res/layout/下面的main.xml,为如下内容：</p>
+
+<pre class="brush: xml; ruler: true ;first-line: 1; highlight: []"> <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+	<TextView
+		android:id="@+id/title"
+		android:gravity="center_horizontal"
+		android:textSize="20px"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="@string/title"/>
+	<TextView
+		android:id="@+id/myTextView1"
+		android:textSize="18px"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="@string/myTextView1"/>
+	    <TextView
+		android:id="@+id/myTextView2"
+		android:textSize="18px"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="@string/myTextView2"/>
+	    <TextView
+		android:id="@+id/myTextView3"
+		android:textSize="18px"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="@string/myTextView3"/>
+	    <TextView
+		android:id="@+id/myTextView4"
+		android:textSize="18px"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="@string/myTextView4"/>
+	    <TextView
+		android:id="@+id/myTextView5"
+		android:textSize="18px"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="@string/myTextView5"/>
+	    <TextView
+		android:id="@+id/myTextView6"
+		android:textSize="18px"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="@string/myTextView6"/>
+	    <TextView
+		android:id="@+id/myTextView7"
+		android:textSize="18px"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="@string/myTextView7"/>
+	    <TextView
+		android:id="@+id/myTextView8"
+		android:textSize="18px"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="@string/myTextView8"/>
+	    <TextView
+		android:id="@+id/myTextView9"
+		android:textSize="18px"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="@string/myTextView9"/>
+	    <TextView
+		android:id="@+id/myTextView10"
+		android:textSize="18px"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="@string/myTextView10"/>
+	    <TextView
+		android:id="@+id/myTextView11"
+		android:textSize="18px"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="@string/myTextView11"/>
+</LinearLayout>
+
+ </pre>
+
+<p>更改res/values/strings.xml为如下内容：</p>
+
+<pre class="brush: xml; ruler: true ;first-line: 1; highlight: []"> <?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">templator!</string>
+    <string name="app_name">templator</string>
+    <string name="title">Sigma Sensors</string>
+    <string name="myTextView1">Current Temprature：</string>
+    <string name="myTextView2">Current Magnetic x：</string>
+    <string name="myTextView3">Current Magnetic y：</string>
+    <string name="myTextView4">Current Magnetic z：</string>
+    <string name="myTextView5">Current Accelero x：</string>
+    <string name="myTextView6">Current Accelero y：</string>
+    <string name="myTextView7">Current Accelero z：</string>
+    <string name="myTextView8">Current Oraenttation x：</string>
+    <string name="myTextView9">Current Oraenttation y：</string>
+    <string name="myTextView10">Current Oraenttation z：</string>
+    <string name="myTextView11">Current Light：</string>
+</resources>
+
+ </pre>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (6)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.cydz-led.com" rel="nofollow">南京led显示屏</a></span>
+                        <span class="comment-date">2011-05-03</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>学习，收藏了~</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.qhm123.com/" rel="nofollow">鸣</a></span>
+                        <span class="comment-date">2011-05-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你搞Android做啥阿？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-05-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>Android黑飘过。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">yihongyuelan</span>
+                        <span class="comment-date">2012-01-11</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>方法有问题。<br><br>1.yourActivity implements SensorEventListener<br>2.mSensorManager.registerListener(this,<br>				mSensorManager.getDefaultSensor(Sensor.TYPE_LIGHT),<br>				SensorManager.SENSOR_DELAY_FASTEST);<br>3.	@Override<br>	public void onSensorChanged(SensorEvent event) {<br>//		Log.i(TAG, "onSensorChanged()...");<br>		if (event.sensor.getType() == Sensor.TYPE_LIGHT) {<br>			Log.i(TAG, "***lightValue: "+event.values[0]);<br>		}<br>	}<br>应该这样做。。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2012-01-11</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-2287" rel="nofollow">@yihongyuelan </a> <br>谢谢指正！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.fakeraybans4sale.com" rel="nofollow">www.fakeraybans4sale.com</a></span>
+                        <span class="comment-date">2013-06-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>Hi there would you mind stating which blog platform you're working with? I'm looking to start my own blog soon but I'm having a difficult time making a decision between BlogEngine/Wordpress/B2evolution and Drupal. The reason I ask is because your design and style seems different then most blogs and I'm looking for something unique.                  P.S My apologies for being off-topic but I had to ask!</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

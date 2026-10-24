@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redis实现之虚拟存储系统（VM）实现(二)--数据交换（Swap）的实现 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>Redis实现之虚拟存储系统（VM）实现(二)--数据交换（Swap）的实现</h1>
+                    <div class="post-date">2011-07-17</div>
+                    <div class="post-meta">
+                        <span class="tag">数据库</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">交换空间</span>
+                        <span class="tag">Redis</span>
+                        <span class="tag">虚拟存储</span>
+                        <span class="tag">VM</span>
+                        <span class="tag">NoSQL</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>Redis的虚拟存储系统（VM subsystem）的目的是实现将Redis对象（Redis Objects）方便的在主存（Memory）和硬盘（Disk）之间交换。在Redis虚拟存储系统中，Redis仅仅会将和值（Values）关联的对象交换（swap）到硬盘上。在前一篇日志中，对VM涉及的数据结构进行简要介绍，在这篇日志中，将介绍数据交换的具体过程。</p>  <p>在具体讲Redis数据交换的具体实现之前，有必要讲下swap文件，swap文件是由若干页（page）组成的，每页包含着给定字节数的数据。由于不同的redis实例的最优配置不一样（取决于你实际存储数据的大小），这些参数可以通过redis.conf文件进行修改。下面是默认的大小：</p>  <pre class="brush: bash; ruler: true ;first-line: 1; highlight: []"> vm-page-size 32
+vm-pages 134217728
+ </pre>
+
+<p>Redis使用位向量（英文为bitmap，这是一些连续的位，每位的值为0或1）来表示在硬盘中page是否被使用。假如一个给定位是1，则表示该页被使用（有swap文件存在上面），为0，表示该页未被使用。</p>
+
+<p>通过在内存中使用位向量(下面将称为页表位向量)，可以在很少的内存消耗情况下取得巨大的性能提升，因为我们仅仅只需要为每页提供一位。对于上面的默认配置，总共有4G的虚存，但是只需要16M的内存给页表位向量。</p>
+
+<p>为了将主存上的数据交换到交换空间，我们需要做如下步骤（假设没有使用虚存线程，仅仅是块实现）。</p>
+
+<ol>
+  <li>找出需要多少页来存储交换文件。这仅仅需要通过调用rdbSavedObjectPages函数即可返回需要的页数。 </li>
+
+  <li>知道需要的页数后，我们需要找到交换空间中一些连续的页来存储。这是通过vmFindContiguousPages函数实现的。这个函数有可能因为内存满了而失败，也有可能因为找不到连续的页失败。当这种情况发生时，交换将被取消，数据将继续保存在内存中。 </li>
+
+  <li>最终，我们只需要调用vmWriteObjectOnSwap函数即可以将数据交换到对应的位置。数据交换完成后，对应的主存被释放，对应的key也被标记为REDIS_VM_SWAPPED，而对应的页表位向量也被标记为使用中。 </li>
+</ol>
+
+<ol>而将交换空间的数据切回到主存中，则很简单，由于知道对象存的位置以及占用页数。只需要调用vmLoadObject即可以完成。</ol>
+
+<p><font style="background-color: #ffffff" color="#0000ff">注：本文内容翻译自redis源码包doc目录中的相关文档。</font></p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (4)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.nuofeini.com/" rel="nofollow">滑动门</a></span>
+                        <span class="comment-date">2011-07-23</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>一个人吃饭，旅行，看书，写信，留言，自己对话谈心。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-07-24</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>。。。你的防垃圾评论系统不照啊。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-07-24</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1082002" rel="nofollow">@grapeot</a><br><br />是啊，都要手动删。。。<br><br />并且也没有过滤系统，尤其是什么宁波的，一系列垃圾评论</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.26kg.cn" rel="nofollow">26kg</a></span>
+                        <span class="comment-date">2011-08-17</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>vm装了N次装不起，索性不装鸟~</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

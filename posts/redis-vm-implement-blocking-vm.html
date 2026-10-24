@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redis实现之虚拟存储系统（VM）实现(三)--阻塞式虚存（Blocking VM）交换 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>Redis实现之虚拟存储系统（VM）实现(三)--阻塞式虚存（Blocking VM）交换</h1>
+                    <div class="post-date">2011-07-24</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">数据库</span>
+                        <span class="tag">替换算法</span>
+                        <span class="tag">虚拟存储</span>
+                        <span class="tag">阻塞式</span>
+                        <span class="tag">Redis</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>个人理解，所谓阻塞式虚存（Blocking VM），是指<a href="http://www.sigma.me/2011/07/17/redis-vm-implement-swap-processing1.html">redis发生数据交换</a>时，进程被阻塞，不能干其他的事情（后面一篇文章将讲到Threaded VM相反，有独立VM线程）。</p>  <p>在Redis中，启用阻塞式虚存需要在配置文件中将server.vm_max_threads设成0（即不为Threaded VM），和VM另一个相关配置变量是sever.vm_max_memory，它表示Redis中数数据所占用的最大内存（实际上运行过程中可能大于这个值），只有数据量占用内存大于这个值时，才会出现数据交换到disk。</p>  <h4>交换到硬盘</h4>  <p>数据交换是通过一个计划任务函数（cron function）实现的。这个函数每隔一定的时间会检查是否超出了内存最大值（out of memory）。假如发现超出了最大值，则通过循环调用vmSwapOneObject（这个函数只有一个参数，0表示阻塞式，1表示线程式）来将数据交换到硬盘。</p>  <p>vmSwapOneObject实现如下：</p>  <ol>   <li>和Cache替换一样，很关键的一点就是需要找到需要交换出去的Object，使得交换代价最小（后面会讲redis是如何决定的）。 </li>    <li>被交换出去的object关联的值（value）通过阻塞式被交换到硬盘。 </li>    <li>key的storage域被设置成REDIS_VM_SWAPPED，vm域也将改写，包括页表索引值，以及所占用的页数。 </li>    <li>释放被swap的object的内存，在哈希表（hash table）中将对应的value的入口设置成NULL。 </li> </ol>  <p>这个函数一直被调用，直到如下情况：swap空间已满，或者数据对象占用的内存小于sever.vm_max_memory。</p>      <h4>替换算法</h4>  <p>在Redis中，VM系统所用的替换算法和Cache里面的LRU有点不同（但有点类似，只是多加数据大小这个权重），redis是通过一个权值swappability来决定被替换出去的对象（swappability越大，表示越优先被交换），swappability的计算方法如下：</p> <block>swappability = age*log(size_in_memory)</block>  <p>上式中的age是指对应的数据对象多久未被访问，而size_in_memory是指数据对象占用内存的大小。从这个算法可以看出，根据局部性原理，redis是想将最少访问的数据交换出去，同时减少交换次数（将大的数据交换）。但是后者的权重比较低，所以取了对数（有点不明白为什么要用这么复杂的函数，感觉这计算所耗的时间比较多）。</p>  <h4>阻塞式的缺陷</h4>  <p>阻塞式数数据交换的缺陷很明显，那就是如其名，阻塞。对于批处理的数据库应用，这也许不算缺陷，因为只在乎总的时间，而不在乎某个请求的响应时间。而对于实时系统，大部分应用都应该属于此类，却是致命的，在发生数据交换时，数据库访问的请求的响应延时会非常大。</p>  <p>为了解决这个问题，需要在后台完成数据交换，于是出现了非阻塞式的虚存系统，那就是线程式虚存（Threaded VM）。</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (2)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.livenote.info" rel="nofollow">su</a></span>
+                        <span class="comment-date">2011-07-26</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>呵呵我也来看看了啊 u 广告顺道点点啊</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.minghanchina.com/" rel="nofollow">WILDEN</a></span>
+                        <span class="comment-date">2011-08-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你通不通过我的留言，我就在那里，不悲不喜</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

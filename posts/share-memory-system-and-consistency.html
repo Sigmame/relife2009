@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>共享存储和存储一致性概述 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>共享存储和存储一致性概述</h1>
+                    <div class="post-date">2011-05-06</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">并行体系结构</span>
+                        <span class="tag">存储一致性</span>
+                        <span class="tag">共享存储</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>之前那篇关于<a href="/2011/04/10/cmp-parallel-computing.html">并行加速的文章</a>里讲到，有空会把各种存储一致性介绍下，趁着今天刚考完分布式操作系统，做各种存储一致性有点点了解，就趁热打铁，把各种一致性写下来，作为备忘。</p>
+<p>需要强调的是，即将写关于存储一致性的几篇文章，大量的参考了夏道藏老师的《分布式操作系统》分布式共享内存一章的课件以及胡伟武老师的《共享存储系统结构》一书。</p>
+<p>在本文中，主要概述下一致性，并且对各种一致性进行简要介绍，后面的几篇文章会稍微详细介绍下：</p>
+<p>和消息传递相比，共享存储体系结构编程模型简单，程序访问在共享地址空间中的数据正如同访问在传统的虚存中的数据一样，不用考虑数据具体所在的位置。但共享存储有个问题就是可扩展性差，规模不能做的很大，因此，现在的机群基本都不采用这种结构，不过研究这个结构对于并行理论还是很有帮助的。</p>
+<p>由于事实上共享存储系统里面存储的各部分是分布到各处的，访存还是需要通过低层的通讯（消息传递）完成的。最严重的是，由于数据在多处具有备份，导致数据在不同的备份会出现不一致的情况，存储一致性就是为了解决这个问题。</p>
+<p>为了改善性能，共享存储系统依赖复制共享数据项（多个备份）和允许在许多结点上并发访问。但是，如果并发访问不仔细地加以控制，内存访问可能以不同于程序员所期望的次序被执行。非正式讲，一个内存是一致的，如果由读操作返回的值总归是程序员所期望的值。</p>
+<p>一致性模型实质上是软件和存储器间的契约（Adve和Hill，1990），它是说，如果软件同意服从某模型给出的规则，则存储器允诺软件在这种模型下正确地工作；否则，存储器操作的正确性将得不到保证。</p>
+<p>具体的常见的一致性协议主要有（本文只讲定义，后面的文章会具体分别介绍）：</p>
+<h4><a href="/2011/05/6/strict-consistency.html">严格一致性(strict  consistency)</a></h4>
+<blockquote><p>一个读返回最近写的值。严格一致性要求具有决定最近写的能力，依次它蕴涵请求的全序。</p></blockquote>
+<h4><a href="/2011/05/6/sequential-consistency.html">顺序的一致性(Sequential consistency)</a></h4>
+<blockquote><p>如果所有进程以一定的顺序执行操作；每一进程的操作都以程序规定的顺序出现，则任何操作的结果都是一样的。</p></blockquote>
+<h4><a href="/2011/05/6/causal-consistency.html">因果一致性(Causal Consistency)</a></h4>
+<blockquote><p>可能因果相关的写操作应对所有进程可见，且顺序一致。并发写操作在不同机器看来顺序可能是不同的。</p></blockquote>
+<h4><a href="/2011/05/6/causal-consistency.html">一般一致性(General Consistency)</a></h4>
+<blockquote><p>一个系统支持一般一致性，当每个处理机所执行的所有写已被完成时，如果一个内存<br />
+位置的所有副本最终地包含同样的数据。</p></blockquote>
+<h4><a href="/2011/05/6/PRAM-consistency.html">处理机一致性(Processor consistency)</a></h4>
+<blockquote><p>由一个处理机发出的写以他们所发出的同样次序被观察到。但是，从两个进程写的次序出现作为由它们自身或第三个处理机所观察到的次序不一定相同。即从不同的处理机的同时对同样的位置的两个读可以产生不同的结果。</p></blockquote>
+<h4><a href="/2011/05/6/causal-consistency.html">PRAM一致性(PRAM consistency,又名FIFO consistency)</a></h4>
+<blockquote><p>一个过程的写操作可以被其他进程以指定的顺序接收到，但不同进程的写操作在不同进程看来次序可以是不同的。</p></blockquote>
+<p>以下几种一致性协议主要是针对增加了同步操作后的共享存储系统而言的。</p>
+<h4><a href="/2011/05/6/weak-consistency.html">弱一致性(Weak consistency)</a></h4>
+<blockquote><p>同步访问（访问要求执行同步操作）是顺序一致的。在一个同步访问可以被执行之前，所有以前正常的数据访问必须完成。在一个正常的数据访问可以被执行之前，所有以前同步访问必须完成。</p></blockquote>
+<h4><a href="/2011/05/6/release-consistency.html">释放一致性(Release consistency)</a></h4>
+<blockquote><p>共享存储在遵守以下规则时就是释放一致的：<br />
+a. 在访问共享变量前，进程所有先前的获取操作都必须成功地完成；<br />
+b. 在允许释放操作前，进程先前的所有读写操作都必须完成；<br />
+c. 获取操作和释放操作必须是FIFO一致的（此处有疑问，因为胡老师一书中说是顺序一致性，而夏老师课件中则是FIFO一致性）。</p></blockquote>
+<h4><a href="/2011/05/6/entry-consistency.html">入口一致性(Entry Consistency)</a></h4>
+<blockquote><p>当存储器满足下列所有条件时，就成为入口一致性存储器（Bershad和 Zekauskas，1991）：</p>
+<p>a. 只有某一进程的保护共享变量全部被更新以后，该进程方允许执行同步变量的获取访问；</p>
+<p>b. 在一进程以互斥模式访问该进程的同步变量之前，不允许其他进程持有此同步变量，即使在非互斥模式下；</p>
+<p>c. 在结束互斥模式下对一个同步变量的访问后，任意其他进程必须与该变量的拥有者核查，才能试图以非互斥模式访问该同步变量。</p></blockquote>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

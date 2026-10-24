@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redis实现之虚拟存储系统（VM）实现(一)--Swap file数据结构 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>Redis实现之虚拟存储系统（VM）实现(一)--Swap file数据结构</h1>
+                    <div class="post-date">2011-07-03</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">数据库</span>
+                        <span class="tag">数据结构</span>
+                        <span class="tag">虚拟存储</span>
+                        <span class="tag">交换空间</span>
+                        <span class="tag">VM</span>
+                        <span class="tag">NoSQL</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>Redis的虚拟存储系统（VM subsystem）的目的是实现将Redis对象（Redis Objects）方便的在主存（Memory）和硬盘（Disk）之间交换。在Redis虚拟存储系统中，Redis仅仅会将和值（Values）关联的对象交换（swap）到硬盘上。</p>  <p>在Redis的顶层的Hash 表中，将一部分的Redis对象（键Key）映射到另一部分Redis对象（值Value）。从而实现可以只将value交换到硬盘，而key对象不交换到硬盘，这保证了Redis非常好的查找性能（一般查找都是通过Key实现）。Redis虚存系统设计目标就是保证有虚存的Redis系统和没有虚存的Redis系统性能相差不大。</p>  <p>当一个对象（包括Key 和 Value）被交换到硬盘，在Hash表中：</p>  <ul>   <li>Key还在内存中，保存着一个代表着Kye的Redis对象。 </li>    <li>Value被设成了NULL。</li> </ul>  <p>到这里，你也许会问，在哪里存储被交换出去的Value信息（这Value和某个Key关联着）。事实上，在Redis中，就在Key对象中。</p>  <p>下面是Redis对象robj的数据结构：</p>  <pre class="brush: c; ruler: true ;first-line: 1; highlight: []">  /* The actual Redis Object */
+typedef struct redisObject {
+    void *ptr;
+    unsigned char type;
+    unsigned char encoding;
+    unsigned char storage;  /* If this object is a key, where is the value?
+                             * REDIS_VM_MEMORY, REDIS_VM_SWAPPED, ... */
+    unsigned char vtype; /* If this object is a key, and value is swapped out,
+                          * this is the type of the swapped out object. */
+    int refcount;
+    /* VM fields, this are only allocated if VM is active, otherwise the
+     * object allocation function will just allocate
+     * sizeof(redisObjct) minus sizeof(redisObjectVM), so using
+     * Redis without VM active will not have any overhead. */
+    struct redisObjectVM vm;
+} robj;
+ </pre>
+
+<p>正如你所看到的，这个数据结构中有一些域是和虚拟存储相关的。最重要的域是storage,其取值可能有如下几个：</p>
+
+<ul>
+  <li>REDIS_VM_MEMORY: 对应的Value就在内存中 </li>
+
+  <li>REDIS_VM_SWAPPED: 对应的Value已被交换, 并且hash表中入口刚被设成了NULL. </li>
+
+  <li>REDIS_VM_LOADING: 对应的Value已被交换, hash表中入口是NULL, 并且对象正从硬盘Load到主存中(这个值仅仅在线程VM/ThreadedVM激活时有效，具体什么事threaded VM，详见我的下一篇博文). </li>
+
+  <li>REDIS_VM_SWAPPING: 对应的Value在主存中, hash表中入口是一个指向redis对象的指针, 但是系统存在一个把这些Value交换到硬盘的IO任务.</li>
+</ul>
+
+
+
+<ul></ul>
+
+<p>假如一个对象被交换到硬盘(REDIS_VM_SWAPPED 或 REDIS_VM_LOADING)，我们是如何知道其存储在硬盘上的位置以及类型呢，这是通过vtype域和vm域（一个redisObjectVM结构体）来实现的：在vtype中保存着交换出去的对象的类型信息，在vm域中存储着交换出去对象在硬盘中的位置。这是redisObjectVM结构体的定义：</p>
+
+<pre class="brush: c; ruler: true ;first-line: 1; highlight: []">  /* The VM object structure */
+struct redisObjectVM {
+    off_t page;         /* the page at which the object is stored on disk */
+    off_t usedpages;    /* number of pages used on disk */
+    time_t atime;       /* Last access time */
+} vm;
+ </pre>
+
+<p>在这个结构体中，包括着对象在交换文件的起始页信息，占用的总页数，以及上一次访问时间（这对于交换算法很重要，因为我们希望交换出去的数据时最少访问的）。</p>
+
+<p>在这里，也许你会问一个问题，假如虚存被禁用了，那vm域所占用的空间岂不浪费了，而对redis这种内存数据库来说，存储可是宝贵的很，在Redis中，为了解决这个问题，在对象申请空间时做了如下处理：</p>
+
+<pre class="brush: c; ruler: true ;first-line: 1; highlight: []">  ... some code ...
+        if (server.vm_enabled) {
+            pthread_mutex_unlock(&server.obj_freelist_mutex);
+            o = zmalloc(sizeof(*o));
+        } else {
+            o = zmalloc(sizeof(*o)-sizeof(struct redisObjectVM));
+        }
+... some code ...
+ </pre>
+
+<p>当虚存被禁用时，申请的空间大侠是<code>sizeof(*o)-sizeof(struct redisObjectVM)</code>，这里不包括vm域的空间。通过将vm域放到最后，我们可以在禁用VM的Redis中不浪费空间，并且保证实现的可靠性。</p>
+
+<p>注：本文内容翻译自redis源码包doc目录中的相关文档。</p>
+
+<p><font style="background-color: #ffffff" color="#0000ff"></font></p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (8)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">刘俊杰</span>
+                        <span class="comment-date">2011-07-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>谢谢分享您的知识。博客做得很好，以后会常来光顾。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-07-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1062006" rel="nofollow">@刘俊杰</a><br><br />谢谢俊杰兄捧场哈</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">Yan</a></span>
+                        <span class="comment-date">2011-07-08</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>为毛没人光顾我的。。。外国人都没有。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.jinyuanfp.com/" rel="nofollow">宁波废品回收</a></span>
+                        <span class="comment-date">2011-07-08</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><br />博主你的博文不错啊，我会继续支持你的</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-07-08</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1066001" rel="nofollow">@Yan</a><br><br />。。。我不是人吗<br><br />话说你写得太pro了，所以受众很小，我的流量现在80％都是靠搜索引擎，并且都是靠那几篇文章</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.livenote.info" rel="nofollow">su</a></span>
+                        <span class="comment-date">2011-07-08</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>好专业啊 呵呵 广告点点啊</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.cs.pitt.edu/~ouyang/wordpress" rel="nofollow">cucufrog</a></span>
+                        <span class="comment-date">2011-07-09</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1066001" rel="nofollow">@Yan</a><br><br />你写的我已然看不懂了。。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-07-23</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>最近开始从MongoDB转向Redis因为发现ZSet很好用，可能能满足需求。才发现原来你在搞他的实现了，牛逼。</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

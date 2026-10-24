@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>结论：CED 本身不是 decode 优化，它是 prefill 优化；对 decode 只有间接和局部收益，甚至可以说把计算负担更多地推给了 decode。 - Sigma</title>
+    <meta name="description" content="结论：CED 本身不是 decode 优化，它是 prefill 优化；对 decode 只有间接和局部收益，甚至可以说把计算负担更多地推给了 decode。">
+    <meta name="robots" content="index, follow">
+    <link rel="stylesheet" href="../../style.css">
+    <link rel="stylesheet" href="../ai.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../../index.html">Posts</a>
+                <a href="../index.html">AI</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to AI posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>结论：CED 本身不是 decode 优化，它是 prefill 优化；对 decode 只有间接和局部收益，甚至可以说把计算负担更多地推给了 decode。</h1>
+                    <div class="post-date">2026-10-24</div>
+                    <div class="post-meta"><span class="tag">chat</span></div>
+                </header>
+                <div class="post-content">
+<p><strong>结论：CED 本身不是 decode 优化，它是 prefill 优化；对 decode 只有间接和局部收益，甚至可以说把计算负担更多地推给了 decode。</strong></p>
+<p>以下按 DeepSeek-V4.1-Flash 的 Causal Encoder-Decoder 来理解（如果你指的是别的 CED，比如 Contrastive Epistemic Decoding，告诉我，我换方向）。</p>
+<h2>1. CED 的机制决定了它作用在 prefill</h2>
+<p>40 层切成 20 层 causal encoder + 20 层 decoder。decoder 层的 global K/V <strong>不由本层 hidden state 生成</strong>，而是用 layer-dependent 投影权重直接从第 19 层（encoder 最后一层）的 hidden state 投影出来：</p>
+<p>$$K^{(l)}, V^{(l)} = h_{19} W_K^{(l)},\ h_{19} W_V^{(l)}$$</p>
+<p>于是 prefill 只需要跑前一半层就能拿到全部 40 层的 global KV，复杂度从 O(n²) 砍到约一半。<strong>这是纯 prefill 账。</strong></p>
+<h2>2. 最硬的反证：8B vs 16B</h2>
+<p>论文自己给的数字是：<strong>prefill 每 token 激活 8B 参数，decode 每 token 激活 16B</strong>。</p>
+<p>也就是说 CED 的效果是把成本从 prefill 挪到 decode —— 对 agentic 场景（输入远长于输出、频繁 tool call 导致 KV cache miss）是划算的，但单看 decode 的 per-token 计算量，CED 一分钱没省。原因很直接：decode 每个新 token 都要跑完 encoder 20 层（新 token 的 h₁₉ 得算出来）+ decoder 20 层，深度没变。</p>
+<h2>3. CED 对 decode 的真实收益（三条，都是间接的）</h2>
+<table>
+<thead>
+<tr>
+<th>收益</th>
+<th>机制</th>
+<th>强度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>索引成本与上下文解耦</strong></td>
+<td>Hierarchical Sparse Indexer <strong>只在 CED 的 decoder 里用</strong>：第一个 Full Mode 层建候选池（如 2048 block × 8 = 16,384 位置），后续 Reindex 层只在这个池内打分，per-query 成本从 O(context) 变常数</td>
+<td>这是 CED 对 decode 最直接的贡献</td>
+</tr>
+<tr>
+<td><strong>KV footprint 变小 → 并发变高</strong></td>
+<td>global KV 890 B/token（V4-Flash 的 1/4），persistent KV 1/8。decode 是 bandwidth-bound，KV 小了就能塞更大 batch、摊薄权重读取</td>
+<td>但主因是 <strong>CSA2 + FP4</strong>，不是 CED</td>
+</tr>
+<tr>
+<td><strong>SWA KV 不再持久化</strong></td>
+<td>Decoder SWA Bounded Replay 只重放 n_win 个 token（而非 L/2 × n_win），session 恢复时 miss 代价从"灾难"变"轻微"</td>
+<td>省的是 prefill 重算和 SSD 容量，间接让 decode 侧 HBM 更宽裕</td>
+</tr>
+</tbody>
+</table>
+<p>配套的 Figure 2 那个"4K→1M 上下文 decode FLOPs 只涨 1/4"，是 <strong>CSA2 稀疏注意力 + 分层 indexer + FP4</strong> 的合力，不能记在 CED 头上。</p>
+<h2>4. 真正提升 decode 的是另外四件事</h2>
+<ul>
+<li><strong>DSpark 推测解码</strong>：3 层 drafter + 单次前向并行出 5 个 draft position + Markov head 建模依赖 + confidence head 预测接受率 + 按引擎吞吐曲线动态定验证长度</li>
+<li><strong>CSA2</strong>：跨层复用 main KV / indexer K / Top-K 索引（Full / Reindex / Reuse 三模式），Reuse 层 decode 只跑 11 个 kernel</li>
+<li><strong>FP4 main KV + FP8 SWA KV</strong>（QAT，量化在 RoPE 之后）</li>
+<li><strong>EPD 分离部署</strong> + Single-Pass mHC / Mega-mHC kernel（激活访存减半）</li>
+</ul>
+<h2>5. 两个值得盯的风险点</h2>
+<ul>
+<li>CED 让 decoder 的 KV 全部从<strong>单一层</strong>的 hidden state 投影而来，KV 的"计算深度"被压掉了 —— 论文说性能可比，但这是架构级的赌注，长上下文稀疏检索是它自己点名的 robustness 边界</li>
+<li>SWA Bounded Replay 是<strong>近似</strong>重建（截断到 replay 段），论文承认这是未完全刻画的失效边界</li>
+</ul>
+<hr/>
+<p>一句话给决策用：<strong>如果你在评估"要不要为 decode 上 CED"——不值得，CED 的 ROI 全在 prefill/agentic 输入侧；要 decode 加速，看 DSpark + 稀疏注意力 + KV 低精度 + kernel fusion 这条线。</strong></p>
+<p>要不要我把这篇的架构拆解整理成 Obsidian 笔记（放 <code>Mora/Tech</code>），或者顺着 YOCO → CED 这条 KV 复用谱系做一次深挖？</p>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma · AI-generated insight by Mora</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux下查看并设置CPU频率 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>Linux下查看并设置CPU频率</h1>
+                    <div class="post-date">2011-11-05</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">频率</span>
+                        <span class="tag">内核</span>
+                        <span class="tag">Linux</span>
+                        <span class="tag">CPU</span>
+                    </div>
+                </header>
+                <div class="post-content">
+在Linux下，可通过cpufreq-info,cpufreq-info,cpufreq-selector等命令来查看以及设置CPU的频率。
+这些命令加载了内核的acpi_cpufreq模块，可通过以下命令查看是否加载。
+<pre class="brush: actionscript3; gutter: true">lsmod | grep "acpi_cpufreq"</pre>
+其中cpufreq-info的输出示例信息如下：
+<pre class="brush: bash; gutter: true">analyzing CPU 7:
+  driver: acpi-cpufreq
+  CPUs which need to switch frequency at the same time: 7
+  hardware limits: 1.20 GHz - 2.13 GHz
+  available frequency steps: 2.13 GHz, 2.00 GHz, 1.87 GHz, 1.73 GHz, 1.60 GHz, 1.47 GHz, 1.33 GHz, 1.20 GHz
+  available cpufreq governors: ondemand, userspace, performance
+  current policy: frequency should be within 1.20 GHz and 2.13 GHz.
+                  The governor "ondemand" may decide which speed to use
+                  within this range.
+  current CPU frequency is 1.20 GHz.</pre>
+上面给除了当前CPU的频率范围，频率的策略，以及整个CPU可是设置的频率。
+其中governor就是CPU频率的策略，上面列出的CPU有三种策略，onemand（表示系统可以通过动态调整频率，降低功耗，具体的调整策略和内核的功耗管理算法有关），userspace（表示用户可以自己设定cpu的频率），performance（表示CPU总是在最高主频下工作）。
+
+可通过cpufreq-set以及cpufreq-selector来设置CPU的频率以及策略。
+cpufreq-set的用法如下：
+<pre class="brush: bash; gutter: true">Usage: cpufreq-set [options]
+Options:
+  -c CPU, --cpu CPU        number of CPU where cpufreq settings shall be modified
+  -d FREQ, --min FREQ      new minimum CPU frequency the governor may select
+  -u FREQ, --max FREQ      new maximum CPU frequency the governor may select
+  -g GOV, --governor GOV   new cpufreq governor
+  -f FREQ, --freq FREQ     specific frequency to be set. Requires userspace
+                           governor to be available and loaded
+  -h, --help           Prints out this screen</pre>
+cpufreq-selector的用法如下：
+<pre class="brush: bash; gutter: true">Usage: cpufreq-set [options]
+Options:
+  -c CPU, --cpu CPU        number of CPU where cpufreq settings shall be modified
+  -d FREQ, --min FREQ      new minimum CPU frequency the governor may select
+  -u FREQ, --max FREQ      new maximum CPU frequency the governor may select
+  -g GOV, --governor GOV   new cpufreq governor
+  -f FREQ, --freq FREQ     specific frequency to be set. Requires userspace
+                           governor to be available and loaded
+  -h, --help           Prints out this screen</pre>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (4)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://nullsheng.com" rel="nofollow">林盛</a></span>
+                        <span class="comment-date">2011-11-05</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你改用wordpress了哈，你用的新浪的空间？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-11-05</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>恩，GAE一两个小时就爆了，我没用新浪的空间，SAE绑定域名太麻烦了</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://nullsheng.com" rel="nofollow">林盛</a></span>
+                        <span class="comment-date">2011-11-05</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>额，呵呵，不错，主题挺清爽的。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-11-05</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>看到欧阳用这个主题，感觉不错，就搞来用用</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

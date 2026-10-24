@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMP读书笔记三:提高吞吐量（IMPROVING THROUGHPUT） - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>CMP读书笔记三:提高吞吐量（IMPROVING THROUGHPUT）</h1>
+                    <div class="post-date">2011-03-31</div>
+                    <div class="post-meta">
+                        <span class="tag">读书笔记</span>
+                        <span class="tag">study</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">芯片设计</span>
+                        <span class="tag">CMP</span>
+                        <span class="tag">处理器设计</span>
+                        <span class="tag">片上多核处理器</span>
+                        <span class="tag">吞吐量</span>
+                        <span class="tag">同步多线程</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>随着互联网的发展，web服务器成为了一个很大的应用。和传统的科学计算以及桌面应用不同，web服务器对延时并不是很敏感，因为网络传输延时往往大于服务器端的计算延时。相反的，对于web服务器，提高并发处理能力倒显得极端重要，因为现在的web站点动辄就是几万人，甚至上千万人在线（当然，对于这种系统，往往不是一个服务器，而是服务器分布在各地，导出都是CDN），因此，提高web服务器的处理器吞吐量就显得极端重要（记得计算所所长李国杰院士去年提过高通量计算，不知道是不是这个意思）。</p>
+<p>提高处理器的吞吐量的基本思路很简单，那就是提高处理器的并发线程数，而提高处理器的并发线程数，方法又有两类，同步多线程（Simultaneous MultiThreading，SMT）以及多核（Multicore）。</p>
+<p>传统的处理器核心只能<span style="color: #ff0000;">并发</span>执行一个线程，而一个线程内部往往会由于相关（数据相关，控制相关）导致流水线堵塞，从而导致处理器的部件不能充分利用（包括取值部件，功能部件等）。为了减少由于线程内的依赖所造成的堵塞，提高单个处理器核心的吞吐量，出现了在一个处理器核心同时执行几个线程的技术（因为线程间的依赖比线程内要少很多），即同步多线程技术，Intel又叫超线程技术（Hyper-Threading Technology，HT）。</p>
+<p>同步多线程（SMT）是一种在一个CPU 的时钟周期内能够执行来自多个线程的指令的硬件多线程技术。本质上，同步多线程是一种将线程级并行处理（多CPU）转化为指令级并行处理（同一CPU）的方法。 同步多线程是单个物理处理器从多个硬件线程上下文同时分派指令的能力。同步多线程用于在商用环境中及为周期/指令（CPI）计数较高的工作负载创造性能优势。 同步多线程使您可在同一处理器上同时调度多个线程，从而充分利用处理器的各个部件，提高性能功耗比。下面是一副不同粒度的多线程技术的比较，同时从图中也可以基本看出同步多线程的基本原理。<br />
+<img style="display: block; float: none; margin-left: auto; margin-right: auto;" title="同步多线程示意图" src="http://3fnp6q.blu.livefilestore.com/y1pKwoY5O58QMDeWjyVE2gDFnM5nXTgEIHyd-91YL-gbXEkimsYMCMSbbgudiHiz8LHI4JHH_uZyfCFLzUV2YiD7eh2HY3FXSZ3/SMT.jpg?psid=1" alt="同步多线程示意图" /></p>
+<p>很多厂商，包括IBM，Sun，Intel的处理器都应用了同步多线程技术，<a href="http://www.mips.com/Prodigy/">MIPS昨天也发布了代号为神童（Prodigy）的64位同步多线程处理器</a>。</p>
+<p>另外一方面，多核也是提高并发线程数的好方法，但是多核会增加大量的面积及功耗，从而大大降低性能功耗比，而性能功耗比对于24小时在线的web服务器是至关重要的，因此，不能简单的在超标量核心上堆积现有的复杂的超标量（Superscale）处理器核心。</p>
+<p>考虑到web应用对延时不敏感的特点，可以将每个处理器核心设计的尽量简单（但可以保持其同步多线程的能力），从而提高处理器核心数目同时，对面积和功耗并不会提高，同时可以大大的提高处理器处理并发线程数（等于处理器核心数X每个核心的多线程数）的能力，提高处理器的吞吐量，并且提高性能功耗比。下面这幅图比较了超标量的多核处理器和简单的多核处理器的吞吐量和功耗的比较，可以看到，简单的核心优势极其明显。<br />
+<img style="display: block; float: none; margin-left: auto; margin-right: auto;" title="标量的多核处理器和简单的多核处理器的吞吐量和功耗的比较" src="http://public.blu.livefilestore.com/y1pMp5PieeyNgOEx29-Ga6MqJg7_5U8_TI5xgpAzyxhbYR3-zlD5mW9gj-hHG2yxQ7awdNG6yeC7K7LC5FzvNAm7Q/simp-super-multicore.jpg?psid=1" alt="标量的多核处理器和简单的多核处理器的吞吐量和功耗的比较" /></p>
+<p>在设计web服务器处理器方面，Sun做到了极致，其Niagara系列处理器绝对是这个领域的巅峰之作（可惜一心做技术的sun却被一心赚钱的oracle收购了！）。</p>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

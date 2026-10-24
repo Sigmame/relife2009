@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>处理器的存储子系统（一）--概述 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>处理器的存储子系统（一）--概述</h1>
+                    <div class="post-date">2010-12-28</div>
+                    <div class="post-meta">
+                        <span class="tag">读书笔记</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">Cache</span>
+                        <span class="tag">存储系统</span>
+                        <span class="tag">处理器</span>
+                        <span class="tag">memory system</span>
+                        <span class="tag">compter technology</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p><span style="color: #ff0000; background-color: #ffffff;">注：这学期第一次做高性能作业（其他十次都没做…），做完后感觉有点收获，做个总结，算是备忘。</span></p>
+<p>随着工艺水平的提高，集成电路的集成程度越来越高，主频也不断提高，处理器的功能部件的计算能力越来越强（现在已经能够一拍就完成32位定点乘法），处理器的性能瓶颈不再再是处理器核心的计算能力了，而是突出表现为访存的瓶颈上了，正如老大所说，“如何喂饱饥饿的CPU”成了处理器设计的主要问题，因此设计一个高效的，能尽量喂得快点的存储子系统对于当今的处理器设计越来越重要。</p>
+<p>由于辅存（如硬盘）的访问速度太慢，根本无法喂饱饥饿的CPU，于是出现了主存，随着处理器性能提高，主存的速度也不够，<span style="color: #0000ff;">根据局部性原理</span>，于是出现了Cache，最早Cache做在片外，后来处理器性能提高了，做在外面也不行，于是做到了片内，之后为了更优化Cache，又出现了L1Cache，L2 Cache，甚至L3 Cache。随着SMP以及CMP的出现，存储一致性问题愈加突出，成为影响程序执行是否正确的一个重要因素。现在处理器的存储层次如下图：</p>
+<p><a href="http://8sgccq.blu.livefilestore.com/y1pq3IY0fVwcja4L5Fdu9z4iWlvDq9ZEEDMjnvzK8PhKyvJA6_YhVE8f_Nun3Zfx50ux7_Rtz1EC6y-Jv9KhcTaTIhj3dtv868F/mem_arch.jpg?psid=1"><img style="background-image: none; padding-left: 0px; padding-right: 0px; display: block; float: none; margin-left: auto; margin-right: auto; padding-top: 0px; border: 0px;" title="mem_arch" src="http://8sgccq.blu.livefilestore.com/y1pq3IY0fVwcja4L5Fdu9z4iWlvDq9ZEEDMjnvzK8PhKyvJA6_YhVE8f_Nun3Zfx50ux7_Rtz1EC6y-Jv9KhcTaTIhj3dtv868F/mem_arch.jpg?psid=1" border="0" alt="mem_arch" width="488" height="257" /></a></p>
+<p>另一方面，随着多任务操作系统的引入，导致了逻辑地址（又叫虚拟地址）和物理地址的区分，为了建立虚拟地址VA和物理地址PA的映射关系，出现了页表机制。但是，直接在主存中查找页表进行虚实地址转化的代价太高了，于是又出现了旁路转换缓冲TLB（又称为页表缓冲，Translation lookaside buffer），还是根据局部性原理，通过将最常使用或者最近使用的页表直接保存在处理器核内，可以大大的提高虚实地址转换的速度，提高处理器的整体性能。</p>
+<p>纵观真个处理器存储系统的发展，其基本目的都是喂饱CPU，设计的基本依据都是程序的时间局部性和空间局部性。</p>
+<p>ps：写这篇文章的时候，我想起了前几天计算所举办的高通量计算机的研讨，的确，在云计算的背景下，高通量计算机的应用前景非常好，但无论是云计算，还是高通量计算机，做好一套非常好存储系统（这好体现在访问速度快，并且不会影响程序执行的正确性）都是非常必要的。当然，作为一个计算机系统，文件系统也是非常重要的。</p>
+<p>ps2：后面两篇文章分别总结下对于单个处理器的存储系统中最重要的两个部分，<a href="../2011/01/13/mem_cahce.html">Cache</a>和TLB。</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (6)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2010-12-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你现在完了，作业都不做了</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2010-12-29</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-722002" rel="nofollow">@grapeot</a><br><br />我做作业那才完了，那么多作业，肯定又会把脑瓜子搞笨</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">PP</span>
+                        <span class="comment-date">2010-12-29</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>1/11, cool!</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2010-12-29</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-729001" rel="nofollow">@PP</a><br><br />1/11是什么东西</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">PP</span>
+                        <span class="comment-date">2010-12-30</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>前面10次都没交</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.cnblogs.com/haippy/" rel="nofollow">Haippy</a></span>
+                        <span class="comment-date">2011-12-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>博主你好，<br>我也是计算所的，11级的，想交换下链接，http://www.cnblogs.com/haippy/，呵呵，可否～我的博客近段时间刚开始，还写的不多，以后会坚持写。</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

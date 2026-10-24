@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Apps的账户漏洞？ - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>Google Apps的账户漏洞？</h1>
+                    <div class="post-date">2010-12-25</div>
+                    <div class="post-meta">
+                        <span class="tag">评论</span>
+                        <span class="tag">IT资讯</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">漏洞</span>
+                        <span class="tag">security</span>
+                        <span class="tag">GAE</span>
+                        <span class="tag">云计算</span>
+                        <span class="tag">google apps</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p><span style="font-family: 微软雅黑;">Google apps主要是面向企业的应用套件，可以减少企业，尤其是中小企业的运营成本，想要了解google apps的请移步</span><a href="http://www.google.com/apps/"><span style="font-family: 微软雅黑;">http://www.google.com/apps/</span></a>.</p>
+<p><span style="font-family: 微软雅黑;">但我发现google apps丢失域名的话，有可能被别人获取管理员权限并且看到所有成员资料，包括所有Gmail,Doc,Calender，只要是属于google apps的服务，都能看到和更改。</span></p>
+<p><span style="font-family: 微软雅黑;">发现过程是这样滴</span><span style="font-family: 微软雅黑;">：</span></p>
+<ol>
+<li><span style="font-family: 微软雅黑;">前天，我在godaddy注册了新的域名</span><a href="../"><span style="font-family: 微软雅黑;">sigma.me</span></a><span style="font-family: 微软雅黑;">，为了让本博客绑到新域名上，我需要把域名加到我原来的google apps上，但是，加入的过程却碰到了如下的错误：This domain name has already been used as an alias or domain.看来，此域名已经被别人用过了。 </span></li>
+<li><span style="font-family: 微软雅黑;">于是，我想怎么才能证明我是这域名的新主人呢，于是搜了半天，搜到的结果大部分都是联系google客服，向他们出示域名属于你的证据，从而取回域名，但是这样据说周期会比较长，有可能需要半年。 </span></li>
+<li><span style="font-family: 微软雅黑;">我只好放弃了这条路，正在徘徊中，试着打开了对应的apps登陆页：</span><a title="https://www.google.com/a/sigma.me" href="https://www.google.com/a/sigma.me"><span style="font-family: 微软雅黑;">https://www.google.com/a/sigma.me</span></a><span style="font-family: 微软雅黑;">，在登陆下面发现了一个</span><a href="https://www.google.com/a/sigma.me/DomainContact?service=CPanel"><span style="font-family: 微软雅黑;">Can't access your account?</span></a><span style="font-family: 微软雅黑;">,于是尝试着点进去，发现有：If you are a domain administrator for sigma.me，</span><a href="https://www.google.com/a/sigma.me/ForgotAdminAccountInfo"><span style="font-family: 微软雅黑;">Reset your administrator password</span></a><span style="font-family: 微软雅黑;"> </span></li>
+<li><span style="font-family: 微软雅黑;">于是我尝试着点进去reset，但是发现要求提交原来的注册邮箱，这貌似没什么问题，但是惊喜在后面，填完验证码以后，有一段这样的话： </span>
+<blockquote>
+<p><span style="font-family: 微软雅黑;">We have sent instructions on how to reset your password to your domain's secondary email address, which ends in: gmail.com.</span></p>
+<p><span style="font-family: 微软雅黑;">If you no longer have access to your domain's secondary email address, there is a second option to reset your password. You can create an HTML file or CNAME record to verify that you own the domain name. </span><a href="https://www.google.com/a/cpanel/sigma.me/VerifyAdminAccountPasswordReset"><span style="font-family: 微软雅黑;">Reset your administrator password by domain verification</span></a></p>
+</blockquote>
+</li>
+<li>
+<p><span style="font-family: 微软雅黑;">原来，假如忘了原来的邮箱，还可以用域名验证来重置管理员密码，这正是我想要的！于是按流程走下去，会要求域名验证和填写一个接受重置密码的邮箱，一切完成后，会告诉你在两个工作日会把结果告诉你。我第二天就收到了重置邮件。</span></p>
+</li>
+<li>
+<p><span style="font-family: 微软雅黑;">点进去，发现已经有个管理员登陆账号xxxx，并且<strong>Secondary email address</strong>已经是我的邮箱了。进入xxxx的inbox，进入发现还有之前的邮件（不过这人很幸运，只留下一封google官方2008年发的邮件），再看成员管理，能看到所有的成员。并且能看到管理员的一些资料，包括真实姓名，以及在GAE上的一些程序和所绑定的域名。其他什么doc也点了下，还好，这人什么也没留下。</span></p>
+</li>
+</ol>
+<p><span style="font-family: 微软雅黑;">我不知道这是否算一个漏洞，但是我总觉得他是非常可怕的。理由如下： </span></p>
+<ol>
+<li><span style="font-family: 微软雅黑;">对于那些用免费域名申请的apps的用户，当你域名被收回后（比如臭名昭著的tk），你的google apps里面的数据不加以销毁的话，域名管理商可以获取你的管理员权限，新注册的用户也可以获取管理员权限并查看你的数据(其实不用收回，就可以通过域名验证来获取管理员权限)。 </span></li>
+<li><span style="font-family: 微软雅黑;">对于使用收费域名的用户，也存在同样的问题。这对一些中小企业后果会很严重。因为很多人中小企业选择google apps就是为了减少自己搭建内部邮件，ERP等服务器的成本。现在，你的内部邮件管理员权限将随时可能被域名注册商获取，你续费不及时的话，还会被新注册的用户获取。 </span></li>
+<li><span style="font-family: 微软雅黑;">在中国注册的域名，这就更可怕，由于xx监管，以及中国互联网的诚信状况。很可能，在一些势力的要求下，会要求域名注册商提供域名权限给政府，这样这些势力在需要的时候就获取目标用户或企业的管理员权限，并且查看内部邮件等资料。这也是很可怕的，这也许也是google要删除所有.cn注册apps的部分原因。 </span></li>
+</ol>
+<p><span style="font-family: 微软雅黑;">更深入的，这反映了云计算的一些问题，之前域名虽然是别人提供的，但数据在自己的服务器上，所以可以放心用，很安全。但现在，域名是别人的，数据也是在别人那的，并且要用别人的域名来验证你对数据的访问权，管理权，这就比较危险了（尤其是域名提供商不可靠的情况下）。</span></p>
+<p><span style="font-family: 微软雅黑;">也许你会说google可以用其他方法来对权限认证，但貌似对于这类东西，也只能是域名作为最后的所属权的判断标准，毕竟有些人万一真的把自己的<strong>Secondary email address</strong>的把自己用户或密码忘了。</span></p>
+<p><span style="font-family: 微软雅黑;">但愿google apps能够解决这个“漏洞”（假如google认为他是的话），也希望云计算能走的更远。因为我写这篇博客就正享受着google云计算（GAE）带给我的便利。</span></p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (2)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.v2xy.com/" rel="nofollow">xyu_ovi</a></span>
+                        <span class="comment-date">2011-01-18</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>有点可怕！注销掉应该没有问题吧！我原来用tk注册过apps，后来域名被收回了。我就果断注销了apps。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2011-01-18</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>注销应该没问题的~</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

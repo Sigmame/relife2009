@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>非关系型数据库NoSQL理论基础之CAP理论 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>非关系型数据库NoSQL理论基础之CAP理论</h1>
+                    <div class="post-date">2011-06-13</div>
+                    <div class="post-meta">
+                        <span class="tag">数据库</span>
+                        <span class="tag">非关系型数据库</span>
+                        <span class="tag">CAP理论</span>
+                        <span class="tag">关系型数据库</span>
+                        <span class="tag">NoSQL</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>CAP理论是设计分布式web系统的一个很关键的定律，其主要内容是（非官方定义）：</p>  <blockquote>   <p>When designing distributed web services, there are three properties that are commonly desired: consistency, availability, and partition tolerance. It is impossible to achieve all three.</p> </blockquote>  <p>中译为：</p>  <blockquote>   <p>在设计分布式Web服务中，通常需要考虑三个应用的属性：一致性、可用性以及分区宽容性。但是在实际的设计中，不可能这三方面同时做的很好。</p> </blockquote>  <p>CAP理论的C就是一致性（Consistency），这里不多解释，想了解的可以看看我之前写过的<a href="http://www.sigma.me/tag/%E5%AD%98%E5%82%A8%E4%B8%80%E8%87%B4%E6%80%A7">一致性的一些东西</a>；A就是可用性（availability），可以理解为是否可获取数据，以及获取数据的速度；P就是分区容忍度（partion tolerance），指的是系统中的数据分布性的大小对系统的正确性，性能的影响（一定程度上就是可扩展性）。这个理论的主要意思就是这三个是不可以同时做到很好的，我们在实现一个分布式系统时（包括分布式数据库），是不可能同时完美的实现三个方面。其实这个理论可以用“鱼和熊掌不可兼得”一言以蔽之。</p>  <p>CAP理论最早是在2000年7月19号，由Berkeley的<a href="http://www.cs.berkeley.edu/~brewer/">Eric Brewer</a>教授在ACM PODC会议上的一个开题演讲中提出，PPT在<a href="http://www.cs.berkeley.edu/~brewer/cs262b-2004/PODC-keynote.pdf">此</a>。此后，MIT的<a href="http://lpd.epfl.ch/sgilbert/">Seth Gilbert</a>和<a href="http://people.csail.mit.edu/lynch/">Nancy Lynch</a>，<a href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.20.1495&rep=rep1&type=pdf">理论上证明</a>了Brewer猜想是正确的，CAP理论在学术上正式作为一个定理出现了。</p>  <p>NoSQL一定程度上就是基于这个理论提出来的，因为传统的SQL数据库（关系型数据库）都是都是具有ACID属性，对一致性要求很高，因此降低了A（availability）和P（partion tolerance），因此，为了提高系统性能和可扩展性，必须牺牲C（consistency），推翻关系型数据库中ACID这一套。</p>  <p>依据CAP理论，从应用的需求不同，我们对数据库（其实就是一种结构化数据存储，和Bolb恰好不同）时，可以从三方面考虑：</p>  <ul>   <li>考虑CA，这就是传统上的关系型数据库(RMDB). </li>    <li>考虑CP，主要是一些Key-value数据库，典型代表为google的Big Table </li>    <li>考虑AP，主要是一些面向文档的适用于分布式系统的数据库，如SimpleDB。 </li> </ul>  <p>而对大型网站尤其是SNS网站，对于数据的短期存储，可用性与分区容忍性优先级要高于数据一致性，一般会尽量朝着 A、P 的方向设计，而对于数据的持久存储，可以通过传统的SQL来保证一致性（最终一致性）。</p>  <p>CAP理论出现后，很多大规模的网站，尤其是SNS网站的数据库设计都利用其思想，包括Amazon,Facebook和Twitter这几个新兴的IT巨头，因此，一定程度上来讲，他们都是CAP的信徒。另一方面，他们从实践上证明了CAP理论的正确性。</p>  <p>最后，附上一张图片，可以形象的解释CAP理论(<a href="http://blog.beany.co.kr/archives/category/database/nosql">来源</a>)     <br /><img style="display: block; float: none; margin-left: auto; margin-right: auto" title="CAP" alt="CAP-NoSQL" src="http://3fnm6q.blu.livefilestore.com/y1pu1aY0LGAukurn_RVbYbXtEnzRatwyDtwT7P6hNNh0uzUs6Ya4zbA4r158VrQzWEJXE8PiKe4FPF1Y8hQ4-cssS4OTnzPv6AH/nosql_cap.jpg?psid=1" width="589" height="442" />     <br />更多内容，请看这篇<a href="http://www.julianbrowne.com/article/viewer/brewers-cap-theorem">介绍CAP理论的文章</a>，本文有些内容译自这里。</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (4)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.keepbase.com/cap%e7%90%86%e8%ae%ba" rel="nofollow">CAP理论 - 空杯</a></span>
+                        <span class="comment-date">2013-05-10</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>[...] http://www.sigma.me/2011/06/13/NoSQL-CAP-Theorem.html [...]</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.kaifazhe.com/database/199804.html" rel="nofollow">技术分享——NOSQL思想篇 - 数据库 - 开发者</a></span>
+                        <span class="comment-date">2013-08-10</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>[...] http://www.sigma.me/2011/06/13/nosql-cap-theorem.html [...]</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.kaifazhe.com/database/244951.html" rel="nofollow">数据库理论之ACID和BASE的比较 - 数据库 - 开发者</a></span>
+                        <span class="comment-date">2013-08-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>[...] 本文作者:  Sigma 本文链接:  http://www.sigma.me/2011/06/13/NoSQL-CAP-Theorem.html [...]</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.r66r.net/?p=3266" rel="nofollow">NoSQL选型及HBase案例详解 | r6</a></span>
+                        <span class="comment-date">2013-09-10</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>[...] NoSQL一定程度上是基于一个很重要的原理—— CAP原理提出来的。传统的SQL数据库（关系型数据库）都具有ACID属性，对一致性要求很高，因此降低了A（availability）和P（partion tolerance）。为了提高系统性能和可扩展性，必须牺牲C（consistency）。 [...]</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

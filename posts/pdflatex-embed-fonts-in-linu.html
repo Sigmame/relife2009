@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pdf嵌入字体 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>pdf嵌入字体</h1>
+                    <div class="post-date">2012-05-12</div>
+                    <div class="post-meta">
+                        <span class="tag">贝壳</span>
+                        <span class="tag">Linux</span>
+                        <span class="tag">字体</span>
+                        <span class="tag">pdflatex</span>
+                        <span class="tag">latex</span>
+                        <span class="tag">pdf</span>
+                    </div>
+                </header>
+                <div class="post-content">
+在论文提交final script时，一般都要求论文中所有的字体都嵌入到pdf中，一般来说，IEEE提供了一个叫做EXPRESS的工具，可以检查是否符合规范，包括字体是否嵌入。但是，有时候，我们通过latex编译出来的pdf，不能通过EXPRESS检查，并且大部分都是因为字体原因，那么，本文将介绍如何在linux pdflatex编译时能够潜入所有字体。
+
+首先，linux下本身提供了一个检查pdf字体信息的工具，pdffonts。比如查看test.pdf的字体：
+<pre class="brush: actionscript3; gutter: true">pdffonts test.pdf</pre>
+结果应该是类似下面的：
+<pre class="brush: actionscript3; gutter: true">name                                 type              emb sub uni object ID
+------------------------------------ ----------------- --- --- --- ---------
+JNARJV+NimbusRomNo9L-Medi            Type 1            yes yes no       6  0
+NBINYZ+NimbusRomNo9L-Regu            Type 1            yes yes no       7  0
+CBDPEB+NimbusRomNo9L-ReguItal        Type 1            yes yes no       8  0
+ZYBBWF+CMSY10                        Type 1            yes yes no       9  0
+QVCFWU+NimbusRomNo9L-MediItal        Type 1            yes yes no      10  0
+IJIDBD+CMMI10                        Type 1            yes yes no      11  0
+MTWRTR+CMR10                         Type 1            yes yes no      16  0
+Arial                                TrueType          no  no  no      35  0
+Arial,Italic                         TrueType          no  no  no      36  0
+WXQMOP+CMMIB10                       Type 1            yes yes no      46  0
+Helvetica                            Type 1            no  no  no      51  0
+DWKNIZ+CMMI7                         Type 1            yes yes no      55  0
+IXNPPI+CMEX10                        Type 1            yes yes no      56  0
+EUDIGL+CMR7                          Type 1            yes yes no      57  0
+CLXNUD+CMSY7                         Type 1            yes yes no      58  0
+RURLFQ+CMMIB7                        Type 1            yes yes no      62  0
+LDBHLR+CMBX10                        Type 1            yes yes no      63  0
+YJCSYX+CMMI5                         Type 1            yes yes no      69  0
+Helvetica                            Type 1            no  no  no      74  0
+Helvetica                            Type 1            no  no  no      79  0
+</pre>
+可以看到，有些字体emb选项为no，表示没有嵌入。
+
+可以通过下面命令来编辑pdflatex潜入字体的设置:
+<pre class="brush: actionscript3; gutter: true">updmap --edit</pre>
+这会打开一个文件，搜索pdftexDownloadBase14，将其值变为True，即最后的文件含有下面一行。
+<pre class="brush: actionscript3; gutter: true">pdftexDownloadBase14 true</pre>
+重新编译tex文件，即可生成嵌入字体的文件。再用pdffonts看，结果应该是：
+<pre class="brush: actionscript3; gutter: true">name                                 type              emb sub uni object ID
+------------------------------------ ----------------- --- --- --- ---------
+JNARJV+NimbusRomNo9L-Medi            Type 1            yes yes no       5  0
+ZDVLDF+NimbusRomNo9L-Regu            Type 1            yes yes no       6  0
+VSOJMD+CMR8                          Type 1            yes yes no       7  0
+EAAUWX+CMMI8                         Type 1            yes yes no       8  0
+YPSQTS+CMR6                          Type 1            yes yes no       9  0
+ZYBBWF+CMSY10                        Type 1            yes yes no      10  0
+QVCFWU+NimbusRomNo9L-MediItal        Type 1            yes yes no      11  0
+EOQRPL+CMMI10                        Type 1            yes yes no      12  0
+MTWRTR+CMR10                         Type 1            yes yes no      17  0
+FTUEJX+NimbusRomNo9L-ReguItal        Type 1            yes yes no      18  0
+WMBKUV+CMMIB10                       Type 1            yes yes no      56  0
+DWKNIZ+CMMI7                         Type 1            yes yes no      63  0
+IXNPPI+CMEX10                        Type 1            yes yes no      64  0
+EUDIGL+CMR7                          Type 1            yes yes no      65  0
+CLXNUD+CMSY7                         Type 1            yes yes no      66  0
+RURLFQ+CMMIB7                        Type 1            yes yes no      70  0
+LDBHLR+CMBX10                        Type 1            yes yes no      71  0
+YJCSYX+CMMI5                         Type 1            yes yes no      77  0
+</pre>
+但是，有时候，由于latex源文件插入了eps.ps,pdf格式的图，这些图没有潜入字体，编译出来pdf也有部分字体没有嵌入，这时，可以通过pdftops工具将编译的pdf转化成ps，之后再用ps2pdf14并加上选项将字体嵌入。
+<pre class="brush: actionscript3; gutter: true">pdftops  test.pdf</pre>
+<pre class="brush: actionscript3; gutter: true">ps2pdf14 -dPDFSETTINGS=/prepress test.ps</pre>
+对于windows用户，遇到没有潜入字体的pdf。可以通过有些支持pdf嵌入字体的虚拟打印机，打印时将嵌入字体选项选上。个人推荐使用foxit phantom或这acrobat的虚拟打印机。
+
+ 
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (4)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">路人</span>
+                        <span class="comment-date">2012-05-13</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你的博客的rss是不是有问题啊，最近每篇文章在reader里都double了</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2012-05-13</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-3300" rel="nofollow">@路人 </a> <br>不会吧，我直接看feed地址没问题<br><a href="http://feeds2.feedburner.com/lifewithbugs" rel="nofollow">http://feeds2.feedburner.com/lifewithbugs</a><br>并且在我自己的reader里也没问题<br>你是不是不小心订阅了两个地址呀，因为除了feedburner的地址，还有个直接的feed地址：<br>http://www.sigma.me/feed</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.nb-seoer.com" rel="nofollow">宁波SEO</a></span>
+                        <span class="comment-date">2012-05-16</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>博主很博学 想跟您交个朋友可以么 留个QQ吧</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.jeswang.org" rel="nofollow">jeswang</a></span>
+                        <span class="comment-date">2012-10-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>我是计算所的学弟呀，很喜欢你写的内容，加油！</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

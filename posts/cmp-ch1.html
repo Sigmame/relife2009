@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMP读书笔记一:CMP的提出 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>CMP读书笔记一:CMP的提出</h1>
+                    <div class="post-date">2010-10-17</div>
+                    <div class="post-meta">
+                        <span class="tag">study</span>
+                        <span class="tag">读书笔记</span>
+                        <span class="tag">TLP</span>
+                        <span class="tag">CMP</span>
+                        <span class="tag">芯片设计</span>
+                        <span class="tag">片上多核处理器</span>
+                        <span class="tag">ILP</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>这段时间，天天上午睡觉，下午去实验室，晚上三国杀，很久没有静下心来看书了，感觉继续这样下去会不行的。于是打算开始看些体系结构领域相关的书籍，为了提高效率，尽量写写读书笔记。</p>
+<p>我选的第一本书是《Chip Multiprocessor Architecture:Techniques to Improve Throughput and Latency》。这是一本刚出不久的，关于片上多核处理器（Chip Multiprocessor,CMP）的设计技术的书，由Kunle Olukotun，Lance Hammond，James Laudon合著的，其中前两位作者都是斯坦福<a href="http://tcc.stanford.edu">TCC</a>（Transactional coherency and consistency）小组的大牛，第三位作者Sun公司的工程师，Sun公司是我最敬佩的技术类公司，没有之一，只是可惜死了。这本书主要关注的是如何提高处理器的吞吐量以及降低延时。里面涉及了很多新的技术（包括一些没有在工业界实现的技术，如线程级预测TLS-Thread Level Speculation、事务内存-TRANSACTIONAL MEMORY），个人觉得对做多核芯片和并行程序设计的人来说还是不错的一本书。</p>
+<p>本书的第一章回顾了整个CPU的发展史，从指令集并行(Instruction-Level Parallelism,ILP)引出了线程级并行（Thread-Level Parallelism），从而导出了CMP的话题。</p>
+<p>2006年之前，CPU的性能基本上是按着摩尔定律发展的，这得益于两个方面，一个是集成电路的发展，另外是处理器结构的优化，如超标量技术（Superscalar），动态流水线技术（Dynamic Pipeline），乱序执行技术（Out-of-order Execution）。</p>
+<p>但是，在2006年左右，摩尔定律出现了一次危机，ILP也几乎走到了尽头，主要原因是：</p>
+<ul>
+<li>集成电路已经发展到了极限，再要提高集成度非常困难，尤其是现在28nm的情况下。</li>
+<li>功耗问题的突出，为了提高单核心的速度，提高ILP，现在的处理器花了很大一部分面积用于这些技术的调度，如动态流水线的调度，乱序执行的调度，这些面积的功耗已经远远超过了运算器件的功耗。导致处理器的效率（性能功耗比）急剧下降。</li>
+<li>设计验证难度的增加，要想在单核情况下提高处理器的性能，需要设计更复杂的超标量乱序执行动态流水线结构，这导致芯片的设计，尤其是验证呈指数增加，很难再一两年内设计出一款商业的芯片。</li>
+</ul>
+<ul>
+于是，学术界和工业界就提出了更粗粒度的并行，线程级并行TLP。于是有了多核处理器的诞生，多核处理器的主要思想就是，一个芯片内集成几个核，每个核可以做的简单点，每个核的性能功耗比就能做的比较好，从而总的性能功耗比也得到了提高。
+</ul>
+<ul>
+之前的单核超标量处理器的并且，主要都是在ILP层面，通过多发射，分支预测技术，只能处理器一些基本的，很小的并行块，无法进行线程级甚至任务级的并行。各种粒度的并行和各种体系结构的关系如下图：
+</ul>
+<p><a href="http://novel.ict.ac.cn/dliu_old/images/26a2d5d0d704_DFBF/image.png"><img style="background-image: none; padding-left: 0px; padding-right: 0px; display: block; float: none; margin-left: auto; margin-right: auto; padding-top: 0px; border-width: 0px;" title="image" src="http://novel.ict.ac.cn/dliu_old/images/26a2d5d0d704_DFBF/image_thumb.png" border="0" alt="image" width="440" height="291" /></a></p>
+<p>接着作者举了个CMP和Uniprocessor的比较的例子，并做了性能，效率的比较分析。</p>
+<p>最后，作者指出了本书主要讨论的问题，一个处理器的吞吐量，一个是延时。前者主要针对并行粒度大，并行度高的应用，如互联网应用；后者主要针对一些延时敏感的应用，如各种实时系统以及各种桌面应用。</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (1)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me/2011/03/31/cmp-overview.html" rel="nofollow">CMP读书笔记二:CMP简要介绍-Sigma</a></span>
+                        <span class="comment-date">2012-12-17</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>[...] 注：上个学期就下过决心要把《Chip Multiprocessor Architecture Techniques to Improve Throughput and Latency》看完，并且写了一篇关于CMP的读书笔记，《CMP的提出》，之后，虽然看了下，但一直不想写，今天突然感觉应该把看的东西简要写写，算是总结，故有此文。为了使得这几篇文章脉络稍微清晰点，在这里先对片上多核处理器进行简要的介绍。 [...]</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

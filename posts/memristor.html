@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>忆阻器(Memristor)研究简述 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>忆阻器(Memristor)研究简述</h1>
+                    <div class="post-date">2010-12-21</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">读书笔记</span>
+                        <span class="tag">简介</span>
+                        <span class="tag">memristor</span>
+                        <span class="tag">忆阻器</span>
+                        <span class="tag">IC</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p><font color="#ff0000"><em>题外话：其实这是VLSI老师布置的一次作业，要求选读一篇VLSI的论文，写读后感，我在PCM和MR徘徊了好久，最终决定读了几篇MR的。</em></font></p>  <h4>忆阻器的提出</h4>  <p>忆阻器的英文 Memristor 来自“Memory（记忆）”和“Resistor（电阻）”两个字的合并。1971年，任教于美国柏克莱大学的华裔科学家蔡少棠（Prof. Leon Chua）提出了忆阻器的概念[1]。</p>  <p>在研究电荷、电流、电压和磁通量之间的关系时，蔡教授推断在电阻、电容和电感器之外，应该还有一种组件（那篇文章称之为“迷失的电子器件”，又称“第四种电子器件”），代表着电荷（q）与磁通量（<a href="http://www.sigma.me/media/aglkZmxpdWJsb2dyDQsSBU1lZGlhGPmePAw"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="clip_image002" border="0" alt="clip_image002" src="http://www.sigma.me/media/aglkZmxpdWJsb2dyDQsSBU1lZGlhGOGmPAw" width="10" height="24" /></a>）之间的关系。这种组件的效果，就是它的电阻会随着通过的电流量而改变，而且就算电流停止了，它的电阻仍然会停留在之前的值，直到接受到反向的电流它才会被推回去。电阻，电容，电感以及忆阻器之间的关系为：</p>  <p><a href="http://www.sigma.me/media/aglkZmxpdWJsb2dyDQsSBU1lZGlhGPqePAw"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="clip_image004" border="0" alt="clip_image004" src="http://www.sigma.me/media/aglkZmxpdWJsb2dyDQsSBU1lZGlhGNz_Oww" width="244" height="239" /></a></p>  <p align="center"><i>图一</i><i>. </i><i>四类基本电子器件</i><i>，忆阻器的位置在右下角</i><i>(</i><i>图引自文献</i><i>[2]</i><i>)</i><i></i></p>  <h4>忆阻器的实现</h4>  <p>蔡教授提出忆阻器理论后几十年过去了，工业界一直没有找到能够实现忆阻器的材料。</p>  <p>时间到了2005年，由 HP 的 Phillip J Kuekes 领军的团队，正在进行的一种称为 Crossbar Latch 的技术的研究[2]。Crossbar Latch 的原理是由一排横向和一排纵向的电线组成的网格，在每一个交叉点上，要放一个“开关”连结一条横向和纵向的电线。如果能让这两条电线控制这个开关的状态的话，那网格上的每一个交叉点都能储存一个位的数据。这种系统下数据密度和存取速度都是前所未闻的，问题是，什么样的材料能当这个开关？这种材料必需要能有“开”、“关”两个状态，这两个状态必需要能操纵，更重要的，还有能在不改变状态的前提下，发挥其开关的效果，允许或阻止电流的通过。如何取得这样的材料考倒了 HP 的工程师。</p>  <p>直到2008年（距蔡教授提出忆阻器已经37年过去了）才出现了转机，另一个由 Stanley Williams 领军的 HP 团队在研究二氧化钛的时候，意外地发现了二氧化钛在某些情况的电子特性比较奇特。</p>  <p>Stanley等人发现，一块极薄的二氧化钛被夹在两个电极中间，这些二氧化钛又被分成两个部份，一半是正常的（图二中undoped部分）二氧化钛，另一半进行了“掺杂”（图二中doped部分），少了几个氧原子。当“掺杂”的那一半带正电，因此电流通过时电阻比较小，而且当电流从“掺杂”的一边通向正常的一边时，在电场的影响之下缺氧的“掺杂物”会逐渐往正常的一侧游移，使得以整块材料来言，“掺杂”的部份会占比较高的比重，整体的电阻也就会降低。反之，当电流从正常的一侧流向“掺杂”的一侧时，电场会把缺氧的“掺杂物”从回推，电阻就会跟着增加[2]。因此，整个器件就相当于一个滑动变阻器一样。</p>  <p><a href="http://www.sigma.me/media/aglkZmxpdWJsb2dyDQsSBU1lZGlhGMKHPAw"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="clip_image005" border="0" alt="clip_image005" src="http://www.sigma.me/media/aglkZmxpdWJsb2dyDQsSBU1lZGlhGMmuPAw" width="308" height="430" /></a></p>  <p align="center"><i>图二</i><i>. HP</i><i>忆阻器实现原理图，</i><i>D</i><i>是夹层宽度，</i><i>w</i><i>是“掺杂”部分宽度，掺杂宽度和器件通过的电量的方向和大小有关，可以表征器件的阻抗（</i><i>resistance</i><i>），一般来说，阻抗</i><i>R</i><i>和</i><i>w/D</i><i>正相关</i><i>,</i><i>图改自文献</i><i>[2]</i><i> </i></p>  <h4>忆阻器的未来</h4>  <p>相比于现在的主要电子器件，CMOS器件，忆阻器有以下优点：</p>  <p>A. 忆阻器由于具有“记忆”功能，属于一种不需要能源的存储设备，因此用来做低功耗的RAM很有前景。</p>  <p>B. 用忆阻器实现的Cross Latch系统可以形成立体的内存，并且每个电线的开关大小是3nm x 3nm，其存储密度高达100 gigabit/cm²，立体的高达1 petabit/cm³。因此很有希望用来做高密度的存储部件，有望替换闪存（Flash）。</p>  <p>C. Crossbar Latch的网格状设计，和每个交叉点间都有开关，意味着整组网格在某些程度上是可以逻辑化的。已经有方法模拟 AND、OR 和 NOT 三大逻辑闸，几个网格的组合甚至可以做出加法之类的运算。这为摆脱晶体管进到下一个世代开了一扇窗，很多人认为忆阻器电脑相对于晶体管的跃进，和晶体管相对于真空管的跃进是一样大的。另一方面，也有人在讨论电路自已实时调整自已的状态来符合运算需求的可能性。这点，再搭配上忆阻器的记忆能力，代表着运算电路和记忆电路将可同时共存，而且随需要调整。这已经完全超出了这一代电脑的设计逻辑，可以朝这条路发展下去的话，或许代表着新一代的智慧机器人的诞生[4]。</p>  <p>参考文献：</p>  <p><a name="chua1971">[1]. Chua, L. O. Memristor - the missing circuit element.<i> IEEE Trans. Circuit Theory </i>18,507–519 (1971).</a></p>  <p><a name="HP2008"></a>[3]. Strukov, D. B., Snider, G. S., Stewart, D. R. & Williams, R. S. The missing memristor found. <i>Nature </i>453, 80–83 (2008).<a name="HPcrossbar"></a></p>  <p><a name="HPcrossbar"></a>[3]. Kuekes, P. J., Stewart, D. R. & Williams, R. S. The crossbar latch: logic value storage, restoration, and inversion in crossbar circuits. <i>J. Appl. Phys.</i> <b>97</b>, 034301 (2005).</p>  <p><a name="MR2009">[4]. Mouttet, Blaise L. </a><a href="http://www.iiis2009.org/imeti/program/HTML/program-20.htm">"Memristor Pattern Recognition Circuit Architecture for Robotics"</a>. <i>Proceedings of the 2nd International Multi-Conference on Engineering and Technological Innovation II</i>: 65–70(2009)</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (3)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://b.grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2010-12-21</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>这个很靠谱啊。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">elatewendy</span>
+                        <span class="comment-date">2011-04-13</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>很不错的网站。<br><br />周末在中科院上智控课，老师讲到忆阻器，然后就从百度百科链接到这儿来了。<br><br />浏览了一下，居然还是校友，不得不评论下哈~~~~</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.fakeraybans4sale.com" rel="nofollow">Fake Fake Ray Bans sunglasses</a></span>
+                        <span class="comment-date">2013-06-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>Hello, I believe your web site might be having web browser compatibility issues. Whenever I take a look at your site in Safari, it looks fine however, if opening in I.E., it has some overlapping issues. I merely wanted to provide you with a quick heads up! Apart from that, excellent blog!</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>
