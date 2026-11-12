@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>事务和事务内存 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>事务和事务内存</h1>
+                    <div class="post-date">2012-02-12</div>
+                    <div class="post-meta">
+                        <span class="tag">芯片设计</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">事务内存</span>
+                        <span class="tag">事务</span>
+                        <span class="tag">处理器</span>
+                    </div>
+                </header>
+                <div class="post-content">
+今天(2月9日)，看到solidot<a href="http://hardware.solidot.org/hardware/12/02/09/0846220.shtml">报道</a>，英特尔下一代Haswell处理器硬件支持事务内存，感觉有点小意外。
+
+其实很早以前（2009年），我就对事务内存关注过一段时间，当时，号称要支持的事务内存的处理器只有（据我所知）只有sun公司的Rock处理器，可是这个Rock，一再跳票，跳到Sun陨落也没发布，到现在，oracle也没发布支持事务内存的处理器。事务内存（尤其是硬件实现的）的前景貌似不太明朗。
+
+2011年9月，IBM发布了BlueGene/Q处理器，这是第一款支持事务内存的处理器。但是，这并不意味着事务内存重见天日了。
+2012年2月7日，最大的处理器厂商发表文章，声称支持硬件事务内存，其通过Transactional Synchronization Extensions(TSX)的组件来实现的，事务内存的前景终于开始明朗起来。
+
+那么，什么是事务，什么又是事务内存呢。
+
+根据维基百科整理，事务的定义为：
+<blockquote>数据库事务(简称: 事务)是数据库管理系统执行过程中的一个逻辑单位，由一个有限的数据库操作序列构成。在数据库管理系统中，事务必须满足ACID性质，即原子性，一致性，隔离性和持久性。原子性指的是事务中的动作要么全部执行，要么一个都不执行；一致性指的是任何时刻，数据库必须处于一致性状态，即必须满足某些预先设定的条件；隔离性是指一个事务不能看见其他未提交事务所涉及到的内部对象的状态，而持久性则是指一个已提交的事务对数据库系统的改变必须是永久的。</blockquote>
+那事务内存又是什么，根据国防科大张铎等人的《<a href="http://www.opengpu.org/forum.php?mod=viewthread&tid=138">事务存储结构的实现</a>》一文，事务内存是这样介绍的（为了准确，以下为直接引文，完成内存详见《<a href="http://www.opengpu.org/forum.php?mod=viewthread&tid=138">事务存储结构的实现</a>》一文）：
+<blockquote>随着多核处理器技术的不断更新和发展，传统的串行程序不论在效率上还是性能上都已经跟不上信息高速发展的脚步了，程序员不得不开发线程级并行以提高片上计算资源的使用效率，但也带来了新的挑战和问题。目前不同线程间的同步、对共享资源的访问等都是通过锁和信号量机制完成的。然而，这种传统的基于锁和信号量的并发系统存在明显的局限性。粗粒度的锁对大量的共享数据做了保护，但是可扩展性不好，因为即使在线程间不存在对共享数据的访问的情况下也可能会出现冲突阻塞现象；细粒度的锁虽然比粗粒度的锁扩展性能好，但由于算法设计的复杂性，普通程序员很难借助细力度的锁实现高效的应用。同时使用锁机制还会带来诸多问题，比如：死锁、优先级反转等，极大地影响了并行应用的效率和性能。
+
+事务存储(Transactional Memory，TM)的使用是解决上述存在问题一个很好的办法[1]。通过将不同并行执行的线程事务化，用事务操作来代替锁机制能降低编程的复杂性。事务是被单线程执行的对内存进行读写的有序操作序列，其特性包括：原子性、隔离性、一致性和持久性。通常事务的执行过程为：调用事务入口函数(begin_transaction)开始执行事务，当事务执行完毕后调用提交函数(commit_transaction)开始提交工作，提交过程分为三个阶段(请求提交、开始提交和完成提交)，执行完提交后此事务也就执行完毕，从而继续执行下面的事务。但如果事务在执行或提交过程中发生冲突或者错误，则通过其特有的回滚机制 (rollback)返回到此事务入口继续执行。
+
+为了实现事务的这些特性，需有一个很好的TM系统来支持事务数据的版本管理(Version Management)和事务的冲突管理(Contention Management)。版本管理同时对新值(事务提交后可见)和原始的旧值(事务执行过程中发生了回滚的恢复数据)进行管理。根据数据存放方式的不同TM系统区分版本管理为：积极版本管理(Eager Version Management)和懒惰版本管理(Lazy Version Management)。积极版本管理是将新值置于目标存储区中，这样在提交时新值能够很快的得到执行，极大地降低了提交的时延；而懒惰版本管理是将原始的旧值置于目标存储区，虽然会增加提交的延时但是降低了当事务发生回滚后执行的延时。冲突管理是不同事务执行过程中对共享资源访问引发冲突而进行的冲突检测以及管理的机制。冲突管理有积极的(Eager)和懒惰的(Lazy)两种策略，如果冲突在读数据或写数据时立刻被发现而进行仲裁，这种冲突检测是积极的；如果冲突是在事务进行提交时才发现并仲裁的，这种冲突检测则是懒惰的。</blockquote>
+可以看出，事务内存的出现就是为了解决并行编程存储一致性和性能矛盾的问题，传统的锁机制会导致性能低下，并且可扩展星差，而事务内存，则尝试在体系结构和程序员之间定义一个新的一致性，也即事务一致性，对应的内存模型叫做事务内存。从上面一段话可以看出，硬件事务内存有很多问题需要解决，包括版本管理，以及冲突管理，而对于硬件，只有有限的资源，因此，这就限制了事务的长度，使（硬件）事务内存的实现难度和实用性大大降低，这也许是Rock难产的原因之一。
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

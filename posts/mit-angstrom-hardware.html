@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIT Angstrom 项目(一)-为多核芯片设计新一代核间互连通路 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>MIT Angstrom 项目(一)-为多核芯片设计新一代核间互连通路</h1>
+                    <div class="post-date">2011-02-26</div>
+                    <div class="post-meta">
+                        <span class="tag">芯片设计</span>
+                        <span class="tag">IT资讯</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">多核</span>
+                        <span class="tag">Multicore</span>
+                        <span class="tag">Angstrom</span>
+                        <span class="tag">MIT</span>
+                        <span class="tag">Manycore</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>今天从博客园新闻新闻频道看到了关于MIT的<a href="http://projects.csail.mit.edu/angstrom/index.html">Angstrom项目</a>的介绍，感觉这东西很有必要，也很有前途，于是去MIT官网看了下。这篇文章就介绍一下Angstrom硬件部分，为多核（Multicore）众核（Manycore）芯片设计新一代的高速互连<span style="color: #ff0000; background-color: #ffffff;">通路</span>（注意,这里讲的是通路，而没说是电路）。</p>
+<p>随着摩尔定律日渐式微，提高性能的主要道路主频之路几乎走到了尽头（不过前几天<a href="http://www.eetimes.com/electronics-news/4213365/ISSCC-China-eyes-petaflops-IBM-hits-5-GHz">IBM还在ISSCC2011上发布了 5.2GHz 的z196</a>，顺便打下广告，原文的标题是<a href="http://www.eetimes.com/electronics-news/4213365/ISSCC-China-eyes-petaflops-IBM-hits-5-GHz">ISSCC: China eyes petaflops, IBM hits 5 GHz</a>，有咱龙芯哈），但天无绝人之路，主频不能提高了，于是出现了多核（Multicore）和众核（Manycore）, 但是，多核使得原来已经很明显的存储墙（<a href="http://storagemojo.com/2008/12/08/many-cores-hit-the-memory-wall/">Memory Wall</a>）愈加明显。并且多核的存储墙往往是不可以通过增加存储层次（如数级Cache）来消除或者减小，因为多核的存储墙的一个重要原因是存储（包括Cache）一致性（<a href="http://en.wikipedia.org/wiki/Memory_coherence">memory coherence</a>）导致了核间通讯的增加，这部分通讯是没有办法通过多级存储结构减小的。</p>
+<p>为此，美国国防部高级研究计划署（DARPA）在MIT和几个大公司里面推进了一个叫Angstrom的项目，该项目的硬件部分主要目的就是为多喝芯片设计新一代的核内核间互联通路。现在，主要有两种方法提高互连通路的Performance。</p>
+<p>第一种方法没有对通信介质进行改进，还是基于电子（electrical），其基本思想是受互联网启发，每个核相当于网路中的一台机器，为了维护存储一致性，不是采用之前的广播算法，而是只把新的数据发给需要的核心，并且每个核心维护一张路由表（router），找到最近的最快的路径发至目标核心，这样的话，可以大大减少核间通讯，提高核间通讯性能。（不过个人感觉，如何决定那些核心需要更新的数据，以及每个核心如何维护一张路由表不出错是一个很难解决的问题）</p>
+<p>第二种方法是改进通信介质，用光互连（light）替代现有的电互连，而计算电路保持原来的电子结构。由于光的带宽极大，因此，这种方法是革命性的，将彻底改变整个计算机的结构，因为这是存储墙将不再存在，现在很多为了提高访存的结构将从计算机体系结构中消失。很多优化访存的编译技术也将从编译器中消失。但是该技术现在技术不是很成熟，成本也极其高昂。</p>
+<p>第三种方法是改进数据结构，比如对某些不变（只读）的数据，就可以不关心其一致性问题。</p>
+<p>在下一篇文章中，将介绍下<a href="http://www.sigma.me/2011/02/26/mit-angstrom-software.html">Angstrom的软件部分，设计新一代多核操作系统</a>。</p>
+<p>更多阅读:<a href="http://web.mit.edu/newsoffice/2011/multicore-series-1-0223.html">MIT News的英文原文</a>.</p>
+<p>最后，附上之前看到（可能有点老了）一张龙芯众核Godson-T的结构图：</p>
+<p> </p>
+<p><img style="display: block; float: none; margin-left: auto; margin-right: auto;" src="http://3fnp6q.blu.livefilestore.com/y1pBmcCT9x9GvGYC7tbpNRpU_YotXXSuGUeuF5-IhowzPrmXG1TavxMk-qvenvbPDyLOMmFuY7XaXXwHYHoBqahaVV2HlKO0GPr/godson-t.jpg?psid=1" alt="" width="561" height="380" /></p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (5)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-02-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>electrical不是电子的，是电气的意思，一般指强电。electronic是电子的，一般指弱电。国外的EE只有Electrical Engineering,不像国内还有Electronic Engineering。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-02-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-945014" rel="nofollow">@grapeot</a><br><br />哎，被EE的鄙视了。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.v2xy.com/" rel="nofollow">xyu_ovi</a></span>
+                        <span class="comment-date">2011-02-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-945014" rel="nofollow">@grapeot</a><br><br />请问‘电子’和‘电气’有什么区别？是你上面说的强弱电的区别么？<br><br />我一直在想‘电’和‘气’之间到底有什么关系！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-02-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-948020" rel="nofollow">@xyu_ovi</a><br><br />是的~比如像国家电网搞母线保护这种就是强电，属于Electrical，dfliu他们搞CPU设计就是弱电，属于Electronic. 但其实国外的Electrical Engineering很多搞得也是Electronic的东西，只是他们的起源来自特斯拉那帮搞电磁的，就一直这么叫下去了。<br><br /></p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.v2xy.com/" rel="nofollow">xyu_ovi</a></span>
+                        <span class="comment-date">2011-02-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-948021" rel="nofollow">@grapeot</a><br><br />懂了！<br><br />能把“空气”都电离的叫“电气”Electrical<br><br />电流弱的都能数电子个数的叫Electronic<br><br /><br><br />又是特斯拉！《致命魔术》里面把一个人都给电离成两个了！</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

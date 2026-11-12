@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>杯具带来的教训-关于C和C++代码的混合链接 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>杯具带来的教训-关于C和C++代码的混合链接</h1>
+                    <div class="post-date">2012-08-29</div>
+                    <div class="post-meta">
+                        <span class="tag">贝壳</span>
+                        <span class="tag">链接</span>
+                        <span class="tag">编译</span>
+                        <span class="tag">C语言</span>
+                    </div>
+                </header>
+                <div class="post-content">
+====我是分割线，只是想说明下面的都是废话，大家可以直接跳到下一个分割线====
+
+这几天需要把<a href="http://parsec.cs.princeton.edu/">Parsec</a>（普林斯顿出品的一组多程序程序benchmark，C++编写，貌似是鼎鼎有名的李凯教授带的组出的）的一些程序移植到某模拟器上，由于模拟器没有OS，很多系统调用都是用硬件模拟。因此，parsec的pthread库需要替换成硬件提供的系统调用。在该模拟器上，之前已经有用汇编代码写好的系统调用库以及编程成了相应的静态链接库 .a文件。因此，理论上，只需要换掉pthread头文件，换成.a对应的头文件，并把对应的pthread函数换成硬件模拟的系统调用函数即可。
+
+花了好大力气把所有的头文件以及pthread函数换掉，并且把Makefile的编译器换成交叉编译器，LDFLAGS里的多线程库换成了模拟器系统调用的.a库（通过 -Ldir -llib 替换，其中dir是.a文件所在目录，lib是.a文件的文件名去掉前缀lib和后缀.a的剩余部分）。一切就绪，敲下make，看着一个个.cpp变成了.o，我心里暗喜。可是，当所有.cpp变成.o后，杯具出现了，屏幕刷出一堆“undefined reference to xxxx”，其中xxx就是模拟器系统调用函数名。
+
+奇了怪了，怎么会找不到reference呢，我第一感觉是LDFLAGS写错了，可是检查了几遍，发现没错。并且用同样的LDFLAGS链接splash2中的FFT程序都可以。因此，不太可能试着问题，并且为了确认，我加了-v选项，把链接的细节打出来了，发现没有任何问题。
+
+排除了一种可能，但是问题并没有解决，我只好放狗搜。搜到的答案都是说由于库的链接顺序，会导致这问题，并且通假如某参数，链接时进行repeat搜索，可以避免该问题（当然，repeat的代码就是降低链接速度）。于是，我遍历了各种影响链接顺序的可能，包括LDFLAGS本身的顺序，以及源代码中包含头文件的顺序，可是，杯具依然。
+
+两天过去了。。。还是一无所获，期间只好跑去机房调另外一个东西。昨天，在走投无路的情况下，狠下决心，用c语言重写parsec的这个benchmark。但是，决心容易下，真写谈何容易，看了半天，才把算法大致看明白。再看代码的过程中，我突然想，要不直接把模拟器的系统调用的汇编码嵌入到源代码中，不用.a形式静态链接，但是，由于这些汇编码的寄存器都是按mips标准命名用的，直接放进去，可能交叉编译器无法识别。于是，只好作罢，这时，突然想，为什么FFT可以，这个不可以，莫非是因为C++和C语言链接的方式不一样。想到这，突然有种豁然开朗的感觉，因为模模糊糊记得C函数的符号表和C++函数的符号表是不一致的。
+
+<span style="color: #ff0000;">====杯具终于完了，废话也终于完了，下面进入正题，貌似有点头重脚轻的感觉====</span>
+
+在c语言中，全局函数foo(int)在符号表中是_foo，而c++中，为了支持函数重载，会编译成类似_foo_int的。这就导致了前述xxx的系统调用会编译成_xxx_yyy（yyy是参数类型）的形式存在.o中。难怪链接器会找不到reference。
+
+因此，下一步就是如何让C++代码能链接到c代码中了。于是继续放狗搜“c c++ link”，搜到了伟大的太阳的这篇文章：
+
+<a href="http://developers.sun.com/solaris/articles/mixing.html">Mixing C and C++ Code in the Same Program</a>
+
+这篇文章说道，其实可以通过extern关键词声明函数是c函数还是c++函数。当然，也可以直接extern某个头文件，将整个头文件里的函数都声明是啥函数。比如，下面代码：
+<pre class="brush: actionscript3; gutter: true">extern "C" {
+  #include "sb.h"
+}</pre>
+就降sb.h 里面的函数都声明是c函数。这样，在c ++代码中，碰到sb.h中的函数，就会当成c函数来对待。
+
+对于我碰到的问题，可以前述extern 头文件来解决。但是，对于大部分头文件来说，我们并不知道这个头文件里的函数是c函数还是c++函数。这就要求头文件编写者做些工作，一般来说，现在的系统库里面都能看到下面的语句：
+<pre class="brush: actionscript3; gutter: true">#ifdef __cplusplus
+extern "C"{
+#endif
+
+//some function declaration 
+
+#ifdef __cplusplus
+             }
+#endif</pre>
+上面的代码就是为了让库兼容c和c++.因为使用g++编译器的时候，实际上是带了__cplusplus的声明，因此整个头文件的函数都会被额外的声明是c函数。之后g++会特殊处理，从而保证链接不出错。
+
+最后，再说几句废话，博客荒废已久，本来以为八月必然交白卷的，想不到最后还是憋出来一篇。。。
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (5)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">PP</span>
+                        <span class="comment-date">2012-09-04</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>赞<br>好久没静下心去解决过一个复杂的问题了</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2012-09-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-5506" rel="nofollow">@PP </a> <br>同感，其实这个问题也很sb。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">Donkey</span>
+                        <span class="comment-date">2012-09-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>vc下同样被这个问题困扰过很久。如果仅是C和C++的库头编译后，链接时符号表不对应，根据链接错误提示就会发现根源。但是坑爹的是，vc的各版本之间符号表的命名法也可能略有不同，导致以前编好的库没法子用。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.nb-banjia.com/" rel="nofollow">宁波搬家</a></span>
+                        <span class="comment-date">2012-10-31</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>公司要求做网络推广，我是菜鸟级别的。不知道我也像博主一样写一个博客，这样的效果会不会好些？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.0574-banjia.com/" rel="nofollow">宁波搬家</a></span>
+                        <span class="comment-date">2012-11-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>博主的文章都是自己写的吗？写的挺好的，也挺受益，谢谢</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

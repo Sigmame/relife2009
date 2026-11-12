@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linux(ubuntu)下开发并添加内核模块 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>Linux(ubuntu)下开发并添加内核模块</h1>
+                    <div class="post-date">2011-11-15</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">内核</span>
+                        <span class="tag">内核模块</span>
+                        <span class="tag">Linux</span>
+                    </div>
+                </header>
+                <div class="post-content">
+首先，大致有以下一些地方需要用到Linux内核编程：
+<ul>
+	<li>驱动开发，linux下的大部分驱动都是以内核模块的形式执行的。</li>
+	<li>使用了一些特权指令的程序，比如wrmsr这些指令，这些指令需要在ring0下执行，一般这种程序也是以内核模块的形式执行。</li>
+</ul>
+下面简要介绍一下，一个Hello world的内核模块开发并且添加的过程（其实网上很多教程，但是发现都是针对比较老的内核，有些已经不适用了，因此，在此处，我在罗唆一下，也当是个备忘）。
+<ol>
+	<li>首先需要安装开发库和头文件。
+<pre class="brush: bash; gutter: true">$:sudo apt-get install linux-kernel-devel
+$:sudo apt-get install linux-headers-`uname -r`</pre>
+</li>
+	<li>写个hello_kernel.c(我保留了我代码中的获取cpuID的代码，所以严格不算helloword了)，下面代码中printk是内核中的printf，打印的信息回打到内核log中，可以通过dmesg或者cat /var/﻿﻿﻿log/kern.log查看。module_init以及module_exit分别为内核进入以及退出的函数。
+<pre class="brush: c; gutter: true">#include <linux/module.h>
+//#include <linux/config.h>//这个头文件在老的内核中有，新的内核已经没有了，因此注释调
+#include <linux/init.h>
+
+void bcopy(unsigned char *src,unsigned char *des,int count)
+{
+	int i=0;
+	for (i=0;i<count;i++)
+	{
+	  printk("src[%d]=%x\
+",i,src[i]);
+	  des[i]=src[count-i];
+	}
+
+}
+
+void get_CPUID()
+{
+    // 定义一些变量，用于存储 CPU 的 ID信息
+
+    char szCpu[16]={0};
+  unsigned int szCpu0,szCpu1,szCpu2;
+    unsigned int uCpuID;
+  int i = 0;
+
+    __asm__ __volatile__(
+      "push %%ebx;"
+      "push %%ecx;"
+      "push %%edx;"
+      "mov $0, %%eax;"
+      "cpuid;"
+      "mov %%ebx, %0;"
+      "mov %%edx, %1;"
+      "mov %%ecx, %2;"
+      "mov $1, %%eax;"
+      "cpuid;"
+      "mov %%edx, %3;"
+      "pop %%ebx;"
+      "pop %%ecx;"
+      "pop %%edx;"
+      :"=r"(szCpu0),"=r"(szCpu1),"=r"(szCpu2),"=r"(uCpuID)
+      :
+    );
+  printk("szCpu0=%x,szCpu1=%x,szCpu2=%x\
+",szCpu0, szCpu1, szCpu2);
+  bcopy((unsigned char *)&szCpu0,(unsigned char *)szCpu,4);
+  bcopy((unsigned char *)&szCpu1,(unsigned char *)(szCpu+4),4);
+  bcopy((unsigned char *)&szCpu2,(unsigned char *)(szCpu+8),4);
+  for(i = 0; i < 16; i++)
+    printk("szCpu[%d]=%c\
+",i,szCpu[i]);
+
+    printk("cpu id is %u, info is %s\
+", uCpuID,szCpu);
+}
+
+static int __init mymodule_init(void)
+{
+  printk("Hello Kernel\
+");
+        get_CPUID();
+  return 0;
+}
+
+static void __exit mymodule_exit(void)
+{
+   printk ("Unloading my module.\
+");
+           return;
+}
+
+module_init(mymodule_init);
+module_exit(mymodule_exit);
+
+MODULE_LICENSE("GPL");</pre>
+</li>
+	<li>编译：编译的话，首先写哥makefile：
+<pre class="brush: bash; gutter: true">obj-m += hello_kernel.o
+CUR_PATH := $(shell pwd)
+KERN_VER := $(shell uname -r)
+KERN_PATH := /usr/src/linux-headers-$(KERN_VER)
+all:
+		make -C ${KERN_PATH} M=${CUR_PATH} modules
+clean:
+		make -C ${KERN_PATH} M=${CUR_PATH} clean</pre>
+</li>
+	<li>make,没有错误的话，可以通过下面命令将模块加载到内核。
+<pre class="brush: bash; gutter: true">sudo insmod hello_kernel.ko</pre>
+</li>
+	<li>可以在dmesg或者﻿cat /var/﻿﻿﻿log/kern.log查看printk打印的信息。需要卸载模块的话，可以：
+<pre class="brush: bash; gutter: true">sudo rmmod hello_kernel</pre>
+</li>
+</ol>
+更多更仔细的介绍的可以参看<a href="http://bbs.chinaunix.net/thread-852547-1-1.html">这篇文章</a>（虽然中间有些说法现在直接用的话会有些问题。）
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>存储一致性之严格一致性（Strict Consistency） - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>存储一致性之严格一致性（Strict Consistency）</h1>
+                    <div class="post-date">2011-05-06</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">存储一致性</span>
+                        <span class="tag">共享存储</span>
+                        <span class="tag">严格一致性</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>定义：</p>  <blockquote>   <p><b>Any read to a memory location X returns the value stored by the most recent write operation to X.</b></p> </blockquote>  <p>中译为（看起来真简洁，不得不感慨下汉语的简洁性，不过和简洁相伴的往往是不准确性）：</p>  <blockquote>   <p>从存储器地址X处读出的值为最近写入X的值。</p> </blockquote>  <p>严格一致性要求具有决定最近写的能力，因此它蕴涵请求的全序。</p>  <p>传统意义上，单处理机遵守严格一致性，单处理机的编程者正希望这样。但是在分布式计算机系统中为每个与准确的全局时间对应的操作分配惟一的时间戳是不可能的。</p>  <p>可以放宽条件，将时间分割成一系列连续的、不重叠的时间间隔。假设每个操作发生在一个时间间隔内，并获得与那个时间间隔对应的时间戳。</p>  <p>但是无法保证每个时间间隔内最多只发生一个单一操作。因此，仍需要处理在同一时间间隔内所发生的多个操作。如果同一时间间隔内的两个操作是对相同数据进行操作，并且其中一个操作是写操作，那么称这两个操作是冲突的。</p>  <p>另一方面，编程人员却希望能够满足严格一致性。如果不支持严格一致性，程序发生问题就很难说是那方面的问题。定义一致性模型的一个重要问题就是准确定义出现冲突时，哪些行为是可接受的。</p>  <p>如果一个进程的两个事件发生如此之快，以致其他进程不能在此之间执行任何操作，那可能会带来麻烦。相反，通常的编程方式是：语句执行的确切时间（实际上是存储器访问）并不重要，而当事件（读或写）的顺序是至关重要时，可以使用信号量等方法实现同步操作。接受这种意见意味着采用较弱的一致性模式来编程。经过几次实践，大多数并行程序编写人员都能适应这种模式。因此，程序设计者使用较弱的一致性模式同样可以使存储器正常工作。这些工作将在后面几篇文章介绍。</p>  <p>总之，对于严格一致性的存储器，写操作在任一时刻对所有进程都是可见的，同时维护一个绝对全局时间顺序。一旦存储器中的值改变，不管读写之间的事件间隔多小，不管哪个进程执行读操作，也不管进程在何处，以后读出的都是新更改的值。同样，如果执行了读操作，不管后面的写操作有多迅速，该读操作仍应读出原来的值。</p>  <p>严格一致性的示意图：   <br /></p>  <p align="center"><img src="http://public.blu.livefilestore.com/y1pIVDQ3ZLQBzRhp3ovvZqZNIgZgNWtIVGa0201cRWcHxAsiXDwPhPPTV_qE403kZumMiWxwNLIfX3Iu_xCZWjuEw/strict_consistancy.jpg?psid=1" width="447" height="134" /></p>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>芯片设计中验证Verification，确认Validation以及测试Test的区别 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>芯片设计中验证Verification，确认Validation以及测试Test的区别</h1>
+                    <div class="post-date">2011-02-06</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">芯片设计</span>
+                        <span class="tag">测试</span>
+                        <span class="tag">Test</span>
+                        <span class="tag">确认</span>
+                        <span class="tag">Verifacation</span>
+                        <span class="tag">Validation</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>上一篇<a href="http://www.sigma.me/2011/02/6/ic-test.html">关于测试的文章</a>提到，现代芯片设计中的QA环节有两个，<a href="http://www.sigma.me/2011/02/19/IC-verify.html">验证Verification</a>和测试Test，事实上，还漏了一个不常见的，其英文为Validation，对应中文经常也翻译为验证，但为了和之前的验证区分，我在此翻译成确认。</p>
+<p>对于刚进入芯片设计领域的童鞋，经常被这三个概念迷惑，很难区分，我曾经也是，因此，在这里把我理解的异同点在这里写一下，不一定准确，希望对某些童鞋有用。</p>
+<p>验证(Verification)，确认(Validation)，测试(Test)的最终目的是一样的，都是减少设计中的缺陷，保证设计的质量，可以算是QA的环节（不过貌似现在QA几乎就是指测试了），不同点的是，他们是在不同的层次，由不同的人进行的工作。</p>
+<p>验证(Verification)一般是在硅前的rtl设计阶段进行的，一般也是由rtl设计人员负责的。其目的是让设计符合设计者所想的，粒度也比较细，一般前期是分模块的，不同的模块由不同的设计人员进行，后期才会将所有模块连起来联调。由于这时候只有rtl，需要用软件仿真来模拟最终的硬件行为，速度很慢，因此用于验证的向量规模都比较小，即便如此，在整个设计周期中，验证所占的时间也非常可观，对于这一点，作为一个做设计和验证的码农，我深有体会，把rtl写出来，简单，把rtl验证好，那是非常地难。</p>
+<p>确认（Validation）是由结构设计者完成的（这是我的理解，不知对否），一般是对设计的功能进行验证，即确认设计能否实现某种功能。其粒度（功能级）较验证（一般为模块级）要粗一些，时间也短一些。</p>
+<p>测试（Test）一般是在硅后（Post-silicon）完成的，有专门的测试人员完成，粒度最粗，一般是系统级（其实验证也会在系统级进行，但由于是硅前的，规模非常非常的小）。并且由于已经有了硬件平台，测试速度大大提高，因此规模也比较大，具体的可看之前<a href="http://www.sigma.me/2011/02/6/ic-test.html">关于测试的文章</a>。</p>
+<p>一般来说，芯片设计会有专门的验证（也负责设计）和测试人员，但没有专门的“确认”人员，就像龙芯有验证组和测试组，但没有“确认”组。</p>
+<p>比较复杂的芯片，如处理器，验证与测试已经占了整个芯片研发的大部分时间，一般来说，在一款芯片量产前，需要进行几次工程样片的流片，这些流片的主要原因都是测试中发现了缺陷，从而重新修改设计，重新进行验证（一般只验证修改的模块），重新进行测试（一般也是针对之前发现的缺陷，以及因为之前的缺陷无法进行测试的部分）。</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (2)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">gm</span>
+                        <span class="comment-date">2011-08-02</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>pre-silicon verification: compare design against spec.<br><br />post-silicon validation: compare first-silicon chips against both spec (for logic bugs) and design (for electrical bugs).<br><br />manufacturing testing: go/no-go test for volume production.<br><br /><br><br />I guess it is not true that the Godson team does not have "validation" sub-team. Instead, they categorise the silicon debug tasks, such as system bring-up, functional testing, shmoo plotting, etc., to the testing team's job. :)<br><br /><br><br />Another point I want to make is that post-silicon validation nowadays becomes the most time-consuming and expensive stage of the entire flow, due to the lack of effective methodology, tool, model, and metrics.</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-08-03</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1080012" rel="nofollow">@gm</a><br><br />Thanks for your valuable comment:)<br><br />In our team(Godson team), there are no particular “validation” group.Maybe the "validation" work are done by other group,such as verification group,test group and system group.<br><br />And i am an freshman to IC,and my opinion may be wrong.Thank you for your correction again:)</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

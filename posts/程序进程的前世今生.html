@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>程序/进程的前世今生 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>程序/进程的前世今生</h1>
+                    <div class="post-date">2012-02-08</div>
+                    <div class="post-meta">
+                        <span class="tag">读书笔记</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">编译</span>
+                        <span class="tag">进程</span>
+                        <span class="tag">计算机</span>
+                        <span class="tag">链接</span>
+                        <span class="tag">加载</span>
+                    </div>
+                </header>
+                <div class="post-content">
+在这篇文章中，将介绍下程序从源码，到目标文件，到二进制码，再到装载，运行以及退出的整个过程，简称程序/进程的前世今生。
+
+首先，区分一下程序和进程的概念。程序是一个静态的概念，而进程是一个动态的概念。程序一般是指从源码到二进制码这些过程的实体（勉强简称为<strong>前世</strong>），而进程则是从装载，到执行，到推出的实体（勉强简称为<strong>今生</strong>）。维基百科对两个概念的定义为：
+
+程序的定义：
+<blockquote><strong>计算机程序</strong>或者<strong>软件程序</strong>（通常简称<strong>程序</strong>）是指一组指示计算机或其他具有讯息处理能力装置每一步动作的指令，通常用某种程序设计语言编写，运行于某种目标体系结构上。</blockquote>
+进程的定义：
+<blockquote><strong>行程</strong>（英语：Process，中国大陆译作<strong>进程</strong>，台湾译作<strong>行程</strong>）是计算机中已执行程序的实体。行程本身不会执行，是线程的容器。程式本身只是指令的集合，行程才是程式（那些指令）的真正执行。</blockquote>
+对于上面进程的定义，个人觉得有点问题(不仅仅是大陆台湾叫法不同的问题)，我认为应该是"进程是计算机已执行程序的实体。对于多线程程序，程序可能存在多个同时执行的指令流和控制流，称为线程。程序本身知识指令的集合，进程才是那些指令的真正执行"。
+
+下面，就开始介绍程序/进程的前世今生，由于内容较多，在这里只是介绍前世今生的各个阶段，各个阶段的详细介绍，后面有空的话，并且觉得有必要的话，会单独写一文。不废话，转入正题，程序/进程大致需要经过以下阶段完成其前世今生(以C语言以及Linux进程为例)：
+<ul>
+	<li><strong>源码阶段</strong>：表现形式为符合某种程序语言设计语言语法的文本。如大名鼎鼎的C语言以及其上大名鼎鼎helloworld.c源码：
+<pre class="brush: actionscript3; gutter: true">#include <stdio.h>
+
+void main(void)
+{
+    printf("Hello World\
+");
+}</pre>
+</li>
+	<li><strong>编译阶段</strong>：这阶段的作用是将程序从源码转化成特定体系结构特定指令集的二进制文件的过程，这个阶段一般由编译器完成，如Linux下gcc可以通过"gcc helloworld.c -o helloworld"完成签署helloword.c的编译。编译是一个很复杂的过程，不是一步完成的，可以分成很多步，事实上，gcc程序就是由一系列工具组成的，不通工具负责不同编译的不通阶段，大致分为一下阶段（这里简略介绍下，详细介绍可能会另开一文）：
+<ol>
+	<li><strong>预处理</strong>：主要包括宏替换，文件包含，以及特殊符号等的处理</li>
+	<li><strong>编译</strong>：主要包括词法分析和语法分析以及优化。此阶段完成后将得到一个临时汇编文件进而根据指令编码转化成二进制的目标文件。目标文件一般以.o结尾。</li>
+	<li><strong>链接</strong>：链接过程主要完成的是不通源文件之间函数调用的链接以及不通目标文件地址的统一编码，从而得到真正的可执行文件。链接分为两种，静态链接和动态链接。</li>
+</ol>
+</li>
+	<li><strong>加载阶段</strong>：程序的加载（装载）是通过操作系统的程序加载器将程序加载到内存并建立起进程的过程（需要强调的是，加载器不会把整个程序加载进去，很多都是动态加载的，一般都是只会将起始地址更新到进程控制块中）。详细的过程另文说明。</li>
+	<li><strong>执行阶段</strong>：就是执行程序的指令，不过其中会碰到各种内部的例外（如缺页）以及外部的中断（如IO），需要处理。暂时不详细介绍。</li>
+	<li><strong>进程退出</strong>：这个阶段是指进程被杀死时的行为，主要包括释放内存，释放打开的文件等操作。</li>
+</ul>
+ 
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (5)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2012-02-09</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你最近咋老写科普文？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2012-02-10</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-2502" rel="nofollow">@grapeot </a> <br>凑数</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">Gfans</span>
+                        <span class="comment-date">2012-02-11</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>可以把Sigma BBS的模板发到我的邮箱吗？<br>想自己建个小型论坛。<br>minikaka#gmail点com</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2012-02-11</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-2519" rel="nofollow">@Gfans </a> <br>这是livid写得原版：<br>https://github.com/livid/v2ex<br>这是我基于前述版本改的（效果见Sigma BBS）<br>http://code.google.com/p/v2ex-sigma/</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.njcut.com/" rel="nofollow">网站</a></span>
+                        <span class="comment-date">2012-03-02</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>进程是程序的正在进行时。。。</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>存储一致性之入口一致性(Entry Consistency) - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>存储一致性之入口一致性(Entry Consistency)</h1>
+                    <div class="post-date">2011-05-06</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">共享存储</span>
+                        <span class="tag">存储一致性</span>
+                        <span class="tag">入口一致性</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>另一种使用临界区的一致模型是入口一致性（Bershad等，1993）。和<a href="../2011/05/6/release-consistency.html">释放一致性</a>的两个变体一样，它也需要编程人员或编译器在临界区的首尾分别使用获取和释放操作。然而，与释放一致性不同的是，入口一致性要求每个普通的共享数据都要与某种同步变量如锁（lock）或屏障（barrier）相关联。</p>
+<p>若并行访问数组元素，不同的数组元素就需要与不同的锁相联系。在对一个同步变量执行获取操作时，只保证与这个同步变量有关的共享数据一致。入口一致性与懒惰释放一致性不同在于，后者没有将共享数据与锁或屏障相连系，做获取操作时必须凭经验确认它需要哪些变量。</p>
+<p>将每个同步变量与一组共享变量相连，可减少获取访问和释放访问一个同步变量时的开销，因为只有极少数共享变量需同步。它还允许包含不相关共享变量的多个临界区同时执行同步，增加了并行度。代价是将每个共享数据变量与同步变量相联系，这要求额外的开销，且增加了复杂度。这样编程更为复杂且更易于出错。</p>
+<p>其定义为：</p>
+<blockquote>
+<p>a memory exhibits entry consistency if it meets all the following conditions :</p>
+<ol>
+<li>An acquire access of a synchronization variable is not allowed to perform with respect to a process until all updates to the guarded shared data have been performed with respect to that process. </li>
+<li>Before an exclusive mode access to a synchronization variable by a process is allowed to perform with respect to that process, no other process may hold the synchronization variable, not even in nonexclusive mode. </li>
+<li>After an exclusive mode access to a synchronization variable has been performed, any other process next nonexclusive mode access to that synchronization variable may not be performed until it has performed with respect to that variable's owner. </li>
+</ol></blockquote>
+<p>中译为:</p>
+<blockquote>
+<p>当存储器满足下列所有条件时，就成为入口一致性存储器（Bershad和 Zekauskas，1991）：</p>
+<p>a. 只有某一进程的保护共享变量全部被更新以后，该进程方允许执行同步变量的获取访问；</p>
+<p>b. 在一进程以互斥模式访问该进程的同步变量之前，不允许其他进程持有此同步变量，即使在非互斥模式下；</p>
+<p>c. 在结束互斥模式下对一个同步变量的访问后，任意其他进程必须与该变量的拥有者核查，才能试图以非互斥模式访问该同步变量。</p>
+</blockquote>
+<p>第一个条件说明，当进程执行获取访问时，该操作在所有保护的共享变量均更新后才能结束（即将控制权交给下一条语句）。也就是说，在获取操作时，所有被保护数据的远程修改都必须是可见的。</p>
+<p>第二个条件说明，在更新一个共享变量前，进程必须以互斥方式进入临界区，以确定没有其他进程同时更新它。</p>
+<p>第三个条件说明，若进程试图以非互斥方式进入临界区，它必须与保护此临界区的同步变量的拥有者核查，以获得被保护共享变量的最新拷贝。</p>
+<p>最后，附一张入口一致性的示意图：    <br /><img style="display: block; float: none; margin-left: auto; margin-right: auto;" src="http://public.blu.livefilestore.com/y1p1egmdlhRuyHLBVYf5h1_OeB-bdJ4tShDIp7GaqExl_bLtdlqHguSC5zfJP9QgdhxquDW7X64mEWM7BwBcN0uGw/entry-consistency.jpg?psid=1" alt="" width="557" height="117" /></p>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[整理]SD协议概述 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>[整理]SD协议概述</h1>
+                    <div class="post-date">2012-03-29</div>
+                    <div class="post-meta">
+                        <span class="tag">贝壳</span>
+                        <span class="tag">SD协议</span>
+                        <span class="tag">协议</span>
+                        <span class="tag">SD</span>
+                    </div>
+                </header>
+                <div class="post-content">
+这段时间折腾某芯片上的SDIO，在这里将相关知识整理下，以便备忘。需要注意的是，由于我们的SD只支持SD模式，不支持SPI模式，因此文中内容也是针对SD模式的，后面不再强调此点。
+<h2>信号</h2>
+CLK:时钟信号
+CMD:双向命令和响应信号
+DAT0-3:双向数据信号
+VDD,VSS:电源和地信号
+注:SD模式下可以选择总线宽度, 即选用几根DAT信号线(1或4根), 可以在主机初始化后设置.
+<h2>比特流</h2>
+SD协议规范的比特流类型有三类：
+<ul>
+	<li><strong>命令</strong>: 是在CMD上传输的用于启动一个操作的比特流. 由主机发往从机, 可以是点对点也可以是广播的.</li>
+	<li><strong>响应</strong>: 是在CMD上传输的用于之前命令回答的比特流. 由从机发往主机.</li>
+	<li><strong>数据</strong>: 是在DAT上传输的比特流, 双向传输.</li>
+</ul>
+命令和数据流都有一个开始位和结束位.
+<h2>命令</h2>
+SD协议定义了两类命令，广播命令以及点对点命令，
+<ul>
+	<li><strong>广播命令</strong>:给所有卡都发送, 某些命令需要响应.</li>
+	<li><strong>点对点命令</strong>:给指定地址的卡发送, 需要响应.</li>
+</ul>
+<h2>工作模式</h2>
+<ul>
+	<li><strong>卡识别模式</strong>:主机上电复位后即处于此模式,它会在总线上等待卡. 卡复位后也处于此模式, 直到SEND_RCA(CMD3)命令到来.此模式下主机复位总线所有的卡, 验证工作电压, 询问卡的地址. 这个模式下所有数据的传输都是只通过CMD线来完成.</li>
+	<li><strong>数据传输模式</strong>:卡收到SEND_RCA(CMD3)命令后即进入此模式. 主机识别到卡后也进入此模式.CMD7命令用于使指定地址的卡进入传输模式, 任何指定时刻只能有一个卡处于传输模式.传输模式下所有的数据传输都是点对点的, 并且所有有地址的命令都需要有响应.</li>
+</ul>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

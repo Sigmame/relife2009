@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>存储一致性总结 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>存储一致性总结</h1>
+                    <div class="post-date">2011-05-06</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">存储一致性</span>
+                        <span class="tag">计算机体系结构，并行编程</span>
+                        <span class="tag">共享存储</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p><a href="/2011/05/6/strict-consistency.html">严格一致性</a>其实从物理定律上来说就是不能实现的（它要求写操作能够瞬间传播出去）。</p>
+<p><a href="/2011/05/6/sequential-consistency.html">顺序一致性</a>是可行的，在编程人员中很流行且广泛应用。但是它的性能很差。解决这个问题的方法是放宽一致性的模型。下表以限制程度递减的顺序给出了几种可能的模型。</p>
+<table border="0" cellspacing="0" cellpadding="2" width="546">
+<tbody>
+<tr>
+<td width="92" valign="top">一致性</td>
+<td width="452" valign="top">说明</td>
+</tr>
+<tr>
+<td width="92" valign="top">严格</td>
+<td width="452" valign="top">所有的共享访问事件都有绝对时间顺序</td>
+</tr>
+<tr>
+<td width="92" valign="top">顺序</td>
+<td width="452" valign="top">所有进程都以相同的顺序检测到所有的共享访问事件</td>
+</tr>
+<tr>
+<td width="92" valign="top">因果</td>
+<td width="452" valign="top">所有进程都以相同的顺序检测到所有因果联系的事件</td>
+</tr>
+<tr>
+<td width="92" valign="top">处理器</td>
+<td width="452" valign="top">PRAM一致性+存储相关性</td>
+</tr>
+<tr>
+<td width="92" valign="top">PRAM</td>
+<td width="452" valign="top">所有的进程按照预定的顺序检测到来自一个处理器的写操作，来自其他处理器的写操作不必以相同的顺序出现</td>
+</tr>
+</tbody>
+</table>
+<p>另一措施是引入了明确的同步变量，正如<a href="/2011/05/6/weak-consistency.html">弱一致性</a>，<a href="/2011/05/6/release-consistency.html">释放一致性</a>和<a href="/2011/05/6/entry-consistency.html">入口一致性</a>所做的那样。下表总结了这三种模式。当进程对普通共享数据变量执行操作时，不能保证它们何时对于其他进程是可见的。只有当访问同步变量后，变化才能传播出去。</p>
+<table border="0" cellspacing="0" cellpadding="2" width="546">
+<tbody>
+<tr>
+<td width="92" valign="top">一致性</td>
+<td width="452" valign="top">说明</td>
+</tr>
+<tr>
+<td width="92" valign="top">弱</td>
+<td width="452" valign="top">同步完成后，共享数据才可能保持一致</td>
+</tr>
+<tr>
+<td width="92" valign="top">释放</td>
+<td width="452" valign="top">当离开临界区时，共享数据就保持一致</td>
+</tr>
+<tr>
+<td width="92" valign="top">入口</td>
+<td width="452" valign="top">当进入临界区时，和该临界区相关的共享数据保持一致</td>
+</tr>
+</tbody>
+</table>
+<p>这三种模型的不同在于其同步机制如何工作。但在这三种情况中，它们都可在一个临界区中执行多重的读写操作，而不引起数据传输。当临界区的操作完成后，最后结果或者广播发送给其他进程或准备就绪在其他进程需要时再发送出去。</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (4)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.cydz-led.com" rel="nofollow">南京led显示屏</a></span>
+                        <span class="comment-date">2011-05-09</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>多线程编程？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-05-11</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>LZ备案拍照了么？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-05-11</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1028001" rel="nofollow">@grapeot</a><br><br />我是被备案的：<br><br />http://fjcainfo.miitbeian.gov.cn/icp/publish/query/icpMemoInfo_login.action?id=1675700<br><br /></p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.wukenan.com/" rel="nofollow">七七</a></span>
+                        <span class="comment-date">2011-05-12</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>写的不错，很受用！</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

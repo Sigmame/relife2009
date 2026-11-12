@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>存储一致性之处理机一致性(Processor consistency)和PRAM一致性(PRAM consistency) - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>存储一致性之处理机一致性(Processor consistency)和PRAM一致性(PRAM consistency)</h1>
+                    <div class="post-date">2011-05-06</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">处理机一致性</span>
+                        <span class="tag">共享存储</span>
+                        <span class="tag">存储一致性</span>
+                        <span class="tag">FIFO一致性</span>
+                        <span class="tag">PRAM一致性</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>Goodman于1989年提出处理机一致性（processor consistency）。</p>  <p>处理机一致性的定义是：</p>  <blockquote>   <p>由一个处理机发出的写以他们所发出的同样次序被观察到。但是，从两个进程写的次序出现作为由它们自身或第三个处理机所观察到的次序不一定相同。即从不同的处理机的同时对同样的位置的两个读可以产生不同的结果。</p> </blockquote>  <p>和<a href="/2011/05/6/sequential-consistency.html">顺序一致性</a>相比，只需要同一个处理器的<font color="#ff0000">写操作</font>或者不同处理器对同一地址的<font color="#ff0000">写操作</font>在所有的处理器看到的顺序是一致的即可以（顺序一致性要求读写都一样）。</p>  <p>PRAM （Pipelined RAM）意为管道式或流水线式存储器，因为一个进程的写能被管道化，故进程不需要等待每次写的完成就可启动下一个操作。</p>  <p>Lipton和Sandberg （1988）给PRAM一致性存储器模型下了如下定义：</p>  <blockquote>   <p><b>Writes done by a single process are received by all other processes in the order in which they were issued, but writes from different processes may be seen in a different order by different processes.</b></p> </blockquote>  <p>中译为：</p>  <blockquote>   <p>单一进程完成的写操作被所有进程以这些操作发出的次序所接纳，但不同进程的写操作可被不同的进程以不同的次序所看到。 </p> </blockquote>  <p>PRAM一致性和处理器一致性如此接近，以至于有的作者认为他们实际是一样的（如，Attiya和Friedman，1992；以及Bitar，1990）。Goodman通过一个例子证明在处理器一致的存储器还有一个附加条件，即存储相关性。PRAM一致性，对于任意存储器地址x，对于写入x的顺序有个全局约定。写入不同地址（即使是同一进程写），对于不同进程来看，不需要相同顺序。</p>  <p>PRAM一致和<a href="/2011/05/6/causal-consistency.html">因果一致</a>的对比如下图所示。这里的时间顺序在PRAM一致的存储器中是允许的，而在其他更强的模式下都不允许。 </p>  <p><img style="display: block; float: none; margin-left: auto; margin-right: auto" src="http://public.blu.livefilestore.com/y1p0ggpViUEOe_psOyENPlAKk3m6j_vhUB_CX4Oic7MA8-dRlp84pBxnpgrLZxhDFYAR9IP0eESn-zs1rvAQadWzg/pram-not-causual-consistency.jpg?psid=1" width="414" height="180" />     <br /></p>  <p>处理器一致性（以及PRAM一致性）的优点是允许硬件隐藏写操作的延迟。当写的内容还在写缓冲区并没有被其他处理器看见时，此处理器可发出并完成对它的读操作。允许在一个处理器内读操作可跨过前面的还在缓冲的写操作先于完成，会给处理器以及整个系统的性能改善带来实质性的支持。</p>  <p>处理器一致性（以及PRAM一致性）的优点是允许硬件隐藏写操作的延迟。当写的内容还在写缓冲区并没有被其他处理器看见时，此处理器可发出并完成对它的读操作。允许在一个处理器内读操作可跨过前面的还在缓冲的写操作先于完成，会给处理器以及整个系统的性能改善带来实质性的支持。</p>  <p>PRAM一致由于易于应用而得到关注。事实上它不保证不同进程看到的写操作顺序是一致的，除非是同一个源的一个或多个写操作，才必须按次序到达，就好像在管道中。换而言之，在这种模式中，由不同进程产生的写操作是并发的。这种模型可以通过如下方法实现：简单地使用（进程，序列号）对偶作为每个操作的标签，并根据序列号执行每个进程的写操作。</p>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

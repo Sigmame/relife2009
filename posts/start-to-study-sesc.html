@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>开始阅读并修改SESC模拟器代码，开始写关于SESC的日志 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>开始阅读并修改SESC模拟器代码，开始写关于SESC的日志</h1>
+                    <div class="post-date">2011-09-05</div>
+                    <div class="post-meta">
+                        <span class="tag">芯片设计</span>
+                        <span class="tag">SESC</span>
+                        <span class="tag">模拟器</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>这段时间由于“科研”需要，需要改模拟器，经过和师兄们商量，最后基本定了用<a href="http://iacoma.cs.uiuc.edu/~paulsack/sescdoc/">SESC</a>（SuperESCalar Simulator）。但是，在使用SESC的过程中，发现文档极少（甚至完整的安装文档都没有），唯一比较好的参考来源就是偶尔有一两个更新的SESC邮件列表。</p>  <p>而这些天，我要开始看SESC模拟器代码，并且需要根据实验需求改一些SESC模拟器的结构，趁这个机会，我打算有空的话，把一些阅读的文摘写到这里，也算是对SESC的一些“贡献”吧。</p>  <p>先把官方的SESC介绍简要翻译下吧：</p>  <h4>什么是模拟器</h4>  <p>在微体系结构领域，经常会有一些新的结构提出，这些结构相比于老的处理器结构，可能（<font style="background-color: #ffffff" color="#ff0000">注意，仅仅是可能</font>）性能更高，功耗更小，更可靠，等等。但是，直接将这些结构用硬件实现的代价是昂贵的，因此，出现了微体系结构的模拟器，通过模拟器，不仅能模拟一个微体系结构设计对应的性能，还能模拟面积，功耗等等。</p>  <h4>什么是SESC</h4>  <p>SESC是最早由UIUC的一些研究单位开发并使用的微体系结构的模拟器。它可以对不同类型的处理器建模，包括单核处理器，片上多核处理器，以及PIM（processors-in-memory）。其可以模拟支持乱序发射，转移猜测的流水线，以及各种其他的现代处理器所有的单元，如cache层次，总线等等。</p>  <p>SESC是一个事件驱动的模拟器，这是一个从MINT衍生而来的，MINT是一个古老的模拟MIPS处理器的项目。处理器核中大部分的功能函数都是每一拍都会执行，不过也有少部分的函数只有需要的时候执行（通过事件驱动）。</p>    <p> </p>  <p>SESC的代码时用C++写的，基于面向对象的编程思想，主要的类有Resource，GProcessor，FetchEngine，ExecutionFlow，Cluster，DepWindow等，其大致关系如下：</p>  <br />  <p><img src="https://public.sn2.livefilestore.com/y1pY42ojS9_l5_bTy4ntDtuL7bBy7O-ZACtfHLQdXqWfQF7UJNKvFl7ZMYp-QIxOmOccVUs1GllLGHWNf5OABU81A/pipelineUML.jpg?psid=1" />    <br />    <br /></p>  <p>图片来源：<a href="http://iacoma.cs.uiuc.edu/~paulsack/sescdoc/project.html#pipeline">http://iacoma.cs.uiuc.edu/~paulsack/sescdoc/project.html#pipeline</a></p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (2)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">xiaoxiao</span>
+                        <span class="comment-date">2011-09-08</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>呵呵，强力支持！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-09-08</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1119004" rel="nofollow">@xiaoxiao</a><br><br />谢谢笑姐支持～不过哥因为SESC不支持Directory-based coherence，哥只好转战Godson-simulator...</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

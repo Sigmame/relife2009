@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博客搬家:导出live space 到micolog或者wordpress - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>博客搬家:导出live space 到micolog或者wordpress</h1>
+                    <div class="post-date">2010-10-07</div>
+                    <div class="post-meta">
+                        <span class="tag">博客相关</span>
+                        <span class="tag">python</span>
+                        <span class="tag">import</span>
+                        <span class="tag">live space</span>
+                        <span class="tag">Micolog</span>
+                        <span class="tag">xml</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>前段时间，微软宣布将停止live space 的服务，建议用户转移到wordpress，但是对于有些用户，比如说向我们这些用GAE+micolog搭建独立博客的用户，并不像直接搬到wordpress，或者由于各种原因，不想把live space的数据马上删除（默认转到wordpress，live space数据会删除）。因此，找一个能够把live space数据导出到micolog格式或者wordpress格式就很有必要。</p>
+<p>我在网上找了下，终于找到了一个叫Live-space-mover的工具，并且成功的将live space 导出到micolog和wordpress，在此简要的记录一下过程。</p>
+<h4><span style="color: #9b00d3;">准备工作：</span></h4>
+<blockquote>
+<p>1.设置live space日期格式：</p>
+<p>重要的是让WindowsLiveSpace和Wordpress的日期格式一致，这里我两个设置的是2010/10/7。在WindowsLiveSpace中，我的时间格式是10:43，设置的路径是“选项”->“常规”->“日期和时间格式”：</p>
+<p><a href="http://home.ustc.edu.cn/~dfliu/images/64f8501f4cbb_96DB/image.png"><img style="background-image: none; margin: 0px; padding-left: 0px; padding-right: 0px; display: inline; padding-top: 0px; border: 0px;" title="image" src="http://home.ustc.edu.cn/~dfliu/images/64f8501f4cbb_96DB/image_thumb.png" border="0" alt="image" width="521" height="140" /></a></p>
+<p>另外，在“选项”->“日志”->“显示日志日期”选项中，勾选“在页首出显示日志发布日期”。</p>
+</blockquote>
+<blockquote>
+<p>2.安装python：</p>
+<p>我使用的是python2.5.2+Beautiful Soup 3.0.6，Python 2.5.2的官方下载地址在：</p>
+<p><a href="http://www.python.org/download/releases/2.5.2/">http://www.python.org/download/releases/2.5.2/</a></p>
+<p>下载后若在命令行敲python说命令没找到，则要手动将python路径添加到环境变量，或者后续命令时把python路径敲全。</p>
+</blockquote>
+<blockquote>
+<p>3.下载Beautiful Soup 3.0.6：</p>
+<p>Beautiful Soup 3.0.6是一个解析HTML页面的类库，接下来那个下载博客文章的脚本需要用它。下载地址：</p>
+<p><a href="http://www.crummy.com/software/BeautifulSoup/download/3.x/BeautifulSoup-3.0.6.tar.gz">http://www.crummy.com/software/BeautifulSoup/download/3.x/BeautifulSoup-3.0.6.tar.gz</a></p>
+<p>解压到一个文件夹，比如D:downloadBeautifulSoup-3.0.6。你将看到BeautifulSoup.py等几个脚本。</p>
+</blockquote>
+<blockquote>
+<p>4.下载Live-space-mover：</p>
+<p>Live-space-mover这个脚本，能够把WindowsLiveSpace中的所有文章和评论等，生成一个Wordpress能够识别的XML文件，以实现博客搬家的目的。下载地址：</p>
+<p><a href="http://code.google.com/p/live-space-mover/downloads/list">http://code.google.com/p/live-space-mover/downloads/list</a></p>
+<p>现在的最新版本是live-space-mover.1.8.zip。解压到Beautiful Soup 3.0.6的目录。在BeautifulSoup-3.0.6目录下，你应该看到脚本live-space-mover.py。</p>
+<hr />
+<p>上述3,4两部，大家若嫌麻烦可以直接下载我打好包的Beautiful Soup 3.0.6+Live-space-mover，下载地址：</p>
+<p> </p>
+</blockquote>
+<h4><span style="color: #9b00d3;">搬到micolog或者wordpress：</span></h4>
+<blockquote>
+<p>1.导出live space：</p>
+<p>在cmd下，cd到BeautifulSoup-3.0.6目录，若时间格式和我的一样，直接运行：</p>
+<p>python live-space-mover.py -s <a href="http://yourSpaceName.spaces.live.com/">http://<span style="color: #ff0000;">yourSpaceName</span>.spaces.live.com/</a></p>
+<p>若时间格式后面还有秒，运行：</p>
+<p>python live-space-mover.py -s <a href="http://yourspacename.spaces.live.com/">http://<span style="color: #ff0000;">yourSpaceName</span>.spaces.live.com/</a> -t “%m/%d/%Y %I:%M:%S %p”</p>
+<p>其中youSpaceName是你的博客名。倘若环境变量中没有python，则把python的路径输全即可，如：</p>
+<p>D:\\Program Files\\Python25\\python.exe live-space-mover.py -s <a href="http://yourspacename.spaces.live.com/">http://<span style="color: #ff0000;">yourSpaceName</span>.spaces.live.com/</a> -t “%m/%d/%Y %I:%M:%S %p”</p>
+</blockquote>
+<blockquote>
+<p>2.导入到micolog或者wordpress：</p>
+<p>倘若是导入到wordpress，可以直接导入(tools->import->wordpress格式)，只需设置一下作者即可。</p>
+<p><span style="color: #ff0000;">倘若导入到micolog，则需要手动把一些中文post_name改成拼音或英文</span>，如：</p>
+<pre class="brush: xml; ruler: true ;first-line: 1; highlight: []"> <wp:post_name>中文</wp:post_name>
+ </pre>
+</blockquote>
+<blockquote>
+<p>改成：</p>
+<pre class="brush: xml; ruler: true ;first-line: 1; highlight: []"> <wp:post_name>english</wp:post_name>
+ </pre>
+</blockquote>
+<blockquote>
+<p>否则或出现对应item没导入进去，有些文章会缺失。</p>
+<p>wordpress评论也能够完美导入，但micolog貌似不能，我从wordpress导入到micolog也不能导入评论，所以这应该是micolog导入功能不够完善所致。</p>
+</blockquote>
+<p>done & enjoy~</p>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>芯片设计(IC)中的验证 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>芯片设计(IC)中的验证</h1>
+                    <div class="post-date">2011-02-19</div>
+                    <div class="post-meta">
+                        <span class="tag">芯片设计</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">IC设计</span>
+                        <span class="tag">IC</span>
+                        <span class="tag">集成电路设计</span>
+                        <span class="tag">verify</span>
+                        <span class="tag">IC验证</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>通俗的讲，芯片设计的验证（Verification）就是验证所设计的逻辑代码是否符合预期的要求，是否符合原来定义好的规范（如对于一个H264解码芯片，就是验证其是否实现了H264 标准中的某部分规范，不一定是全部，因为H264分为很多profile，可能所要求的仅仅是实现某些profile）。</p>
+<p>在现在的集成电路的验证中，主要有两种方法，一种是随机验证，另外一种是形式验证（Formal Verification）。随机验证就是通过大量的随机向量来验证测试是否符合要求（通常是将硬件的结果和软件的结果进行比较，或者通过断言比较）。形式验证的主要思想是通过使用形式证明的方式来验证一个设计的功能是否正确。形式验证可以分为三大类：等价性检查（Equivalence Checking）、模型检查（Model Checking）和定理证明(Theory Prover) 。</p>
+<p>随着芯片规模的增大，芯片设计中验证需要的时间越来越长，占整个设计周期的比例越来越大。为了提高验证速度，出现个各种自动化的验证语言（如SystemVerilog等）和验证工具（这些验证工具大部分都支持随机验证）和各种验证方法学，如OVM和VMM。</p>
+<p>VMM和OVM都是基于SV（SystemVerilog）的硬件验证的方法学，从本质上来讲，VMM和OVM的方法学是一致的，目的都是实现可重用性(reusable)以提高验证的效率。</p>
+<p>VMM是由ARM和Synopsys提出的，OVM则是由Mentor和Candence共同提出的。因此使用Synopsys VCS进行仿真也就选择了VMM的验证方法，支持OVM的仿真工具自然就是Mentor和Candence的工具了。</p>
+<p>VMM和OVM都是基于SystemVerilog（SV）的验证方法，而SV相对于传统的HDL语言来说，其最大的好处就是引入了面向对象编程的概念（Object Oriented Programming，OOP），OOP的概念基本上是可以跟{封装(Encapsulation)+继承(Inheritance)+多态(Polymorphism)}相等同的，至于封装、继承和多态，如果学过C++的人自然会明白。引入了OOP之后，SV便可以在更高的抽象层次进行仿真和验证。</p>
+<p>在2010年，貌似又出现了一个新的验证方法，叫Universal Verification Methodology（UVM），UVM号称集成了两个验证方法的优点，具体可以看<a href="http://www.uvmworld.org/overview.php">http://www.uvmworld.org/overview.php</a>。</p>
+<p>以上几种验证方法学的基本结构都差不多，可重用的实现的手段都是通过VIP（verification IP）实现的。这些VIP都是EDA工具提供或者单独购买的，通常是一些常见的协议或者标准的IP，如AXI总线IP，USB协议IP。这样的话，倘若设计一个使用了AXI总线作为输入输出接口的部件，通过验证工具检测待测设计AXI总线上的输入输出，并且和SystemVerilog描述的断言进行比较（只需描述里面出AXI总线接口外的行为，不用自己用SystemVerilog描述复杂AXI的行为，直接使用VIP就可以，节省了大量时间）。</p>
+<p>并且这些验证方法学和EDA工具现在都提供了对覆盖率的支持，其基本的验证结构如下（其中灰色部分就是验证方法学所提供的支持）：</p>
+<p> </p>
+<p><img style="display: block; float: none; margin-left: auto; margin-right: auto;" src="http://3fnp6q.blu.livefilestore.com/y1pY1v_aGutdBfgzDM_olf2aGIr3YN8os76cB8yyjTDO_W_aTRvkiDV3MtJYLJvOQ0gPwDDnFGPyIvSVSzilMX-palO2Se8IaBq/verify_const.jpg?psid=1" alt="" width="397" height="273" /></p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (5)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-02-19</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>道福怎么开始学术起来了。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-02-20</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-941001" rel="nofollow">@grapeot</a><br><br />哥一直很学术啊，只是楼上几篇都是扯淡，至多算科普</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.qhm123.com/" rel="nofollow">鸣</a></span>
+                        <span class="comment-date">2011-02-25</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>求教，我用的cloudflare绑定了GAE，怎么像你这个这样访问sigma.me时候，跳转到www.siga.me这里。我的地址是： http://www.qhm123.com/  ，直接输入  http://qhm123.com/  会找不到页面。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-02-25</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-946001" rel="nofollow">@鸣</a><br><br />我其实sigma.me指向的是另一台主机，里面的内容就是一个301跳转</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.qhm123.com/" rel="nofollow">鸣</a></span>
+                        <span class="comment-date">2011-02-25</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-946002" rel="nofollow">@Sigma</a><br><br />哦。</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

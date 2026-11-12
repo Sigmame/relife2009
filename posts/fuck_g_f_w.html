@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudflare被墙了（附解决办法） - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>Cloudflare被墙了（附解决办法）</h1>
+                    <div class="post-date">2011-01-07</div>
+                    <div class="post-meta">
+                        <span class="tag">IT资讯</span>
+                        <span class="tag">被墙</span>
+                        <span class="tag">GFW</span>
+                        <span class="tag">Cloudflare</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p><em><span style="color: #ff0000;">update 2011-2-19</span>：貌似这两天Cloudflare又解封了，因此不用采用本文的方法，直接在Cloudflare注册并设置DNS记录即可。</em></p>
+<p>Cloudflare是一个很好的CDN，前几天刚发现的，试了一下其免费版，发现挺好的，访问速度很快，并且google crawl的速度也很快。</p>
+<p>可是，今天我访问自己的博客，发现访问不了，用traceroute追了下，貌似是连不上Cloudflare的DNS服务器，以及Cloudflare的CDN服务器（199.27.134.xxx和199.27.134.xxx全部中枪）。</p>
+<p>原来以为是偶然现象，可是到晚上还没好，看来是被墙了（根据analytics的记录，7号早上六点还有访问，看来就是今早7号早上开始被墙的）。。。</p>
+<p>后来搜了下，发现貌似今天墙又进行了大升级，所有包含Twitter， VPN，SSH关键词的网站所在IP都中枪了。。。</p>
+<p>nnd，今天（7号）中午还和biabia和grapeot讨论那墙是我ICT做的，哎，想不到，晚上我就发现自己被自己所里做的东西搞得很郁闷。。。</p>
+<p>但愿那个bt监控的东西晚点做出来，否则以后想bt都不行了。。。</p>
+<p><span style="color: #ff0000;">另附解决被墙的方法</span>（刚试了，可以成功）：</p>
+<p>就是找一个Cloudflare没被封的CDN ip，将你的域名A记录指向那里（这时候你就不能使用Cloudflare的DNS服务了，必须使用原来域名注册商如godaddy的ns服务），需要ip的可以在此留言，我通过email发过去</p>
+<p><span style="color: #ff0000;">uodate 2011/01/10:</span></p>
+<p><span style="color: #ff0000;">由于问ip的人比较多，我没空一一发，所以我自己建了个A记录ghs.sigma.me,众位想要用Cloudflare只需要先激活Cloudflare，然后将要用的域名CNAME到一下地址即可：</span></p>
+<blockquote>
+<p><span style="color: #ff0000;">xxx.youdomain.com cname   ghs.sigma.me</span></p>
+</blockquote>
+<p><span style="line-height: normal; border-collapse: collapse;"><span style="color: #ff0000;">但是前提都是你注册好了Cloudflare，并且active了，之后你在你注册域名的网站把域名服务器改回原来的（就改回不是Cloudflare），之后再在新的dns服务器上添加cname,你的域名在Cloudflare的域名还需要通过Cname指向ghs.google.com</span></span></p>
+<p><span style="color: #ff0000;"><span style="border-collapse: collapse; line-height: normal;">最终的结果应该是和下面差不多（假设你的域名是godaddy的）：</span></span></p>
+<blockquote>
+<p><span style="color: #ff0000;">xxx.youdomain.com cname   ghs.sigma.me          Godaddy的DNS设置 </span></p>
+<div><span style="color: #ff0000;">xxx.youdomain.com cname   ghs.google.com      Cloudflare里面的DNS里面设置</span></div>
+</blockquote>
+<p>这样还有个好处是，可以减少ip的外泄，并且要是那个ip不行了，只需要我将我的ghs.sigma.me的A记录改下即可，各位的dns设置不用改</p>
+<p><span style="color: #ff0000;">DNS记录生效前请安心等待，一般需要半个小时到一个小时不等，和你的ISP刷新DNS记录周期有关</span></p>
+<p><img src="http://3fnp6q.blu.livefilestore.com/y1phtlzMzj3nwJbQ8g3_przLESzzODe1pL4pkmq8_zAwn0lG_ooJNAZwfXOrlxTpK9YOfkLzkh5RpvwnFRV8ok6aCXJAych_ksR/qiang.jpg?psid=1" alt="" /></p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (54)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">syoummer</span>
+                        <span class="comment-date">2011-01-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>Bless</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://gaebbs.xibu.biz/" rel="nofollow">gaebbs</a></span>
+                        <span class="comment-date">2011-01-09</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>3Q</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">kk</span>
+                        <span class="comment-date">2011-01-09</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>求ip，谢谢！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.zhaiduo.com" rel="nofollow">zhaiduo</a></span>
+                        <span class="comment-date">2011-01-09</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>顶啊～</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2011-01-09</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-794003" rel="nofollow">@gaebbs</a><br><br />已发~</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2011-01-09</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-803002" rel="nofollow">@kk</a><br><br />已发，请查收~</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">v4419</span>
+                        <span class="comment-date">2011-01-09</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>求ip，谢谢！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">milkkey</span>
+                        <span class="comment-date">2011-01-10</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>还是想求一下ip</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.v2xy.com/" rel="nofollow">xyu_ovi</a></span>
+                        <span class="comment-date">2011-01-10</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>503 Service Temporarily Unavailable!<br><br />这是怎么回事啊？？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2011-01-10</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-798002" rel="nofollow">@xyu_ovi</a><br><br />503错误一般都不是反向代理的问题，你直接访问appspot.com的二级域名会出现那错吗？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2011-01-10</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-798002" rel="nofollow">@xyu_ovi</a><br><br />我刚看了下，貌似你的dns没改，或者改好了还没生效，应该等半个小时一个小时就生效了</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.v2xy.com/" rel="nofollow">xyu_ovi</a></span>
+                        <span class="comment-date">2011-01-10</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-818002" rel="nofollow">@dfliu</a><br><br />怎么指向ghs.google.com？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2011-01-10</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-831001" rel="nofollow">@xyu_ovi</a><br><br />Cloudflare域名管理里面你的域名指向ghs.google.com<br><br />在新的域名管理里面你的域名指向ghs.sigma.me</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">milkkey</span>
+                        <span class="comment-date">2011-01-11</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-832001" rel="nofollow">@dfliu</a><br><br />这里面说的指向google那个是只针对appengine的用户吗？是不是其他的非google用户就不用改这个了？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2011-01-11</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-780002" rel="nofollow">@milkkey</a><br><br />那就不用，不过在Cloudflare里面应该有一个类似这样的A记录：<br><br />youdomain.com  A      youip</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">whtsky</span>
+                        <span class="comment-date">2011-01-17</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>依旧无用啊</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">whtsky</span>
+                        <span class="comment-date">2011-01-17</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>依旧无用</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2011-01-17</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-883001" rel="nofollow">@whtsky</a><br><br />那我就不知了，我自己的这个站点用的就是那方法，楼上的xyu_ovi的也是用这个方法<br><br />你再确认一下你有没设置错误，另外，设置好了生效是需要一段时间的</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.v2xy.com/2011/02/2/cloudflare-been-blocked.html" rel="nofollow">Cloudflare悲催了——转用chinasb - eX</a></span>
+                        <span class="comment-date">2011-02-02</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><strong> Cloudflare悲催了——转用chinasb - eXpress You ...</strong><br/>[…] 求助谷歌大神之后找到了 Cloudflare被墙了（附解决办法） ——该方法已失效。在dfliu耐心的帮助之下，让本博起死回生！ […]...</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-02-02</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>楼上说的对，我的同悲催，转用chinasb，具体请看www.chinasb.org<br><br />本文中方法已失效<br><br />（在家编辑文章不方便，所以只好在评论中说明）</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.tnnde.com" rel="nofollow">SaNy</a></span>
+                        <span class="comment-date">2011-02-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你好 我想问下 我直接用了 Cloudflare的DNS后 会随即2个IP 一个可以访问 另外一个访问不了<br><br />整个就悲剧了 请问有什么方法更改IP么 因为我看你的IP是另外的 跪求指点 感谢</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-02-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-943017" rel="nofollow">@SaNy</a><br><br />貌似你可以发邮件联系客服要求其更改<br><br />对了，不用说跪求。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.v2xy.com/" rel="nofollow">xyu_ovi</a></span>
+                        <span class="comment-date">2011-02-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-875003" rel="nofollow">@ Cloudflare悲催了——转用chinasb - eX</a><br><br />请问博主！这条回复就是传说中的<strong>Trackback</strong>吗？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-02-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-946020" rel="nofollow">@xyu_ovi</a><br><br />你得到了他<br><br />感觉应该单独列出来的</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.v2xy.com/" rel="nofollow">xyu_ovi</a></span>
+                        <span class="comment-date">2011-02-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-946021" rel="nofollow">@Sigma</a><br><br />卖糕的！哪有这样用英文的！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.tnnde.com" rel="nofollow">SaNy</a></span>
+                        <span class="comment-date">2011-02-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>可以我给他发邮件 他自动回复我=。= 悲剧</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-02-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-943018" rel="nofollow">@SaNy</a><br><br />不会吧，人品不行啊</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.v2xy.com/" rel="nofollow">xyu_ovi</a></span>
+                        <span class="comment-date">2011-03-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-943018" rel="nofollow">@SaNy</a><br><br /><p><br><br />	我给你个解决办法！你不是被摊到了一个可怜的被墙IP吗！<br><br /></p><br><br /><p><br><br />	去申请一个免费域名！比如co.cc或者cx.cc<br><br /></p><br><br /><p><br><br />	把这个域名添加到cloudflare，作cname到ghs.google.com，<strong>启用cdn</strong><br><br /></p><br><br /><p><br><br />	把你的主域名中指向ghs.google.com全部换到刚才做好的那个免费域名上！<strong>关闭cdn</strong>——否则还会用到被墙IP<br><br /></p><br><br /><p><br><br />	<br /><br><br /></p><br><br /><p><br><br />	此方法绝对可行！我已经试过了。PING一下我的域名你就看得出来！<br><br /></p><br><br /><p><br><br />	如果这个免费域名又摊到被墙IP——那你可以去买彩票了<br><br /></p></p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.v2xy.com/" rel="nofollow">xyu_ovi</a></span>
+                        <span class="comment-date">2011-03-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>哇！p标签的间隔这么大！！！！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-03-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-947017" rel="nofollow">@xyu_ovi</a><br><br />哈哈，那么多br貌似是系统自己加的</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.v2xy.com/" rel="nofollow">xyu_ovi</a></span>
+                        <span class="comment-date">2011-03-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-951015" rel="nofollow">@Sigma</a><br><br />我是在xhEditor里面编辑的！默认就加上了p标签！发过来就多了几个br</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">zhang</span>
+                        <span class="comment-date">2011-03-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>求cloudflare能用的ip  谢了兄弟</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-03-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-958005" rel="nofollow">@zhang</a><br><br />貌似现在Cloudflare很多ip都解封了<br><br />你要看的话，可以ping ghs.sigma.me得到</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.guang58.com" rel="nofollow">逛我吧</a></span>
+                        <span class="comment-date">2011-04-03</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>兄弟啊，墙是你们做的啊！别整这伤天害理的事啊!水深火热啊</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">Sigma</a></span>
+                        <span class="comment-date">2011-04-05</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-963010" rel="nofollow">@逛我吧</a><br><br />我可没参加，我也对此深恶痛绝</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://willin.me/" rel="nofollow">长岛冰泪</a></span>
+                        <span class="comment-date">2011-04-18</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>没看很明白,如果不想更换NS服务器到CF,可以直接添加个2级域名A解析吗</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-04-18</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1000006" rel="nofollow">@长岛冰泪</a><br><br />可以，但前提是要先把NS改到CF激活CF<br><br />之后在手动改回NS<br><br />但现在貌似CF会定期检查NS，到时要重新改回去激活</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://bestkaola.com/blog" rel="nofollow">超级考拉</a></span>
+                        <span class="comment-date">2011-04-20</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>yes!<br><br />My blog http://goo.gl/C1JUc</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.iwojie.com" rel="nofollow">我们结婚了</a></span>
+                        <span class="comment-date">2011-04-25</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你们所还真不邪恶啊</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">ajiao</span>
+                        <span class="comment-date">2011-05-15</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>我想咨询下，如何才能用cloudflare进行GAE泛域名解析啊。比如说：现在是www.yourdomain.com访问，我希望yourdomain.com 也能访问，有没有办法。如果有的话，该如何做呀？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.v2xy.com" rel="nofollow">xyu_ovi</a></span>
+                        <span class="comment-date">2011-05-16</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1027007" rel="nofollow">@ajiao</a><br><br />不能绑定裸域，只能转向！<br><br />方法参考http://bbs.sigma.me/t/43#reply2</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.all-nike.com" rel="nofollow">Air Max 2011</a></span>
+                        <span class="comment-date">2011-05-27</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>请问应该如何验证CDN已用上呢?</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-05-27</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1037007" rel="nofollow">@Air Max 2011</a><br><br />ping你的域名，看所得到的ip是否为Cloudflare的ip</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.all-nike.com" rel="nofollow">Air Max 2011</a></span>
+                        <span class="comment-date">2011-05-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>多谢你啊.我成功了,原来刚开始是我太急了.DNS 要2-24 小时之内转过来的.我的用了将近15小时才转过去的.为是为什么ping站的话有两个IP.一会儿是199.27.134.* 一会儿是199.27.135.* ?一个快一个慢的.那我A记录里应该用哪个呢.<br><br /></p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-05-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1027015" rel="nofollow">@Air Max 2011</a><br><br />你最好别用A记录的方法，那个被cloudflare发现会停用，要重新激活，现在一般直接分到的ip就行了，详见第一段<br><br />update 2011-2-19：貌似这两天Cloudflare又解封了，因此不用采用本文的方法，直接在Cloudflare注册并设置DNS记录即可。<br><br />----------------<br><br />至于两个ip，那是因为Cloudflare可能要做负载均衡的原因，每个域名都分了两个ip，那个ip对应的服务器空闲，就通过那个cdn（这是我的猜测）</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://qiusuoge.com" rel="nofollow">求索阁</a></span>
+                        <span class="comment-date">2011-07-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>Cloudflare第一次听说过，咋用呀？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.ineeke.com" rel="nofollow">Neeke</a></span>
+                        <span class="comment-date">2011-07-07</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>红杏出墙，亮了。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.shawze.tk" rel="nofollow">Chauzeix</a></span>
+                        <span class="comment-date">2011-07-23</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>其实最近ghs.google.com可直接访问。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-07-23</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1083002" rel="nofollow">@Chauzeix</a><br><br />果然是，谢谢提醒</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://baidublog.org" rel="nofollow">百毒博客</a></span>
+                        <span class="comment-date">2011-08-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>免费的CND经常会被人滥用，结果导致被墙。唉。我看还是不使用CND好了。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.tekebet.com/" rel="nofollow">E世博</a></span>
+                        <span class="comment-date">2011-11-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>尊敬的博主你好，现在你的这个gsh.sigma.me的cname还可用吗？这个是不是长期免费提供下去呢？谢谢</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-11-01</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-1172007" rel="nofollow">@E世博</a><br><br />GHS部分已经解封了，不需要用这个方法<br><br />详见<br><br />http://mblog.sigma.me/2011/07/23/ghs-freed.html<br><br />当然，你也可以直接将原来指向ghs.google.com的结果指向ghs.sigma.me<br><br />因为ghs.sigma.me我会A到一个可用的ghs ip上</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://tumutanzi.com" rel="nofollow">土木坛子</a></span>
+                        <span class="comment-date">2011-12-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>凡是免费的服务都不可靠，凡理被大量天朝人民用的服务更不可靠。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://gogleoe.edu" rel="nofollow">giwapeawek</a></span>
+                        <span class="comment-date">2012-07-27</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>Cloudflareè¢«å¢™äº†ï¼ˆé™„è§£å†³åŠžæ³•ï¼‰-Sigma I was suggested this website by my cousin. I'm not sure whether this post is written by him as nobody else know such detailed about my trouble. You are amazing! Thanks! your article about Cloudflareè¢«å¢™äº†ï¼ˆé™„è§£å†³åŠžæ³•ï¼‰-SigmaBest Regards Cindy</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

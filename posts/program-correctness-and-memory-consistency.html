@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>程序的正确性的一些理解--再谈一致性协议 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>程序的正确性的一些理解--再谈一致性协议</h1>
+                    <div class="post-date">2011-08-27</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">存储一致性</span>
+                        <span class="tag">程序正确性</span>
+                        <span class="tag">一致性</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>这几天，看论文，有个东西一直困惑我。那就是，如何判断程序是正确的，又如何判断程序的执行是正确的。下面谈谈我个人很直白，很初级的理解</p>  <p>个人以为，简单直白讲，程序正确，就是程序能做程序员预期希望做的事；程序执行正确，就是程序能够在一定输入下，输出程序员（设计者）所希望的输出。</p>  <p><font color="#ff0000">个人以为</font>，对于<font color="#ff0000">冯诺依曼机器</font>，程序的输入包括：</p>  <blockquote>   <p>整个程序空间的内存初始值以及任何改变程序空间内存的事件。</p> </blockquote>  <ol>对串行程序，上面的输入很好理解，其实就是内存初始值，以及各种外部改变内存的IO事件。一句话，串行程序的输入，其实就是内存输入（包括初始值以及外部改变的值）。并且，前述的输入可以确定地决定程序的输出。</ol>  <ol>对串行程序，正确的程序，个人以为，就是能够处理程序员所定义的所有输入并得到期望的输出；程序的正确执行，也就是计算机能够将正确的程序得到期望的输出。其实，这里的正确，是基于程序员和计算机的一种协定，即计算机的指令集及每条指令的功能；正确的程序强调的是，程序元能用这套指令集实现所期望的功能；正确的执行，强调的是，计算机能够按指令定义及规范正确的执行每一条指令。</ol>  <ol>而对于并行程序，理论上输入也只有这些，但是，现代的并行机器（多核，多处理机），由于同一份内存有多个备份，这时候，程序内部的内存改变，也是影响程序最终的输出。因为，不同备份的内存会出现不一致的情况，而消除不一致的值传播却不是瞬间的，甚至不是固定时间的。也就是说，不同备份内存值改变（包括因为其他备份传播导致的值更新）的时间也能成为一个伪输入，影响最终的结果。</ol>  <ol>这时候，程序员和计算机，除了指令集约定，就需要新的约定，那就是一致性约定。对于计算机（或者对于计算机设计者）来说，希望这个值传播能够随意传播，时间没有限制，顺序也没有限制，因为，这样可以乱序执行，可以不用等待，可以提高计算机性能。而对于程序员，希望这个值传播是瞬间的，每个线程，只需要一改写内存，其他的内存备份，马上得到更新。</ol>  <p>程序员所希望的<a href="http://www.sigma.me/2011/05/6/share-memory-system-and-consistency.html">一致性协议</a>，叫做<a href="http://www.sigma.me/2011/05/6/strict-consistency.html">严格一致性</a>,但是，这是这从物理上都是不可实现的，计算机肯定更无法实现。而计算机希望的一致性，则是不靠谱的，因为，那种情况下，程序员无法写出具有确定性输出的程序，因为很可能，在程序执行完毕后，同一地址对应不同的内存备份不一样，这时候，到底取哪个值，是一个问题。对于这种计算机来说，并行程序已经无所谓正确与否了。</p>    <p> </p>  <p>于是，根据两方妥协程度的不同，出现了不同的一致性协议，包括：<a href="http://www.sigma.me/2011/05/6/strict-consistency.html">严格一致性(strict  consistency)</a>，<a href="http://www.sigma.me/2011/05/6/sequential-consistency.html">顺序的一致性(Sequential consistency)</a>，<a href="http://www.sigma.me/2011/05/6/causal-consistency.html">因果一致性(Causal Consistency)</a>，<a href="http://www.sigma.me/2011/05/6/causal-consistency.html">一般一致性(General Consistency)</a>，<a href="http://www.sigma.me/2011/05/6/PRAM-consistency.html">处理机一致性(Processor consistency)</a>，<a href="http://www.sigma.me/2011/05/6/causal-consistency.html">PRAM一致性(PRAM consistency,又名FIFO consistency)</a>，<a href="http://www.sigma.me/2011/05/6/weak-consistency.html">弱一致性(Weak consistency)</a>，<a href="http://www.sigma.me/2011/05/6/release-consistency.html">释放一致性(Release consistency)</a>，<a href="http://www.sigma.me/2011/05/6/entry-consistency.html">入口一致性(Entry Consistency)</a>等等。</p>  <blockquote></blockquote>  <p>这些一致性协议中，从程序员来讲，几乎是越来越妥协，也就是说，对程序员来讲，越来越难写出正确的程序（即能够实现期望功能的程序）。一个程序，在顺序一致性机器上执行是正确的，而在弱一致性机器上，往往却是错的。比如对于弱一致性，程序员写的程序需要保证，在同步区间内，不会出现对同一地址的冲突访问（即Data Race，这类程序叫Data race free的程序），这样才能保证程序的正确性，才能在弱一致性的机器上执行正确。</p>  <p>PS:<font color="#0000ff">本文仅仅是个人的一些理解，不一定正确，更不是关于程序正确性理论（如程序正确的形式化验证），假如各位被搜索引擎，或者标题骗来了，只能说抱歉。</font></p>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

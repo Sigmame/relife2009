@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoSQL非关系数据库简介 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>NoSQL非关系数据库简介</h1>
+                    <div class="post-date">2011-06-11</div>
+                    <div class="post-meta">
+                        <span class="tag">技术相关</span>
+                        <span class="tag">关系型数据库</span>
+                        <span class="tag">数据存储</span>
+                        <span class="tag">非关系型数据库</span>
+                        <span class="tag">数据库</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p><font color="#0000ff">昨天去听了下新浪微博首席架构师的一个讲座，其中讲到新浪微博采用了非关系数据库Redis，感觉这东西有点意思，于是搜了下，大致了解下，把看到的一些东西放到这里，算是小小总结（其中可能有误，请自行辨别）。</font></p>  <p>在计算机科学中，非关系型数据库（NoSQL）是一个和之前的关系型数据库（RDBM）有很大不同的另一类数据结构化存储管理系统。非关系型数据库通常没有固定的表结构，并且避免使用join操作。和关系型数据库相比，非关系型数据库特别适合以SNS为代表web 2.0应用，这些应用需要极高速的并发读写操作，而对数值一致性要求却不甚高。</p>  <h4>关系型数据库的特点</h4>  <p><strong>关系型数据库最大特点就是事务的一致性</strong>：传统的关系型数据库读写操作都是事务的，具有ACID（原子性Atomicity、一致性Consistency、隔离性Isolation、持久性Durability）的特点，C就是一致性（Consistency），这个特点是关系型数据库的灵魂（其他三个AID都是为其服务的），这个特性使得关系型数据库可以用于几乎所有对一致性有要求的系统中，如典型的银行系统。</p>  <p>但是，在网页应用中，尤其是SNS应用中，一致性却不是显得那么重要，用户A看到的内容和用户B看到同一用户C内容更新不一致是可以容忍的，或者说，两个人看到同一好友的数据更新的时间差那么几秒是可以容忍的，因此，关系型数据库的最大特点在这里已经无用武之地，起码不是那么重要了。</p>  <p>相反的，关系型数据库为了维护一致性所付出的巨大代价就是其读写性能比较差，而像微博，facebook这类SNS的应用，对并发读写能力要求极高，关系型数据库已经无法应付（在读方面，传统上为了克服关系型数据库缺陷，提高性能，都是增加一级memcache来静态化网页，而在SNS中，变化太快，memcache已经无能为力），因此，必须用新的一种数据结构化存储来来代替关系数据库。</p>  <p>关系数据库的另一个特点就是其具有固定的表结构，因此，其扩展性极差，而在SNS中，系统的升级，功能的增加，往往意味着数据结构巨大改动，这一点关系型数据库也难以应付，需要新的结构化数据存储。</p>  <p>于是，非关系数据库（NoSQL）应运而生，由于不可能用一种数据结构化存储方式应付所有的新的需求，因此，<strong>非关系型数据库严格上不是一种数据库，应该是一种数据结构化存储方法的集合。</strong></p>  <p><strong>必须强调的是，数据的持久存储，尤其是海量数据的持久存储，还是需要关系数据库这员老将。</strong></p>  <h4>非关系型数据库分类</h4>  <h4></h4>  <p>由于关系型数据库本身天然的多样性，以及出现的时间较短，因此，不像关系型数据库，有几种数据库能够一统江山，关系型数据库的非常多，并且大部分都是开源的，这里列出一些：Redis,Tokyo Cabinet,Cassandra,Voldemort,MongoDB,Dynomite,HBase,CouchDB,Hypertable,Riak,Tin, Flare,Lightcloud,KiokuDB,Scalaris,Kai,ThruDB…</p>  <p>这些数据库中，其实实现大部分都比较简单，除了一些共性外，很大一部分都是针对某些特定的应用需求出现的，因此，对于该类应用，具有极高的性能。依据结构化方法以及应用场合的不同，主要分为以下几类：</p>  <ol>   <li><strong>面向高性能并发读写的Key-Value数据库</strong>：Key-Value数据库的主要特点就是具有极高的并发读写性能，Redis,Tokyo Cabinet,Flare就是这类的代表。 </li>    <li><strong>面向海量数据访问的面向文档数据库（Document store）</strong>：这类数据库的特点是，可以在海量的数据中快速的查询数据。典型代表为MongoDB以及CouchDB。 </li>    <li><strong>面向可扩展性的分布式数据库(Object Store)：</strong>这类数据库想解决的问题就是传统数据库在可扩展性上的缺陷，这类数据库可以适应数据量的增加以及数据结构的变化，Google Appengine的Big Table就是这类的典型代表，并且，BigTable特别适用于<a href="http://www.sigma.me/2011/04/21/intro-to-mapreduce.html">Map Reduce</a>处理。 </li> </ol>  <p>这里只对这几类数据库简要的介绍，需要详情可以看：<a href="http://en.wikipedia.org/wiki/NoSQL">http://en.wikipedia.org/wiki/NoSQL</a></p>  <p>有空的话，以后也扯扯各类的具体差别，另外，个人感觉RAM Database挺有前途的，果如此，memcache就几乎不用了。最后附上一张图：</p>  <p><img title="NoSQL database" alt="database" src="http://3fnm6q.blu.livefilestore.com/y1pKZ3veScRkKk-PZW7uC5TRO_3h_5FlTnK0nht-UPAcQgGqbmFiS0-LdiTRWCu5edxKROn0AC9jy1hEm9_CeXp4CxVY7ZBZfrN/datastore.jpg?psid=1" width="590" height="432" /></p>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

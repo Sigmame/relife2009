@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>debian包的结构和解包打包-从打包ubuntu12.10 linuxqq说起 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>debian包的结构和解包打包-从打包ubuntu12.10 linuxqq说起</h1>
+                    <div class="post-date">2013-01-09</div>
+                    <div class="post-meta">
+                        <span class="tag">折腾</span>
+                        <span class="tag">Linux</span>
+                        <span class="tag">Debian</span>
+                    </div>
+                </header>
+                <div class="post-content">
+作为2B青年，果断在mac下装了linux。今天想装QQ，发现报错了。
+<pre class="brush: actionscript3; gutter: true">daohoo@daohoo-mbp:~/Downloads$ sudo dpkg -i linuxqq_v1.0.2-beta1_i386.deb
+[sudo] password for daohoo:
+dpkg: error processing linuxqq_v1.0.2-beta1_i386.deb (--install):
+ parsing file '/var/lib/dpkg/tmp.ci/control' near line 7 package 'linuxqq':
+ error in Version string 'v1.0.2-beta1': version number does not start with digit
+Errors were encountered while processing:
+ linuxqq_v1.0.2-beta1_i386.deb</pre>
+根据错误信息显示，不能安装的原因是新版的ubuntu要求版本号为数字开头，SB的腾讯却用v开头。因此，我猜想，只要重新打包即可（之前我通过重新打包的方法，也改过android QQ的尾巴）。过程如下：
+
+1.ar解包：
+<pre class="brush: actionscript3; gutter: true">daohoo@daohoo-mbp:~/Downloads/linuxqq$ ar vx linuxqq_1.0.2_i386.deb
+x - debian-binary
+x - control.tar.gz
+x - data.tar.gz</pre>
+2.tar解包control信息：
+<pre class="brush: actionscript3; gutter: true">daohoo@daohoo-mbp:~/Downloads/linuxqq$ tar -zxvf control.tar.gz
+./
+./conffiles
+./control</pre>
+3.修改control文件：
+<pre class="brush: actionscript3; gutter: true">sed -i "s/v1.0/1.0/g" control</pre>
+4.重新tar打包control.tar.gz
+<pre class="brush: actionscript3; gutter: true">tar -zcvf control.tar.gz ./conffiles ./control</pre>
+5.ar重新打包debian包：
+<pre class="brush: actionscript3; gutter: true">ar rcs linuxqq.deb debian-binary control.tar.gz data.tar.gz</pre>
+6.安装：
+<pre class="brush: actionscript3; gutter: true">sudo dpkg -i linuxqq.deb</pre>
+BTW:介绍一下关于debian包的结构：
+
+1.解包后得到三个文件：
+<pre class="brush: actionscript3; gutter: true">daohoo@daohoo-mbp:~/Downloads/linuxqq$ ls -l
+total 4920
+-rw-r--r-- 1 daohoo daohoo     442 Jan  9 20:50 control.tar.gz
+-rw-r--r-- 1 daohoo daohoo 5027432 Jan  9 20:50 data.tar.gz
+-rw-r--r-- 1 daohoo daohoo       4 Jan  9 20:50 debian-binary</pre>
+其中：
+
+<strong>1.debian-binary：</strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+<pre class="brush: actionscript3; gutter: true"><strong>daohoo@daohoo-mbp:~/Downloads/linuxqq$ cat debian-binary
+2.0</strong></pre>
+<strong> </strong>
+
+ 
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>这个文件包含所使用软件包格式的版本号
+
+<strong>2.control.tar.gz:</strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+<pre class="brush: actionscript3; gutter: true"><strong>daohoo@daohoo-mbp:~/Downloads/linuxqq$ tar -zxvf control.tar.gz
+./
+./conffiles
+./control</strong></pre>
+<strong> </strong>
+
+ 
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+<pre class="brush: actionscript3; gutter: true"><strong>daohoo@daohoo-mbp:~/Downloads/linuxqq$ cat control
+Package: linuxqq
+Priority: extra
+Section: Internet
+Installed-Size: 6264
+Maintainer: Tencent Inc.
+Architecture: i386
+Version: v1.0.2-beta1
+Depends: gtk2.0-binver-2.10.0, libc6, libcairo2, libglib2.0-0, libgtk2.0-0, libpango1.0-0
+Description: QQ - The most popular free instant messaging program in China.
+ * Chat with more than 590,000,000 people all over the world.
+ * Free to download or distribute absolutely.</strong></pre>
+<strong> </strong>
+
+ 
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+<strong> </strong>
+
+包含了软件包管理工具所需信息的tarball文件。里面的control文件有版本号以及依赖关系
+
+<strong>3.data.tar.gz:</strong>
+<pre class="brush: actionscript3; gutter: true">daohoo@daohoo-mbp:~/Downloads/linuxqq$ tar -zxvf data.tar.gz
+./
+./usr/
+./usr/bin/
+./usr/bin/qq
+./usr/share/
+./usr/share/tencent/
+./usr/share/tencent/qq/
+./usr/share/tencent/qq/qq.png
+./usr/share/tencent/qq/qq
+./usr/share/tencent/qq/res.db
+./usr/share/applications/
+./usr/share/applications/qq.desktop
+./usr/share/doc/
+./usr/share/doc/linuxqq/
+./usr/share/doc/linuxqq/qq</pre>
+这个才是最后真正的安装文件，指明了安装的路径。
+
+最后，上传下打好包在ubuntu12.10可用的linux QQ debian包（出于安全考虑，对debian进行了重新打包）。
+
+<a href="http://www.sigma.me/wp-content/uploads/2013/01/linuxqq.tar">ubuntu12.10 可用linux QQ</a>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (7)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://blog.letjs.com/" rel="nofollow">happmaoo</a></span>
+                        <span class="comment-date">2013-03-11</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>博客不错</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://ligs.tk" rel="nofollow">questionlee</a></span>
+                        <span class="comment-date">2013-03-19</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>linuxqq 还能用吗？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.you52.com" rel="nofollow">服装搭配</a></span>
+                        <span class="comment-date">2013-03-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>我原先在别人博客中有看到，他们用的好多推广方式，现在我也在不断的跟着博主学习</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.0574zt.com" rel="nofollow">宁波私家侦探</a></span>
+                        <span class="comment-date">2013-05-06</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>互联网一定是未来几年的发展大趋势，我们传统行业的人也在不断努力学习网络知识，期待博主的更新</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.lecoq.com.cn" rel="nofollow">环法</a></span>
+                        <span class="comment-date">2013-06-20</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>博客不错，学习了，顶下！</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.qkuaiji.com" rel="nofollow">会计从业资格考试</a></span>
+                        <span class="comment-date">2013-06-28</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>可惜现在用不了了。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="https://grapeot.me" rel="nofollow">sb</a></span>
+                        <span class="comment-date">2014-01-14</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你个傻逼已经一年没发blog了。。</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

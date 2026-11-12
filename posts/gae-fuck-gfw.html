@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAE被墙了，我的博客光荣的成为墙外一员（附用反向代理解决micolog/GAE解决被墙方法） - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>GAE被墙了，我的博客光荣的成为墙外一员（附用反向代理解决micolog/GAE解决被墙方法）</h1>
+                    <div class="post-date">2010-12-09</div>
+                    <div class="post-meta">
+                        <span class="tag">评论</span>
+                        <span class="tag">IT资讯</span>
+                        <span class="tag">反向代理</span>
+                        <span class="tag">Clouflare</span>
+                        <span class="tag">Micolog</span>
+                        <span class="tag">GAE</span>
+                        <span class="tag">GFW</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>今天，我试着上了下我的在GAE上micolog的搭建的博客，发现貌似无法上了（显示time out），还以为是偶然现象。</p>
+<p>到了晚上，在<a href="http://internet.solidot.org/article.pl?sid=10/12/09/0620219&from=rss">solidot</a>看到说GAE被盾了，原来如此，看来不是偶然现象，是赤裸裸的阴谋！</p>
+<blockquote><p><a href="http://www.appspot.com/">GAE</a>（Google App Engine）是Google于2008年提供的知名的云计算服务，用户可以上传Python程序和Java程序，免费使用谷歌的存储空间、带宽或CPU进行应用的开发等。现在GAE的域名 www.appspot.com 被关键字封锁，目前所有托管的项目程序均无法从中国访问。目前还不清楚这是否与个人利用GAE搭建私人代理服务器有关。</p></blockquote>
+<p>看来我GAE上搭建的博客终于也光荣的成为墙外一员了！！</p>
+<p>但是我发现，倘若通过我的另外一个域名：<a href="http://www.debuglife.tk">www.debuglife.tk</a>,却还可以访问，分析了下原因，感觉是因为我的域名用了反向代理的原因，因此再次说下如何使用反向代理解决基于反向代理的过程：</p>
+<ol>
+<li>首先，需要注册一个域名，这大家都懂得，不像花钱的话，可以去<a href="http://dot.tk">dot.tk</a>注册免费域名。</li>
+<li>找一个反向代理服务，个人推荐<a href="http://www.you8g.com">www.you8g.com</a>,注册并将你第一步的域名提交上去。</li>
+<li>在google上注册企业套件，地址<a href="http://www.google.com/apps/intl/en/business/index.html">http://www.google.com/apps/intl/en/business/index.html</a>，可以注册教育机构的，那是免费的，不过那需要国外的ip进行注册。</li>
+<li>在企业套件管理面板或者GAE管理面板找到添加域名（add domain）选项，添加域名，可以参见<a href="http://donauya.spaces.live.com/blog/cns!F53B4DB2F7D1A8A1!131.entry?wa=wsignin1.0&sa=315075441">http://donauya.spaces.live.com/blog/cns!F53B4DB2F7D1A8A1!131.entry?wa=wsignin1.0&sa=315075441</a></li>
+<li>在你所申请的域名的域名管理（如dot.tk）中添加一个CNAME记录，指向你申请的代理服务器如：<a href="http://donauya.spaces.live.com/blog/cns!F53B4DB2F7D1A8A1!131.entry?wa=wsignin1.0&sa=315075441">ghs.you8g.com</a></li>
+</ol>
+<p><span style="color: #ff0000;">update</span> 13/12/2010:</p>
+<p>    貌似今天GAE又恢复了，看来真和颁奖日有关！</p>
+<p><span style="color: #ff0000;">update 17/2/2011</span></p>
+<p><span style="color: #000000;">发现现在you8g挂了，各位可以换到另外一个叫Chinasb的，地址是app.chinasb.org,具体方法类似，只是第五步要提前到第二步之前，因为chinasb会先验证dns记录。</span></p>
+<p><span style="color: #ff0000;">update 17/2/2011</span></p>
+<p>另外，可以使用一个免费的CDN <a href="http://www.sigma.me/2011/01/7/fuck_g_f_w.html">Cloudflare</a>实现反向代理，具体步骤：</p>
+<p>1. 注册Cloudflare。<br /><br />
+2. 将你需要CDN推送的域名添加到CloudFlare，然后将域名的dns服务器修改为CloudFlare指定的两组即可。<br /><br />
+3. 在你的CloudFlare账户中，可以针对域名每一条A记录或者cname记录设置是否启用云CDN服务，如果不启用，也可以仅仅将CloudFlare当做免费域名dns服务器来使用。<br />
+</p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (4)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.itnsfan.net.ru" rel="nofollow">yishuad</a></span>
+                        <span class="comment-date">2010-12-10</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>反向代理确实很强大</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">fall</span>
+                        <span class="comment-date">2010-12-11</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>2404:6800:8007::63 后加你blog地址，v6访问即可。。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.debuglife.tk" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2010-12-11</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-656001" rel="nofollow">@fall</a><br><br />我的blog我自己的hosts早就是ipv6的了<br><br />只是别人不可能改host，我博客本意是给别人看的，这就没意义了<br><br />所以还是反向代理靠谱，这样别人直接用顶级域名而非GAE域名访问就行了</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">QH</span>
+                        <span class="comment-date">2012-11-15</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>你好，我现在的情况是域名被强了。我想做反向代理，能否参照你这个来操作？</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

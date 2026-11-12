@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>feed终于正常工作了 - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>feed终于正常工作了</h1>
+                    <div class="post-date">2010-10-16</div>
+                    <div class="post-meta">
+                        <span class="tag">micolog</span>
+                        <span class="tag">feed</span>
+                        <span class="tag">update</span>
+                        <span class="tag">Micolog</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>之前，我的博客的feed在google reader能够正常显示，但是，我尝试在校内和live space导入时却总是失败。</p>  <p>仔细对比了我的feed页和一些其他网站的feed页，发现我的feed页有一个标签和其他feed页不同，其他的都是<item>，而我的却是<entry>,感觉应该是我的网站的生成feed页面的python程序有问题。</p>  <p>今天又是周末，有点空，于是想把这问题解决一下，于是去看了micolog官网看了一下，发现micolog竟然release了，于是想更新下我的micolog主程序。</p>  <p>下完release版的micolog，才想到，为了定制我自己的页面，我的micolog程序已被我改的面目全非了，因此，为了让更新后的页面效果和原来一样，必须将官方版的micolog和我自己的修改版进行merge。</p>  <p>本来想用svn进行merge的，但感觉没那个必要，只需要有文件夹比较以及文件比较的编辑器即可以用来merge，于是在放搜狗文件夹比较工具，发现下面一个叫<a href="http://www.scootersoftware.com/">Beyond Compare</a>的工具比较好，于是下了下来并花了大约半个小时进行merge。</p>  <p>merge完后，用GAE进行上传，但发现貌似micolog工具不正常，表现为有的页面打不开，寻思再三，感觉是有的文件没有上传的原因。于是想，为什么会出现目录下的文件没上传，最后猜测应该是GAE可能是根据修改日期判断文件的新旧的，于是，我把merge后的文件夹所有文件的修改日期都进行了批量修改，改到最新，改完后，再上传，发现，It works！</p>  <p>测试feed，出现了&lt item &gt，并尝试日志的导入导出，发现这次正常了，哈~</p>  <p>最后，顺便测试下一个别人刚发给我的windows live writer的插件-InsertPhotsoFromAlbum(下面图片是从SkyDrive相册插入的，测试用)</p>  <p><img src="http://public.blu.livefilestore.com/y1pxXXxILKmyIOb7ENcrMTFbdx2CO5XRkqyUVwCdC-O2x143jTS8BepXHod3-ccHnpj9mnRg4NDyKiXDgi_IDcIWw/2031_1.jpg?psid=1" width="267" height="286" /></p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (2)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.zuomin.tk" rel="nofollow">shanguan</a></span>
+                        <span class="comment-date">2011-01-16</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>我的gae博客的rssfeed订阅功能用IE不能订阅，用火狐就可以，从上传了micolog程序也不行，请高人指点，先谢过了。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">dfliu</a></span>
+                        <span class="comment-date">2011-01-17</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-879001" rel="nofollow">@shanguan</a><br><br />可能和micolog输出的feed格式有关，除非自己改源码，否则没办法，不过应该很少用IE订阅的<br><br />还有一个方法就是用feedsky，FeedBurner工具将你的feed托管，就像我的feed一样，点击<a href="http://www.sigma.me/rss" rel="no-follow" rel="nofollow">RSS按钮</a>可见详情</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

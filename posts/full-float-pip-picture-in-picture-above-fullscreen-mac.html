@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FullFloatPiP: Floating Video Above Fullscreen Apps on macOS - Sigma</title>
+    <meta name="description" content="Chrome's Picture-in-Picture hides behind fullscreen apps on macOS. So I built FullFloatPiP, an open-source Chrome extension + native Swift app that keeps a video floating above fullscreen IDEs and terminals.">
+    <meta name="keywords" content="picture in picture above fullscreen mac, floating video window macOS, watch youtube while coding fullscreen, always on top video mac, chrome pip fullscreen not working, macOS PiP, FullFloatPiP, full-float-pip">
+    <meta name="author" content="Sigma">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://www.sigma.me/posts/full-float-pip-picture-in-picture-above-fullscreen-mac.html">
+    <link rel="alternate" hreflang="en" href="https://www.sigma.me/posts/full-float-pip-picture-in-picture-above-fullscreen-mac.html">
+    <link rel="alternate" hreflang="zh" href="https://www.sigma.me/posts/full-float-pip-mac-quanping-xuanfu-shipin.html">
+    <link rel="alternate" hreflang="x-default" href="https://www.sigma.me/posts/full-float-pip-picture-in-picture-above-fullscreen-mac.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="FullFloatPiP: Floating Video Above Fullscreen Apps on macOS">
+    <meta property="og:description" content="Chrome's Picture-in-Picture hides behind fullscreen apps on macOS. So I built FullFloatPiP, an open-source tool that floats video above fullscreen IDEs and terminals.">
+    <meta property="og:url" content="https://www.sigma.me/posts/full-float-pip-picture-in-picture-above-fullscreen-mac.html">
+    <meta property="og:site_name" content="Sigma">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:locale:alternate" content="zh_CN">
+    <meta property="article:published_time" content="2026-06-14T00:00:00+08:00">
+    <meta property="article:author" content="https://github.com/Sigmame">
+    <meta property="article:tag" content="Picture-in-Picture">
+    <meta property="article:tag" content="macOS">
+    <meta property="article:tag" content="Chrome Extension">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="FullFloatPiP: Floating Video Above Fullscreen Apps on macOS">
+    <meta name="twitter:description" content="Chrome's PiP hides behind fullscreen apps on macOS. I built an open-source tool that floats video above fullscreen IDEs and terminals.">
+
+    <link rel="stylesheet" href="../style.css">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BlogPosting",
+          "@id": "https://www.sigma.me/posts/full-float-pip-picture-in-picture-above-fullscreen-mac.html#article",
+          "headline": "FullFloatPiP: Floating Video Above Fullscreen Apps on macOS",
+          "description": "Chrome's Picture-in-Picture hides behind fullscreen apps on macOS. So I built FullFloatPiP, an open-source Chrome extension and native Swift app that keeps a video floating above fullscreen IDEs and terminals.",
+          "datePublished": "2026-06-14T00:00:00+08:00",
+          "dateModified": "2026-06-14T00:00:00+08:00",
+          "inLanguage": "en",
+          "mainEntityOfPage": "https://www.sigma.me/posts/full-float-pip-picture-in-picture-above-fullscreen-mac.html",
+          "author": { "@type": "Person", "name": "Sigma", "url": "https://github.com/Sigmame" },
+          "publisher": { "@type": "Person", "name": "Sigma", "url": "https://www.sigma.me" },
+          "keywords": "picture in picture above fullscreen mac, floating video window macOS, watch youtube while coding fullscreen, always on top video mac, FullFloatPiP",
+          "about": { "@id": "https://github.com/Sigmame/full-float-pip#software" }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://github.com/Sigmame/full-float-pip#software",
+          "name": "FullFloatPiP",
+          "alternateName": "full-float-pip",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "macOS 12+",
+          "url": "https://github.com/Sigmame/full-float-pip",
+          "sameAs": "https://github.com/Sigmame/full-float-pip",
+          "softwareHelp": "https://github.com/Sigmame/full-float-pip#readme",
+          "programmingLanguage": ["Swift", "JavaScript"],
+          "license": "https://opensource.org/licenses/MIT",
+          "author": { "@type": "Person", "name": "Sigma", "url": "https://github.com/Sigmame" },
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>I Built FullFloatPiP: True Picture-in-Picture Above Fullscreen Apps on macOS</h1>
+                    <div class="post-date">2026-06-14</div>
+                    <div class="post-meta">
+                        <span class="tag">macOS</span>
+                        <span class="tag">Chrome Extension</span>
+                        <span class="tag">Picture-in-Picture</span>
+                        <span class="tag">Swift</span>
+                        <span class="tag">Open Source</span>
+                        <span class="tag">Productivity</span>
+                    </div>
+                </header>
+                <div class="post-content">
+                    <blockquote>🌐 中文读者请看：<a href="full-float-pip-mac-quanping-xuanfu-shipin.html">《让视频悬浮在 Mac 全屏应用之上》</a></blockquote>
+
+                    <p>I do almost all of my work in fullscreen. One Space for my editor, one for the terminal, one for the browser — no title bars, no Dock, no clutter. It is a lovely way to work, right up until the moment I want to watch something while I code.</p>
+
+                    <p>Picture the scene: I am following along with a conference talk, or keeping half an eye on a Twitch stream, or I just want a little video playing in the corner while I grind through a refactor. On Windows, or on a Mac where nothing is fullscreen, Chrome's built-in <strong>Picture-in-Picture</strong> handles this perfectly. But the second my editor goes fullscreen, the floating PiP window vanishes behind it. It is still "always on top" — just on top of a <em>different</em> Space. So I built a tool to fix it, and I open-sourced it: <a href="https://github.com/Sigmame/full-float-pip">FullFloatPiP on GitHub</a>.</p>
+
+                    <h2>Why Chrome's Picture-in-Picture can't float above fullscreen on macOS</h2>
+
+                    <p>I went down a real rabbit hole on this one, because at first it feels like a bug. It is not. It is two design decisions stacking on top of each other.</p>
+
+                    <p>The first is <strong>macOS Spaces</strong>. When you send an app fullscreen on a Mac, macOS does not just maximize the window — it moves that app into its own dedicated Space. Your ordinary windows, including Chrome's little PiP popup, live back on the desktop Space. The instant you switch into your fullscreen IDE, anything on the desktop Space is hidden by definition. "Always on top" only means "on top of its own Space," and a fullscreen app is a wall around its own world.</p>
+
+                    <p>The second is the <strong>browser sandbox</strong>. For very good security reasons, Chrome is not allowed to create a window at the system level that would be required to sit above a fullscreen application. The browser simply does not have that privilege. So no amount of clever JavaScript or fiddling with a PiP extension can get a Chrome-owned window to float above a fullscreen app — the capability lives below the browser, at the operating-system layer.</p>
+
+                    <p>I tried every "always on top" utility and PiP extension I could find. They all hit the same wall. The window would behave beautifully until I went fullscreen, and then it was gone.</p>
+
+                    <h2>What I actually wanted</h2>
+
+                    <p>My wish list was short but stubborn:</p>
+
+                    <ul>
+                        <li>A genuine <strong>floating video window</strong> that stays visible above a fullscreen IDE or terminal.</li>
+                        <li>Cross-Space behaviour, so the window follows me when I switch desktops instead of getting left behind.</li>
+                        <li>Support for the sites I actually watch — YouTube, Bilibili, Twitch — not just generic HTML5 video.</li>
+                        <li>A clean, borderless look, with playback controls that only appear when I hover.</li>
+                    </ul>
+
+                    <p>Nothing out there ticked all four boxes. So one weekend I stopped searching and started building.</p>
+
+                    <h2>Meet FullFloatPiP</h2>
+
+                    <p><a href="https://github.com/Sigmame/full-float-pip">FullFloatPiP</a> is the tool I wished already existed: a truly always-on-top floating video window for macOS that stays put <em>even when another app is fullscreen</em>. I can throw a YouTube tutorial into a small window in the corner, send my editor fullscreen, and the video is still right there, floating above everything. People call this "vibe coding" now — fullscreen terminal, a stream or some lo-fi in the corner, zero context switching. That is exactly the workflow it was built for.</p>
+
+                    <h2>How it works under the hood</h2>
+
+                    <p>The trick is to stop asking the browser to do something it is not allowed to do. FullFloatPiP is a <strong>hybrid</strong>: a Chrome extension plus a small native macOS app written in Swift, talking to each other over Chrome's <strong>Native Messaging</strong> protocol.</p>
+
+                    <ul>
+                        <li>The <strong>Chrome extension</strong> does what the browser is good at: detecting the video on the page (a badge shows how many it found), grabbing the right stream, and handling site-specific quirks.</li>
+                        <li>The <strong>native Swift app</strong> does what the browser is forbidden from doing: it renders the actual floating window as an <code>NSPanel</code> set to the maximum window level, with collection behaviour that lets it appear across all Spaces and above fullscreen apps.</li>
+                    </ul>
+
+                    <p>Because that window is created by a native process at the system level — not by the sandboxed browser — it can finally sit exactly where I always wanted it. The video loading is layered, too: it pulls directly from <code>&lt;video&gt;</code> elements where it can, falls back to a small local HTTP server with the right Referer headers for YouTube, uses site-specific embed players for places like Bilibili and Twitch, and full-page loading with JavaScript injection as a last resort.</p>
+
+                    <h2>The features I use every day</h2>
+
+                    <ul>
+                        <li><strong>Floats above everything</strong>, including fullscreen apps, and stays visible across Spaces.</li>
+                        <li><strong>Clean, borderless window</strong> with a YouTube-style control bar that appears on hover: play/pause, seek, a 10-second skip, volume and mute, and a current/total time display.</li>
+                        <li><strong>Automatic video detection</strong> with a badge showing how many videos are on the page.</li>
+                        <li><strong>Aspect-ratio lock</strong> while you drag the corners to resize.</li>
+                        <li><strong>Position memory</strong> between sessions, so it reopens where you left it.</li>
+                        <li>Drag the title bar to move it; press <code>ESC</code> to close.</li>
+                    </ul>
+
+                    <h2>Sites it supports</h2>
+
+                    <p>Out of the box it handles <strong>YouTube, Bilibili, Twitch, Youku, iQiyi, Tencent Video, and Douyin</strong>, with generic HTML5 video detection as a fallback for everything else.</p>
+
+                    <h2>Getting started</h2>
+
+                    <p>You will need macOS 12 (Monterey) or later, Google Chrome, and Xcode Command Line Tools. Then it is a clone and one script:</p>
+
+                    <pre>git clone https://github.com/Sigmame/full-float-pip.git
+cd full-float-pip
+chmod +x scripts/install.sh
+./scripts/install.sh</pre>
+
+                    <p>The script compiles the Swift app, installs the executables, configures Chrome Native Messaging, and walks you through loading the extension at <code>chrome://extensions</code>. After that: open a supported video site, click the FullFloatPiP icon, pick a video, hit <strong>Float</strong>, and switch into whatever fullscreen app you like. Full instructions are in the <a href="https://github.com/Sigmame/full-float-pip#readme">README on GitHub</a>.</p>
+
+                    <h2>What it can't do (yet)</h2>
+
+                    <p>I would rather be honest than oversell it:</p>
+
+                    <ul>
+                        <li><strong>DRM-protected content</strong> (Netflix, Disney+) will not play — Widevine prevents it in the isolated floating window.</li>
+                        <li>Some <code>blob:</code> URLs fall back to full-page loading.</li>
+                        <li>Cookie/login state is not shared with your main Chrome session.</li>
+                        <li>It is <strong>macOS only</strong> — the whole point is the native window layer, so there is no Windows or Linux build.</li>
+                    </ul>
+
+                    <h2>It's open source — take it, break it, improve it</h2>
+
+                    <p>FullFloatPiP is MIT-licensed and lives on GitHub. I built it to scratch my own itch, but if you also live in fullscreen and have wanted a video to float above it, it might scratch yours too. If it does, a star helps other people find it, and issues and pull requests are very welcome.</p>
+
+                    <p>👉 <strong>Grab the source here: <a href="https://github.com/Sigmame/full-float-pip">github.com/Sigmame/full-float-pip</a></strong></p>
+
+                    <p>If you have built your whole workflow around fullscreen apps and quietly missed being able to watch things while you work — this is the small tool that gave that back to me. I hope it does the same for you.</p>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMP读书笔记四:降低单任务的延时(Improve Latency) - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>CMP读书笔记四:降低单任务的延时(Improve Latency)</h1>
+                    <div class="post-date">2011-03-31</div>
+                    <div class="post-meta">
+                        <span class="tag">读书笔记</span>
+                        <span class="tag">技术相关</span>
+                        <span class="tag">芯片设计</span>
+                        <span class="tag">study</span>
+                        <span class="tag">延时</span>
+                        <span class="tag">CMP</span>
+                        <span class="tag">核融合</span>
+                        <span class="tag">多核处理器</span>
+                        <span class="tag">同步多线程</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>上一篇关于<a href="/2011/03/31/CMP-improve-throughput.html">提高处理器吞吐量</a>的文章讲到，CMP以及SMT技术可以大大提高处理器的吞吐量，提高处理器的并发处理器能力，从而分别提高处理器的峰值和效率。</p>
+<p>但是，现在的很多串行程序，还不能直接从CMP以及SMT技术中获利。并且，这些程序中有很多都又对延时很敏感，比如说各类实时应用。对于这些程序，提高单个任务的性能，降低延时就很有必要。在CMP出现之前，各类的复杂的处理器结构的基本目标都是这个，包括超标量，提高主频等，其基本思想都是提高单处理器核心的性能。但是，当多核时代来临后，出现了一些新的方法，最常见的有：辅助线程（Helper thread），猜测多线程（thread-level speculation,TLS），核融合（core fusion）等技术，下面对这些技术进行简要的介绍。</p>
+<p><span style="color: #ff0000;">辅助线程技术</span>是通过在任务主线程外的加一个辅助线程（helper thread），辅助线程要比主线程跑地快一点，但是可以跳过一些代码，功能主要是为主线程完成一些预取操作，比如将数据从主存搬到cache上，从而降低主线程的cache miss等，提高主线程（也即任务）的执行速度。</p>
+<p><span style="color: #ff0000;">猜测多线程技术</span>是通过在执行过程中将一些原来的串行比较容易并行化的代码（如循环，分支，不同函数等）的动态地分配给几个线程执行，从而提高程序的执行速度，但是猜测多线程会带来额外的消耗，一是线程分配的消耗，另外就是猜测失败重新执行的消耗。一个好的猜测多线程机制必须解决以下几个问题：</p>
+<ul>
+<li><span style="color: #0000ff;">线程间通信</span>：如何拆解程序，使不同线程之间的通信尽可能少，同时如何通信，使得线程间通信效率尽可能高。</li>
+<li><span style="color: #0000ff;">检测处理各种相关</span>：为了保证程序执行的正确性，必须检测线程间的各种相关并进行处理，包括读后写（RAW），写后读（WAR），写后写（WAW）相关。不合适的线程分配会导致大量相关，从而导致线程间大量依赖导致堵塞。不明智的相关处理器机制会导致堵塞的时间很长，从而程序效率低下。</li>
+<li><span style="color: #0000ff;">猜测失败的处理</span>：既然是猜测，难免就会失败。失败后的恢复或者重新执行的机制需要保证系统的所有相关状态要回到猜测执行之前的状态，这样才能保证安全和正确。</li>
+<li><span style="color: #0000ff;">猜测线程机制</span>：猜测线程需要考虑各种因素：由于每个线程的buffer size有限（在每个线程提交之前，为了保证正确性，所有执行都需要buffer下来），导致每个线程的长度不能太长。必须减少线程间的真依赖，减少堵塞。多长的时间进行check，何时进行重新执行等等。</li>
+</ul>
+<p><span style="color: #ff0000;">核融合</span>是指硬件将多个核的各个功能部件，如取值，执行等融合成一个核，就像superscale那样，从而提高串行程序的执行速度。这东西貌似比较新，wikipedia都还没有相关内容，想了解的话，可以自己google scholar “<a href="http://scholar.google.com/scholar?q=core+fusion&hl=en&btnG=Search&as_sdt=1,5&as_sdtp=on">Core fusion</a>”。</p>
+<p>最后，附上一张TLS的示意图，图来自《Chip Multiprocessor Architecture:Techniques to Improve Throughput and Latency》一书：<br />
+<img style="display: block; float: none; margin-left: auto; margin-right: auto;" title="猜测多线程TLS示意图" src="http://public.blu.livefilestore.com/y1pWBcGKgDnr1lGIzVG0wbOz4K3UpP00RvJQLNm1oRfD6hVSXwsqW69AQrSDb36oW9gZz_2mtfZ9aIsrvwxT7Pu1w/TLS.jpg?psid=1" alt="猜测多线程TLS示意图" width="591" height="276" /></p>
+                </div>
+            </article>
+
+            <section class="comments-section">
+                <h2>Comments (4)</h2>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.qhm123.com/" rel="nofollow">鸣</a></span>
+                        <span class="comment-date">2011-04-09</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>神，CMP是神马？</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-04-09</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-984001" rel="nofollow">@鸣</a><br><br />Chip Multi-Processor 片上多核处理器</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://grapeot.me" rel="nofollow">grapeot</a></span>
+                        <span class="comment-date">2011-04-11</span>
+                    </div>
+                    <div class="comment-content">
+                        <p>一变成技术贴果断就没评论了。。。</p>
+                    </div>
+                </div>
+
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author"><a href="http://www.sigma.me" rel="nofollow">sigma</a></span>
+                        <span class="comment-date">2011-04-11</span>
+                    </div>
+                    <div class="comment-content">
+                        <p><a href="#comment-982009" rel="nofollow">@grapeot</a><br><br />看来技术知识一小部分人的玩具，还是八卦好，大家都可以玩</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>

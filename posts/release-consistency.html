@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>存储一致性之释放一致性(Release Consistency) - Sigma</title>
+    <meta name="description" content="Work Hard, Play Hard">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="../index.html" class="logo">Sigma</a>
+            <nav>
+                <a href="../index.html">Posts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <a href="../index.html" class="back-link">← Back to posts</a>
+            <article>
+                <header class="post-header">
+                    <h1>存储一致性之释放一致性(Release Consistency)</h1>
+                    <div class="post-date">2011-05-06</div>
+                    <div class="post-meta">
+                        <span class="tag">未分类</span>
+                        <span class="tag">存储一致性</span>
+                        <span class="tag">共享存储</span>
+                        <span class="tag">释放一致性</span>
+                    </div>
+                </header>
+                <div class="post-content">
+<p>倘若在<a href="/2011/05/6/weak-consistency.html">弱一致性</a>中,存储器能够区分进入还是离开临界区的话，应用起来会更有效。鉴于此，我们需要两种类型而非一个同步变量或操作。</p>  <p>释放一致性（Gharachorloo等，1990）提供了这样两种操作：</p>  <p>•获取（acquire）操作是用于通知数据存储进程进入临界区的操作。</p>  <p>•释放（release）操作是表明进程刚退出临界区。</p>  <p>释放一致性本质上和弱一致性相同，但是同步访问必须仅是处理机一致的。同步操作被分裂成获得(acquire)和释放(release)操作。</p>  <p>共享存储器在遵守以下规定时就是释放一致的：</p>  <blockquote>   <ol>     <li>在访问共享变量前，进程所有先前的获取操作都必须成功地完成； </li>      <li>在允许释放操作前，进程先前的所有读写操作都必须完成； </li>      <li>获取操作和释放操作必须是顺序一致的（这是胡老师《共享存储体系结构》一书的讲法，夏老师课件里讲的是顺序一致，具体哪种有待考证）。 </li>   </ol> </blockquote>  <p>存储器和软件的协议说明，当软件执行获取操作时，存储器会根据需要确保被保护数据的所有本地拷贝被更新为最新数据，并和远程数据拷贝保持一致。当执行释放操作时，修改的被保护变量要传送到其他机器上。执行获取操作并不能保证本地所作的修改会立即传送到其他本地拷贝。类似地，执行释放操作也不会必然地从其它拷贝引入所做的改变。 </p>  <br />  <p><img style="display: block; float: none; margin-left: auto; margin-right: auto" src="http://3fnm6q.blu.livefilestore.com/y1pcc01sJqTEYEtyIRv6IoTLw0lFU0z9Ec8dqgPFamm6VQZdtGn0nJSoX2wXu-lZ0FyqIXYU4Pj_w5UdiDchzAVHz4K-yuHptwI/realease-consistency.jpg?psid=1" width="490" height="129" />     <br />    <br /></p>  <p>上图是释放一致性下的一个有效事件顺序。进程P1执行获取操作，两次改变共享变量x的值，然后执行释放操作。进程P2执行获取操作，并读取x。它应在释放操作时得到x的值为b（除非P2的获取操作先于P1的获取操作）。若P2的获取操作在P1的释放操作之前，则它必须等待到P1执行了释放操作。因为P3在读共享变量前没有执行获取操作，存储器不必给它x的当前值，因此返回a是允许的。 </p>  <p>释放一致性分为渴望释放一致和懒惰释放一致性：</p>  <blockquote>   <p>渴望释放一致性在执行释放操作后，执行此操作的处理机将所有修改的数据传给所有那些已经有其缓冲拷贝且可能需要它的处理机。因为没有办法判断它们是否确实需要它，为安全起见，它们将获得所有修改过的数据。尽管这样将所有数据传输出去的方法很直接，但通常不够有效。</p>    <p>在懒惰释放一致性中，在执行释放时，不发送任何数据。相反，在执行获取操作时，处理机试图从拥有这些变量的机器上取得它们的最新值。时间戳协议可用来确定需传送哪些变量。</p></blockquote>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2010-2026 Sigma. Built from WordPress archive.</p>
+        </div>
+    </footer>
+</body>
+</html>
